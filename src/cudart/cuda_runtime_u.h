@@ -8,7 +8,7 @@
 #include "rpc/rpc.h"
 #include "tee_internal_api.h" /* for sgx_satus_t etc. */
 
-#include "ocelot/cuda/interface/cuda_runtime.h"
+#include "cuda_runtime_api.h"
 
 #include <stdlib.h> /* for size_t */
 

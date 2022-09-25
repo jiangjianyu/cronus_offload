@@ -2,9 +2,10 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include <ocelot/cuda/interface/cuda_runtime.h>
-
+#include "cuda_elf.h"
+#include "cuda_runtime_api.h"
 #include "cuda_runtime_u.h"
+#include "FatBinary.h"
 
 dim3 pushed_gridDim;
 dim3 pushed_blockDim;
@@ -37,10 +38,15 @@ extern "C" cudaError_t __cudaPopCallConfiguration(
 	return cudaSuccess;
 }
 
-void *dummy_handle = NULL;
-void** __cudaRegisterFatBinary(void *fatCubin) {
+FatBinary *fatbin_handle = NULL;
+
+extern "C" void init_rpc();
+extern "C" void** __cudaRegisterFatBinary(void *fatCubin) {
+	init_rpc();
     fprintf(stderr, "register fat bin\n");
-    return &dummy_handle;
+	fatbin_handle = new FatBinary(fatCubin);
+	init_cubin_image(fatbin_handle->cubin());
+    return (void**)&fatbin_handle;
 }
 
 extern "C" void __cudaRegisterFatBinaryEnd(
@@ -49,7 +55,7 @@ extern "C" void __cudaRegisterFatBinaryEnd(
     fprintf(stderr, "register fat bin\n"); 
 }
 
-extern char __cudaInitModule(
+extern "C" char __cudaInitModule(
         void **fatCubinHandle
 ) { fprintf(stderr, "load module\n"); }
 
@@ -59,7 +65,7 @@ static char* func_names[MAX_FUNCS];
 static const char* func_ptr[MAX_FUNCS];
 static int func_cnt = 0;
 
-void __cudaRegisterFunction(
+extern "C" void __cudaRegisterFunction(
         void **fatCubinHandle,
   const char *hostFun,
         char *deviceFun,
@@ -132,8 +138,9 @@ cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void
         return ret;
 }
 
-void __cudaUnregisterFatBinary(void **fatCubinHandle) {
+extern "C" void __cudaUnregisterFatBinary(void **fatCubinHandle) {
 	fprintf(stderr, "UnregisterFatBinary\n");
+	rpc_close();
 }
 
 cudaError_t  cudaMemcpy(void *dst, const void *src, size_t count, enum cudaMemcpyKind kind) {

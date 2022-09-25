@@ -1,6 +1,5 @@
 #include "cuda_runtime_t.h"
 
-#include "tee_internal_api.h"
 #include "rpc/rpc.h"
 #include <string.h> /* for memcpy etc */
 #include <stdlib.h> /* for malloc/free etc */
