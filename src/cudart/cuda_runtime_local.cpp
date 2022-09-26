@@ -2,7 +2,6 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "cuda_elf.h"
 #include "cuda_runtime_api.h"
 #include "cuda_runtime_u.h"
 #include "FatBinary.h"
@@ -45,7 +44,7 @@ extern "C" void** __cudaRegisterFatBinary(void *fatCubin) {
 	init_rpc();
     fprintf(stderr, "register fat bin\n");
 	fatbin_handle = new FatBinary(fatCubin);
-	init_cubin_image(fatbin_handle->cubin());
+	fatbin_handle->parse();
     return (void**)&fatbin_handle;
 }
 
