@@ -5,4 +5,5 @@ include_directories(include)
 
 add_subdirectory(src/cudart)
 add_subdirectory(src/cudaserver)
+add_subdirectory(src/test)
 
