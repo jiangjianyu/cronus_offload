@@ -6,9 +6,9 @@
 #include <stddef.h>
 
 #include "tee_internal_api.h"
-#include <cuda_runtime_api.h>
+#include "cuda_runtime_api.h"
 
-// #include <stdlib.h> /* for size_t */
+#include <stdlib.h> /* for size_t */
 
 #define TEE_CAST(type, item) ((type)(item))
 
