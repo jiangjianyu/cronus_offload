@@ -1,5 +1,6 @@
 
 #include <assert.h>
+#include <dlfcn.h>
 #include <stdio.h>
 #include <cstring>
 #include <cstdlib>
@@ -48,12 +49,11 @@ void __cudaRegisterFunction(
 
 cudaError_t cudaLaunchKernelByName(char* funcname, int func_len, dim3 gridDim, dim3 blockDim, 
     void* args_buf, int total_size, uint32_t* parameters, int par_len, size_t sharedMem, cudaStream_t stream) {
-    const char* func_ptr = NULL;
-    for (int i = 0;i < _kernel_func_cnt;i++) {
-        if (strcmp(funcname, _kernel_func_names[i]) == 0) {
-            func_ptr = _kernel_func_ptrs[i];
-        }
-    }
+    void* handle = dlopen(NULL, RTLD_LAZY);
+    void* func_ptr = NULL;
+    func_ptr = dlsym(NULL, funcname);
+    dlclose(handle);
+
     if (!func_ptr) {
         return cudaErrorLaunchFailure;
     }

@@ -7,7 +7,6 @@
 #include "cudaFatBinary.h"
 
 #include <sstream>
-#include <vector>
 #include "FatBinary.h"
 
 #include <iostream>
@@ -263,42 +262,11 @@ typedef struct symbol_entry {
 	uint32_t sym_idx;
 } symbol_entry_t;
 
-#define GDEV_NVIDIA_CONST_SEGMENT_MAX_COUNT 10
-#define gdev_cuda_raw_func CUfunc_st
-
-struct gdev_cuda_param {
-	int idx;
-	uint32_t offset;
-	uint32_t size;
-	uint32_t flags;
-};
-
-struct gdev_cuda_raw_func {
-	const char *name;
-	void *code_buf;
-	uint32_t code_size;
-	struct {
-		void *buf;
-		uint32_t size;
-	} cmem[GDEV_NVIDIA_CONST_SEGMENT_MAX_COUNT]; /* local to functions. */
-	uint32_t reg_count;
-	uint32_t bar_count;
-	uint32_t stack_depth;
-	uint32_t stack_size;
-	uint32_t shared_size;
-	uint32_t param_base;
-	uint32_t param_size;
-	uint32_t param_count;
-	std::vector<struct gdev_cuda_param> param_data;
-	uint32_t local_size;
-	uint32_t local_size_neg;
-};
-
-struct CUfunc_st* FatBinary::malloc_func_if_necessary(const char *name)
+struct cuda_raw_func* FatBinary::malloc_func_if_necessary(const char *name)
 {
 	std::string s(name);
 	if (functions.count(s) == 0) {
-		auto func = new CUfunc_st();
+		auto func = new cuda_raw_func();
 		func->name = name;
 		functions[s] = func;
 	}
@@ -308,7 +276,7 @@ struct CUfunc_st* FatBinary::malloc_func_if_necessary(const char *name)
 
 /* prototype definition. */
 static int cubin_func_type
-(char **pos, section_entry_t *e, struct gdev_cuda_raw_func *raw_func);
+(char **pos, section_entry_t *e, struct cuda_raw_func *raw_func);
 
 static void cubin_func_skip(char **pos, section_entry_t *e)
 {
@@ -345,7 +313,7 @@ static void cubin_func_unknown(char **pos, section_entry_t *e)
 }
 
 static int cubin_func_0a04
-(char **pos, section_entry_t *e, struct gdev_cuda_raw_func *raw_func)
+(char **pos, section_entry_t *e, struct cuda_raw_func *raw_func)
 {
 	const_entry_t *ce;
 
@@ -359,7 +327,7 @@ static int cubin_func_0a04
 }
 
 static int cubin_func_0c04
-(char **pos, section_entry_t *e, struct gdev_cuda_raw_func *raw_func)
+(char **pos, section_entry_t *e, struct cuda_raw_func *raw_func)
 {
 	*pos += sizeof(section_entry_t);
 	/* e->size is a parameter size, but how can we use it here? */
@@ -369,7 +337,7 @@ static int cubin_func_0c04
 }
 
 static int cubin_func_0d04
-(char **pos, section_entry_t *e, struct gdev_cuda_raw_func *raw_func)
+(char **pos, section_entry_t *e, struct cuda_raw_func *raw_func)
 {
 	stack_entry_t *se;
 
@@ -384,14 +352,14 @@ static int cubin_func_0d04
 }
 
 static int cubin_func_1704
-(char **pos, section_entry_t *e, struct gdev_cuda_raw_func *raw_func)
+(char **pos, section_entry_t *e, struct cuda_raw_func *raw_func)
 {
 	param_entry_t *pe;
 	
 	*pos += sizeof(section_entry_t);
 	pe = (param_entry_t *)*pos;
 
-	struct gdev_cuda_param param_data {
+	struct cuda_param param_data {
 		.idx = pe->idx,
 		.offset = pe->offset,
 		.size = pe->size >> 18,
@@ -407,7 +375,7 @@ static int cubin_func_1704
 }
 
 static int cubin_func_1903
-(char **pos, section_entry_t *e, struct gdev_cuda_raw_func *raw_func)
+(char **pos, section_entry_t *e, struct cuda_raw_func *raw_func)
 {
 	int ret;
 	char *pos2;
@@ -441,7 +409,7 @@ static int cubin_func_1903
 }
 
 static int cubin_func_1e04
-(char **pos, section_entry_t *e, struct gdev_cuda_raw_func *raw_func)
+(char **pos, section_entry_t *e, struct cuda_raw_func *raw_func)
 {
 	crs_stack_size_entry_t *crse;
 
@@ -455,7 +423,7 @@ static int cubin_func_1e04
 }
 
 static int cubin_func_maxreg_count
-(char **pos, section_entry_t *e, struct gdev_cuda_raw_func *raw_func)
+(char **pos, section_entry_t *e, struct cuda_raw_func *raw_func)
 {
 	crs_stack_size_entry_t *crse;
 
@@ -469,7 +437,7 @@ static int cubin_func_maxreg_count
 }
 
 static int cubin_func_sw_war
-(char **pos, section_entry_t *e, struct gdev_cuda_raw_func *raw_func)
+(char **pos, section_entry_t *e, struct cuda_raw_func *raw_func)
 {
 	crs_stack_size_entry_t *crse;
 
@@ -483,7 +451,7 @@ static int cubin_func_sw_war
 }
 
 static int cubin_func_api_version
-(char **pos, section_entry_t *e, struct gdev_cuda_raw_func *raw_func)
+(char **pos, section_entry_t *e, struct cuda_raw_func *raw_func)
 {
 	crs_stack_size_entry_t *crse;
 
@@ -527,7 +495,7 @@ static int cubin_func_max_stack
 }
 
 static int cubin_func_type
-(char **pos, section_entry_t *e, struct gdev_cuda_raw_func *raw_func)
+(char **pos, section_entry_t *e, struct cuda_raw_func *raw_func)
 {
 	switch (e->type) {
 	case 0x0204: /* textures */
@@ -674,15 +642,15 @@ int FatBinary::parse() {
 			/* we never know what sections (.text.XXX, .info.XXX, etc.)
 			   appears first for each function XXX... */
 			if (!strncmp(sh_name, SH_TEXT, strlen(SH_TEXT))) {
-				struct CUfunc_st *func = NULL;
-				struct gdev_cuda_raw_func *raw_func = NULL;
+				struct cuda_raw_func *func = NULL;
+				struct cuda_raw_func *raw_func = NULL;
 
 				/* this function does nothing if func is already allocated. */
 				func = malloc_func_if_necessary(sh_name + strlen(SH_TEXT));
 				if (!func)
 					goto fail_malloc_func;
 
-				raw_func = (struct gdev_cuda_raw_func*)func;
+				raw_func = (struct cuda_raw_func*)func;
 
 				/* basic information. */
 				raw_func->code_buf = bin + sheads[i].sh_offset; /* ==sh */
@@ -699,8 +667,8 @@ int FatBinary::parse() {
 					// mod->cmem[x].buf = bin + sheads[i].sh_offset;
 					// mod->cmem[x].raw_size = sheads[i].sh_size;
 				}
-				else if (x >= 0 && x < GDEV_NVIDIA_CONST_SEGMENT_MAX_COUNT) {
-					struct CUfunc_st *func = NULL;
+				else if (x >= 0 && x < NVIDIA_CONST_SEGMENT_MAX_COUNT) {
+					struct cuda_raw_func *func = NULL;
 					/* this function does nothing if func is already allocated. */
 					func = malloc_func_if_necessary(fname);
 					if (!func)
@@ -710,7 +678,7 @@ int FatBinary::parse() {
 				}
 			}
 			else if (!strncmp(sh_name, SH_SHARED, strlen(SH_SHARED))) {
-				struct CUfunc_st *func = NULL;
+				struct cuda_raw_func *func = NULL;
 				/* this function does nothing if func is already allocated. */
 				func =  malloc_func_if_necessary(sh_name + strlen(SH_SHARED));
 				if (!func)
@@ -725,7 +693,7 @@ int FatBinary::parse() {
 				 */
 			}
 			else if (!strncmp(sh_name, SH_LOCAL, strlen(SH_LOCAL))) {
-				struct CUfunc_st *func = NULL;
+				struct cuda_raw_func *func = NULL;
 				/* this function does nothing if func is already allocated. */
 				func = malloc_func_if_necessary(sh_name + strlen(SH_LOCAL));
 				if (!func)
@@ -742,14 +710,14 @@ int FatBinary::parse() {
 			   NV50 doesn't support ".nv.info" section. 
 			   we also assume that ".nv.info.funcname" is an end mark. */
 			else if (!strncmp(sh_name, SH_INFO_FUNC, strlen(SH_INFO_FUNC))) {
-				struct CUfunc_st *func = NULL;
-				struct gdev_cuda_raw_func *raw_func = NULL;
+				struct cuda_raw_func *func = NULL;
+				struct cuda_raw_func *raw_func = NULL;
 				/* this function does nothing if func is already allocated. */
 				func = malloc_func_if_necessary(sh_name + strlen(SH_INFO_FUNC));
 				if (!func)
 					goto fail_malloc_func;
 
-				raw_func = (struct gdev_cuda_raw_func*)func;
+				raw_func = (struct cuda_raw_func*)func;
 
 				/* look into the nv.info.@raw_func->name information. */
 				pos = (char *) sh;
@@ -862,3 +830,11 @@ fail_malloc_func:
 	return ret;
 }
 
+cuda_raw_func* FatBinary::get_function(const char *name) {
+	auto out = functions.find(name);
+	if (out == functions.end()) {
+		return NULL;
+	} else {
+		return out->second;
+	}
+}

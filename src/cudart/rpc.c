@@ -39,7 +39,7 @@ extern int sockfd;
 
 int rpc_ecall(uint32_t idx, void *ecall_buf, int bufsize) {
     int total_size = (bufsize + sizeof(uint32_t));
-    int ret, r, cur;
+    int ret = 0, r, cur;
 
     uint32_t *idx_ptr = (uint32_t*)(buffer + sizeof(rpc_header_t));
     *idx_ptr = idx;

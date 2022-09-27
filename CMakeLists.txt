@@ -3,6 +3,6 @@ project(cronus_offload)
 
 include_directories(include)
 
-# add_subdirectory(src/cudart)
+add_subdirectory(src/cudart)
 add_subdirectory(src/cudaserver)
 

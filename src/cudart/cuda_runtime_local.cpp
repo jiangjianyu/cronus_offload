@@ -108,10 +108,19 @@ cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void
 		if (!parameter_cache[func_idx]) {
 			parameter_cache[func_idx] = (uint32_t*) malloc(sizeof(uint32_t) * 20);
 			parameters = parameter_cache[func_idx];
-			ret = cudaFuncGetParametersByName(&n_par, parameters, func_name, strlen(func_name) + 1);
+			// ret = cudaFuncGetParametersByName(&n_par, parameters, func_name, strlen(func_name) + 1);
 
-			if (ret) {
-				return ret;
+			// if (ret) {
+			// 	return ret;
+			// }
+			auto func = fatbin_handle->get_function(func_name);
+			if (func == NULL) {
+				return cudaErrorLaunchFailure;
+			}
+			n_par = 0;
+			for (auto &param : func->param_data) {
+				parameters[func->param_data.size() - 1 - n_par] = param.size;
+				n_par ++;
 			}
 			
 			parameter_cnt_cache[func_idx] = n_par;
