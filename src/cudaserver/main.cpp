@@ -21,7 +21,7 @@ void func(int connfd)
     
     int n, cur;
     rpc_header_t *header;
-    char *buff = (char*) malloc(20 * 1024 * 1024);
+    char *buff = (char*) malloc(512 * 1024 * 1024);
     // infinite loop for chat
     for (;;) {
         bzero(buff, MAX);

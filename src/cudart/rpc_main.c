@@ -17,7 +17,7 @@ int init_rpc()
     int connfd;
     struct sockaddr_in servaddr, cli;
 
-    rpc_open(0, 100);
+    rpc_open(0, 512);
  
     // socket create and verification
     sockfd = socket(AF_INET, SOCK_STREAM, 0);

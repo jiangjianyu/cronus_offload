@@ -1,7 +1,7 @@
 
 #include "cukernel.h"
 
-#define N 100
+#define N 1000
 
 __global__ void addKernel(int* c, int* a, int* b, int size) {
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
@@ -33,7 +33,9 @@ extern "C" int main() {
 	cudaMemcpy(darra, arra, (N * N) * sizeof(int), cudaMemcpyHostToDevice);
 	cudaMemcpy(darrb, arrb, (N * N) * sizeof(int), cudaMemcpyHostToDevice);
 
-	addKernel<<<N, N>>>(darrc, darra, darrb, N * N);
+	int block  = 100;
+	int grid = N * N / block;
+	addKernel<<<grid, block>>>(darrc, darra, darrb, N * N);
 
 	cudaDeviceSynchronize();
 
