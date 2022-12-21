@@ -55,6 +55,7 @@ cudaError_t cudaLaunchKernelByName(char* funcname, int func_len, dim3 gridDim, d
     dlclose(handle);
 
     if (!func_ptr) {
+        printf("cannot find kernel %s\n", funcname);
         return cudaErrorLaunchFailure;
     }
 

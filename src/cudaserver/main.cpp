@@ -54,7 +54,7 @@ void func(int connfd)
 }
    
 // Driver function
-int main()
+extern "C" void __cronus_rpc_main()
 {
     int sockfd, connfd, len;
     struct sockaddr_in servaddr, cli;

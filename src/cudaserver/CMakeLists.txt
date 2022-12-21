@@ -6,6 +6,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
 
 file(GLOB srcs
     "*.cpp"
+    "hook.c"
 )
 
 include_directories(./)
@@ -14,8 +15,8 @@ include_directories(/usr/local/cuda-11.4/include)
 find_library(CUDART cudart /usr/local/cuda-11.4/targets/x86_64-linux/lib/)
 
 # add_executable(cudaserver ${srcs})
-add_library(cudaserver STATIC ${srcs})
+add_library(cudaserver SHARED ${srcs})
 target_link_libraries(cudaserver ${CUDART})
 target_link_libraries(cudaserver dl)
 
-set_target_properties(cudaserver PROPERTIES LINK_FLAGS "-Wl,-export-dynamic")
+# set_target_properties(cudaserver PROPERTIES LINK_FLAGS "-Wl,-export-dynamic")

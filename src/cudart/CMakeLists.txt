@@ -14,5 +14,5 @@ include_directories(/usr/local/cuda-11.4/include)
 
 find_library(CUDART cudart /usr/local/cuda-11.4/targets/x86_64-linux/lib/)
 
-add_library(cudart_rpc STATIC ${srcs})
+add_library(cudart_rpc SHARED ${srcs})
 # add_executable(cuclient ${srcs})
