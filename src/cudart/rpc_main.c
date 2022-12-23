@@ -11,11 +11,14 @@
 #define SA struct sockaddr
 
 int sockfd;
+static int rpc_is_init = 0;
 extern int rpc_open(void* uuid, int buffer_size_in_mb);
 int init_rpc()
 {
     int connfd;
     struct sockaddr_in servaddr, cli;
+
+    if (rpc_is_init) return 0;
 
     rpc_open(0, 512);
  
@@ -42,10 +45,12 @@ int init_rpc()
     }
     else
         printf("connected to the server..\n");
- 
+
+    rpc_is_init = 1;
     // function for chat
     // func(sockfd);
  
     // close the socket
     // close(sockfd);
+    return 0;
 }

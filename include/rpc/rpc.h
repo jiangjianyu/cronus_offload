@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include "debug.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,21 +45,24 @@ int rpc_entry(char*, int);
 }
 #endif /* __cplusplus */
 
-#ifdef RPC_DEBUG_ENABLE
-#define RPC_DEBUG(format, ...) \
-    fprintf(stderr, "D/RPC:%s:%d " #format "\n", __FUNCTION__, __LINE__ __VA_OPT__(,) __VA_ARGS__)
+#define RPC_DEBUG_ENABLE 1
 
-#define RPC_SERVER_DEBUG(format, ...) \
-    fprintf(stderr, "D/RPC Remote:%s:%d " #format "\n", __FUNCTION__, __LINE__ __VA_OPT__(,) __VA_ARGS__)
+#ifdef RPC_DEBUG_ENABLE
+
+#define rpc_log_info(format, ...) log_info("RPC " format, ## __VA_ARGS__)
+
+#define RPC_DEBUG(format, ...) rpc_log_info("%s:%d" format, __FUNCTION__, __LINE__, ## __VA_ARGS__)
+// fprintf(stderr, "[INFO] RPC: %s:%d " #format "\n", __FUNCTION__, __LINE__ __VA_OPT__(,) __VA_ARGS__)
+
+#define RPC_SERVER_DEBUG(format, ...) rpc_log_info("%s:%d" format, __FUNCTION__, __LINE__, ## __VA_ARGS__)
 #else 
     #define RPC_DEBUG(format, ...)
     #define RPC_SERVER_DEBUG(format, ...)
 #endif
 
-#define RPC_CLIENT_INIT_RET(func,mb)                \
-	TEE_UUID uuid = CUDA_TA_UUID;                   \
-	int ret;                                        \
-	rpc_open(&uuid, mb);                            \
-	ret = func(sizeof(argv) / sizeof(char*), argv); \
-	rpc_close();                                    \
-    return ret;
+#define RPC_CLIENT_INIT_RET(func,mb)    TEE_UUID uuid = CUDA_TA_UUID; \
+                                        int ret;                                        \
+                                        rpc_open(&uuid, mb);                            \
+                                        ret = func(sizeof(argv) / sizeof(char*), argv); \
+                                        rpc_close();                                    \
+                                        return ret;

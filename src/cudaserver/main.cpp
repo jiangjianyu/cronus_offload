@@ -37,7 +37,7 @@ void func(int connfd)
         // print buffer which contains the client contents
         header = (rpc_header_t*) buff;
 
-        printf("execute header %d %d %d\n", header->is_running, header->size, header->status);
+        // printf("execute header %d %d %d\n", header->is_running, header->size, header->status);
         READ_UNTIL(connfd, buff + sizeof(rpc_header_t), n, header->size, cur);
 
         if (n < sizeof(rpc_header_t)) {

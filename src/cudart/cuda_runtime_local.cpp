@@ -4,81 +4,8 @@
 
 #include "cuda_runtime_api.h"
 #include "cuda_runtime_u.h"
+#include "cuda_runtime_header.h"
 #include "FatBinary.h"
-
-dim3 pushed_gridDim;
-dim3 pushed_blockDim;
-size_t pushed_sharedMem;
-struct CUstream_st *pushed_stream;
-
-extern "C" unsigned __cudaPushCallConfiguration(
-        dim3 gridDim,
-        dim3 blockDim,
-        size_t sharedMem,
-        struct CUstream_st *stream) {
-	pushed_gridDim = gridDim;
-	pushed_blockDim = blockDim;
-	pushed_sharedMem = sharedMem;
-	pushed_stream = stream;
-	return cudaSuccess;
-}
-
-extern "C" cudaError_t __cudaPopCallConfiguration(
-        dim3 *gridDim,
-        dim3 *blockDim,
-        size_t *sharedMem,
-        void *stream
-) {
-	cudaStream_t *__stream = (cudaStream_t*)stream;
-	*gridDim = pushed_gridDim;
-	*blockDim = pushed_blockDim;
-	*sharedMem = pushed_sharedMem;
-	*__stream = (cudaStream_t)(long)pushed_stream;
-	return cudaSuccess;
-}
-
-FatBinary *fatbin_handle = NULL;
-
-extern "C" void init_rpc();
-extern "C" void** __cudaRegisterFatBinary(void *fatCubin) {
-	init_rpc();
-    fprintf(stderr, "register fat bin\n");
-	fatbin_handle = new FatBinary(fatCubin);
-	fatbin_handle->parse();
-    return (void**)&fatbin_handle;
-}
-
-extern "C" void __cudaRegisterFatBinaryEnd(
-        void **fatCubinHandle
-) {
-    fprintf(stderr, "register fat bin\n"); 
-}
-
-extern "C" char __cudaInitModule(
-        void **fatCubinHandle
-) { fprintf(stderr, "load module\n"); }
-
-#define MAX_FUNCS 50
-
-static char* func_names[MAX_FUNCS];
-static const char* func_ptr[MAX_FUNCS];
-static int func_cnt = 0;
-
-extern "C" void __cudaRegisterFunction(
-        void **fatCubinHandle,
-  const char *hostFun,
-        char *deviceFun,
-  const char *deviceName,
-        int thread_limit,
-        uint3 *tid,
-        uint3 *bid,
-        dim3 *bDim,
-        dim3 *gDim,
-        int *wSize) {
-	func_names[func_cnt] = deviceFun;
-	func_ptr[func_cnt] = hostFun;
-        func_cnt += 1;
-}
 
 #define KERNEL_ARGC_SIZE 64
 
@@ -95,9 +22,9 @@ cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void
         int args_copy_offset = 0;
 		int func_idx = 0;
 
-        for (int i = 0;i < func_cnt;i++) {
-                if (func_ptr[i] == func) {
-                        func_name = func_names[i];
+        for (int i = 0;i < __cuda_runtime_func_cnt;i++) {
+                if (__cuda_runtime_func_ptr[i] == func) {
+                        func_name = __cuda_runtime_func_names[i];
 						func_idx = i;
                 }
         }
@@ -144,11 +71,6 @@ cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void
         free(args_copy);
 
         return ret;
-}
-
-extern "C" void __cudaUnregisterFatBinary(void **fatCubinHandle) {
-	fprintf(stderr, "UnregisterFatBinary\n");
-	rpc_close();
 }
 
 cudaError_t  cudaMemcpy(void *dst, const void *src, size_t count, enum cudaMemcpyKind kind) {
