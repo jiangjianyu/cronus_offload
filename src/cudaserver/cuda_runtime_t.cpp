@@ -85,9 +85,8 @@ static TEE_Result tee_cudaFree(char *buffer)
 	TEE_Result status = TEE_SUCCESS;
 	void* _tmp_devPtr = ms->ms_devPtr;
 
-	RPC_SERVER_DEBUG("");
-
 	ms->ms_retval = cudaFree(_tmp_devPtr);
+	RPC_SERVER_DEBUG("(%lx) => %lx", _tmp_devPtr, ms->ms_retval);
 
 
 	return status;
@@ -103,8 +102,6 @@ static TEE_Result tee_cudaMalloc(char *buffer)
 	size_t _len_devPtr = 8;
 	void** _in_devPtr = NULL;
 
-	RPC_SERVER_DEBUG("");
-
 	if (_tmp_devPtr != NULL) {
 		if ((_in_devPtr = (void**)malloc(_len_devPtr)) == NULL) {
 			status = TEE_ERROR_OUT_OF_MEMORY;
@@ -114,6 +111,7 @@ static TEE_Result tee_cudaMalloc(char *buffer)
 		memset((void*)_in_devPtr, 0, _len_devPtr);
 	}
 	ms->ms_retval = cudaMalloc(_in_devPtr, ms->ms_size);
+	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _in_devPtr, ms->ms_size, ms->ms_retval);
 err:
 	if (_in_devPtr) {
 		memcpy(_tmp_devPtr, _in_devPtr, _len_devPtr);
@@ -135,8 +133,6 @@ static TEE_Result tee_cudaMemcpyToHost(char *buffer)
 	void* _in_dst = NULL;
 	void* _tmp_src = ms->ms_src;
 
-	RPC_SERVER_DEBUG("");
-
 	if (_tmp_dst != NULL) {
 		if ((_in_dst = (void*)malloc(_len_dst)) == NULL) {
 			status = TEE_ERROR_OUT_OF_MEMORY;
@@ -146,6 +142,7 @@ static TEE_Result tee_cudaMemcpyToHost(char *buffer)
 		memset((void*)_in_dst, 0, _len_dst);
 	}
 	ms->ms_retval = cudaMemcpyToHost(_in_dst, _tmp_src, _tmp_count);
+	RPC_SERVER_DEBUG("(%lx, %lx, %lx) => %lx", _in_dst, _tmp_src, _tmp_count, ms->ms_retval);
 err:
 	if (_in_dst) {
 		memcpy(_tmp_dst, _in_dst, _len_dst);
@@ -167,8 +164,6 @@ static TEE_Result tee_cudaMemcpyToDevice(char *buffer)
 	size_t _len_src = _tmp_count;
 	void* _in_src = NULL;
 
-	RPC_SERVER_DEBUG("");
-
 	if (_tmp_src != NULL) {
 		_in_src = (void*)malloc(_len_src);
 		if (_in_src == NULL) {
@@ -179,6 +174,7 @@ static TEE_Result tee_cudaMemcpyToDevice(char *buffer)
 		memcpy(_in_src, _tmp_src, _len_src);
 	}
 	ms->ms_retval = cudaMemcpyToDevice(_tmp_dst, _in_src, _tmp_count);
+	RPC_SERVER_DEBUG("(%lx, %lx, %lx) => %lx", _tmp_dst, _in_src, _tmp_count, ms->ms_retval);
 err:
 	if (_in_src) free(_in_src);
 
@@ -203,8 +199,6 @@ static TEE_Result tee_cudaLaunchKernelByName(char *buffer)
 	int _tmp_partotal_size = ms->ms_partotal_size;
 	size_t _len_parameters = _tmp_partotal_size;
 	uint32_t* _in_parameters = NULL;
-
-	RPC_SERVER_DEBUG("");
 
 	if (_tmp_funcname != NULL) {
 		_in_funcname = (char*)malloc(_len_funcname);
@@ -234,6 +228,7 @@ static TEE_Result tee_cudaLaunchKernelByName(char *buffer)
 		memcpy(_in_parameters, _tmp_parameters, _len_parameters);
 	}
 	ms->ms_retval = cudaLaunchKernelByName(_in_funcname, _tmp_func_len, ms->ms_gridDim, ms->ms_blockDim, _in_argbuf, _tmp_argbufsize, _in_parameters, _tmp_partotal_size, ms->ms_sharedMem, ms->ms_stream);
+	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", _in_funcname, _tmp_func_len, ms->ms_gridDim, ms->ms_blockDim, _in_argbuf, _tmp_argbufsize, _in_parameters, _tmp_partotal_size, ms->ms_sharedMem, ms->ms_stream, ms->ms_retval);
 err:
 	if (_in_funcname) free(_in_funcname);
 	if (_in_argbuf) free(_in_argbuf);
@@ -258,8 +253,6 @@ static TEE_Result tee_cudaFuncGetParametersByName(char *buffer)
 	int _tmp_name_len = ms->ms_name_len;
 	size_t _len_entryname = _tmp_name_len;
 	char* _in_entryname = NULL;
-
-	RPC_SERVER_DEBUG("");
 
 	if (_tmp_n_par != NULL) {
 		if ((_in_n_par = (uint32_t*)malloc(_len_n_par)) == NULL) {
@@ -287,6 +280,7 @@ static TEE_Result tee_cudaFuncGetParametersByName(char *buffer)
 		memcpy((void*)_in_entryname, _tmp_entryname, _len_entryname);
 	}
 	ms->ms_retval = cudaFuncGetParametersByName(_in_n_par, _in_parameters, (const char*)_in_entryname, _tmp_name_len);
+	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", _in_n_par, _in_parameters, (const char*)_in_entryname, _tmp_name_len, ms->ms_retval);
 err:
 	if (_in_n_par) {
 		memcpy(_tmp_n_par, _in_n_par, _len_n_par);
@@ -308,9 +302,8 @@ static TEE_Result tee_cudaThreadSynchronize(char *buffer)
 
 	TEE_Result status = TEE_SUCCESS;
 
-	RPC_SERVER_DEBUG("");
-
 	ms->ms_retval = cudaThreadSynchronize();
+	RPC_SERVER_DEBUG("() => %lx" , ms->ms_retval);
 
 
 	return status;
@@ -323,9 +316,8 @@ static TEE_Result tee_cudaDeviceSynchronize(char *buffer)
 
 	TEE_Result status = TEE_SUCCESS;
 
-	RPC_SERVER_DEBUG("");
-
 	ms->ms_retval = cudaDeviceSynchronize();
+	RPC_SERVER_DEBUG("() => %lx" , ms->ms_retval);
 
 
 	return status;
@@ -338,9 +330,8 @@ static TEE_Result tee_cudaGetLastError(char *buffer)
 
 	TEE_Result status = TEE_SUCCESS;
 
-	RPC_SERVER_DEBUG("");
-
 	ms->ms_retval = cudaGetLastError();
+	RPC_SERVER_DEBUG("() => %lx" , ms->ms_retval);
 
 
 	return status;
@@ -356,8 +347,6 @@ static TEE_Result tee_cudaGetDeviceProperties(char *buffer)
 	size_t _len_prop = 1 * sizeof(*_tmp_prop);
 	struct cudaDeviceProp* _in_prop = NULL;
 
-	RPC_SERVER_DEBUG("");
-
 	if (_tmp_prop != NULL) {
 		if ((_in_prop = (struct cudaDeviceProp*)malloc(_len_prop)) == NULL) {
 			status = TEE_ERROR_OUT_OF_MEMORY;
@@ -367,6 +356,7 @@ static TEE_Result tee_cudaGetDeviceProperties(char *buffer)
 		memset((void*)_in_prop, 0, _len_prop);
 	}
 	ms->ms_retval = cudaGetDeviceProperties(_in_prop, ms->ms_device);
+	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _in_prop, ms->ms_device, ms->ms_retval);
 err:
 	if (_in_prop) {
 		memcpy(_tmp_prop, _in_prop, _len_prop);
@@ -386,8 +376,6 @@ static TEE_Result tee_cudaGetDeviceCount(char *buffer)
 	size_t _len_count = 1 * sizeof(*_tmp_count);
 	int* _in_count = NULL;
 
-	RPC_SERVER_DEBUG("");
-
 	if (_tmp_count != NULL) {
 		if ((_in_count = (int*)malloc(_len_count)) == NULL) {
 			status = TEE_ERROR_OUT_OF_MEMORY;
@@ -397,6 +385,7 @@ static TEE_Result tee_cudaGetDeviceCount(char *buffer)
 		memset((void*)_in_count, 0, _len_count);
 	}
 	ms->ms_retval = cudaGetDeviceCount(_in_count);
+	RPC_SERVER_DEBUG("(%lx) => %lx", _in_count, ms->ms_retval);
 err:
 	if (_in_count) {
 		memcpy(_tmp_count, _in_count, _len_count);

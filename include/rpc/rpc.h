@@ -51,11 +51,11 @@ int rpc_entry(char*, int);
 
 #define rpc_log_info(format, ...) log_info("RPC " format, ## __VA_ARGS__)
 
-#define RPC_DEBUG(format, ...) rpc_log_info("%s:%d" format, __FUNCTION__, __LINE__, ## __VA_ARGS__)
+#define RPC_DEBUG(format, ...) rpc_log_info("%s:%d " format, __FUNCTION__, __LINE__, ## __VA_ARGS__)
 // fprintf(stderr, "[INFO] RPC: %s:%d " #format "\n", __FUNCTION__, __LINE__ __VA_OPT__(,) __VA_ARGS__)
 
-#define RPC_SERVER_DEBUG(format, ...) rpc_log_info("%s:%d" format, __FUNCTION__, __LINE__, ## __VA_ARGS__)
-#else 
+#define RPC_SERVER_DEBUG(format, ...) rpc_log_info("%s:%d " format, __FUNCTION__, __LINE__, ## __VA_ARGS__)
+#else
     #define RPC_DEBUG(format, ...)
     #define RPC_SERVER_DEBUG(format, ...)
 #endif

@@ -722,7 +722,7 @@ let gen_func_logging (fd: Ast.func_decl) (logfunc: string)
       if is_const_ptr pt then sprintf "(const %s)%s" tystr parm_name else parm_name
   in
   let gen_ret_format = 
-    if fd.Ast.rtype <> Ast.Void then " => %s" else " => Void"
+    if fd.Ast.rtype <> Ast.Void then " => %lx" else " => Void"
   in
   let gen_ret_name = 
     if fd.Ast.rtype <> Ast.Void then sprintf ", %s" (mk_parm_accessor retval_name) else ""
@@ -1263,17 +1263,18 @@ let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
       in
         sprintf "%s%s%s\t%s\n\t%s\n%s" func_open local_vars dummy_var check_pms invoke_func func_close
     else
-      sprintf "%s\t%s\n%s\n%s\n%s\n%s%s\n%s\t%s\n%s\n%s\n%s"
+      sprintf "%s\t%s\n%s\n%s%s%s\n%s\t%s\n%s\n%s\n%s\n%s"
         func_open
         declare_ms_ptr
         buffer_var_decl
         local_vars
-        debug_str
+        (* debug_str *)
         (gen_check_tbridge_length_overflow fd.Ast.plist)
         (mk_check_pms fd.Ast.fname)
 (*        (gen_check_tbridge_ptr_parms fd.Ast.plist)*)
         (gen_parm_ptr_direction_pre fd.Ast.plist)
         (if fd.Ast.rtype <> Ast.Void then update_retval else invoke_func)
+        debug_str
         (gen_err_mark fd.Ast.plist)
         (gen_parm_ptr_direction_post fd.Ast.plist)
         func_close
