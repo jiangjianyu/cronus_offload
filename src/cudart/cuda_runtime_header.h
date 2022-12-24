@@ -17,6 +17,7 @@ extern FatBinary *fatbin_handle;
 #define cudart_exit() exit(1)
 #define cudart_not_implemented(ret) cudart_log_warn("%s not implemented", __FUNCTION__); return ret
 #define cudart_not_implemented_noreturn cudart_log_warn("%s not implemented", __FUNCTION__)
+#define CUDART_NOT_IMPLEMENTED { cudart_not_implemented(cudaErrorNotSupported); }
 
 #define NOT_IMPLEMENTED cudart_log_warn("%s not implemented", __FUNCTION__)
 #define NOT_IMPLEMENTED_RET(x) cudart_log_warn("%s not implemented", __FUNCTION__); return x;
