@@ -714,6 +714,36 @@ let gen_func_invoking (fd: Ast.func_decl)
           (let p0 = gen_parm_str pt declr in
              List.fold_left (fun acc (pty, dlr) ->
                                acc ^ ", " ^ gen_parm_str pty dlr) p0 ps)
+let gen_func_logging (fd: Ast.func_decl) (logfunc: string)
+                      (mk_parm_name: Ast.parameter_type -> Ast.declarator -> string) =
+  let gen_parm_str pt declr =
+    let parm_name = mk_parm_name pt declr in
+    let tystr = get_param_tystr pt in
+      if is_const_ptr pt then sprintf "(const %s)%s" tystr parm_name else parm_name
+  in
+  let gen_ret_format = 
+    if fd.Ast.rtype <> Ast.Void then " => %s" else " => Void"
+  in
+  let gen_ret_name = 
+    if fd.Ast.rtype <> Ast.Void then sprintf ", %s" (mk_parm_accessor retval_name) else ""
+  in
+  let format_str = 
+    match fd.Ast.plist with
+      [] -> ""
+    | (pt, (declr : Ast.declarator)) :: ps ->
+        sprintf "\"(%s)%s\", "
+          (List.fold_left (fun acc (pty, dlr) ->
+                               acc ^ ", " ^ "%lx") "%lx" ps) gen_ret_format
+  in
+    match fd.Ast.plist with
+      [] -> sprintf "%s(\"()%s\" %s);" logfunc gen_ret_format gen_ret_name
+    | (pt, (declr : Ast.declarator)) :: ps ->
+        sprintf "%s(%s%s%s);"
+          logfunc
+          format_str
+          (let p0 = gen_parm_str pt declr in
+             List.fold_left (fun acc (pty, dlr) ->
+                               acc ^ ", " ^ gen_parm_str pty dlr) p0 ps) gen_ret_name
 (* Generate local variables required for the trusted bridge. *)
 let gen_ubridge_local_vars (plist: Ast.pdecl list) =
   let do_gen_local_var (ty: Ast.atype) (name: string) =
@@ -1212,7 +1242,8 @@ let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
   let local_vars = gen_tbridge_local_vars fd.Ast.plist in
   let func_close = "\treturn status;\n}\n" in
 
-  let debug_str = "\tRPC_SERVER_DEBUG(\"\");" in
+  (* let debug_str = sprintf "\tRPC_SERVER_DEBUG(\"%s\");" in *)
+  let debug_str = gen_func_logging fd "\tRPC_SERVER_DEBUG" mk_parm_name_tbridge in
 
   let ms_struct_name = mk_ms_struct_name fd.Ast.fname in
   let declare_ms_ptr = sprintf "%s* %s = TEE_CAST(%s*, %s);"
