@@ -827,7 +827,7 @@ let gen_func_uproxy (fd: Ast.func_decl) (idx: int) (ec: enclave_content) =
     gen_uproxy_com_proto fd ec.enclave_name ^
       "\n{\n\tTEE_Result status;\n\tint bufsize;\n" ^ "\tchar *enclave_buffer = rpc_buffer();\n" ^ "\t" ^ gen_local_retval fd.Ast.rtype ^ "\n"
   in
-  let func_close = "\n}\n" in
+  let func_close = "\treturn cudaErrorInvalidValue;\n}\n" in
   let ocall_table_name  = mk_ocall_table_name ec.enclave_name in
   let ms_struct_name  = mk_ms_struct_name fd.Ast.fname in
   let input_size_base = sprintf "sizeof(%s)" ms_struct_name in
@@ -935,7 +935,7 @@ let gen_ptr_size (ty: Ast.atype) (pattr: Ast.ptr_attr) (name: string) (get_parm:
         | Some a -> mk_len_count a size_str
     in
       if pattr.Ast.pa_isstr then
-        sprintf "%s ? strlen(%s) + 1 : 0" parm_name parm_name
+        sprintf "%s ? strlen((const char*)(%s)) + 1 : 0" parm_name parm_name
       else if pattr.Ast.pa_iswstr then
         sprintf "%s ? (wcslen(%s) + 1) * sizeof(wchar_t) : 0" parm_name parm_name
       else
@@ -1057,7 +1057,7 @@ let gen_parm_ptr_direction_pre (plist: Ast.pdecl list) =
             let s1 = List.fold_left (fun acc s -> acc ^ pre_indent ^ s ^ "\n") "" code_template in
             let s2 =
               if attr.Ast.pa_isstr
-              then sprintf "%s\t\t%s[%s - 1] = '\\0';\n" s1 in_ptr_name len_var
+              then sprintf "%s\t\t((char*)%s)[%s - 1] = '\\0';\n" s1 in_ptr_name len_var
               else if attr.Ast.pa_iswstr
               then sprintf "%s\t\t%s[(%s - sizeof(wchar_t))/sizeof(wchar_t)] = (wchar_t)0;\n" s1 in_ptr_name len_var
               else s1 in

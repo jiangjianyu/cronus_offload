@@ -230,7 +230,7 @@ let check_ptr_attr (fd: Ast.func_decl) range =
       else ()
   in
   let check_void_ptr_size (pattr: Ast.ptr_attr) (identifier: string) =
-    if pattr.Ast.pa_chkptr && (not (has_size pattr.Ast.pa_size))
+    if pattr.Ast.pa_chkptr && (not (has_size pattr.Ast.pa_size) && (not pattr.Ast.pa_isptr))
     then failwithf "`%s': void pointer `%s' - buffer size unknown" fname identifier
     else ()
   in

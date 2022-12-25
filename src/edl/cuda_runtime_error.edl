@@ -1,0 +1,32 @@
+
+
+/**
+ * \defgroup CUDART_ERROR Error Handling
+ *
+ * ___MANBRIEF___ error handling functions of the CUDA runtime API
+ * (___CURRENT_FILE___) ___ENDMANBRIEF___
+ *
+ * This section describes the error handling functions of the CUDA runtime
+ * application programming interface.
+ *
+ * @{
+ */
+
+enclave {
+    trusted {
+        public cudaError_t cudaGetDeviceCount([out, count=1]int *count);
+        public cudaError_t cudaGetDeviceProperties([out, count=1]struct cudaDeviceProp *prop, int device);
+        public cudaError_t cudaDeviceGetAttribute([out, count=1]int *value, enum cudaDeviceAttr attr, int device);
+        public cudaError_t cudaDeviceGetDefaultMemPool([out, count=1]cudaMemPool_t *memPool, int device);
+        public cudaError_t cudaDeviceSetMemPool(int device, cudaMemPool_t memPool);
+        public cudaError_t cudaDeviceGetMemPool([out, count=1]cudaMemPool_t *memPool, int device);
+        // public cudaError_t cudaDeviceGetNvSciSyncAttributes(void *nvSciSyncAttrList, int device, int flags);
+        // public cudaError_t cudaDeviceGetP2PAttribute(int *value, enum cudaDeviceP2PAttr attr, int srcDevice, int dstDevice);
+        public cudaError_t cudaChooseDevice([out, count=1]int *device, [in, count=1]const struct cudaDeviceProp *prop);
+        public cudaError_t cudaSetDevice(int device);
+        public cudaError_t cudaGetDevice([out, count=1]int *device);
+        public cudaError_t cudaSetValidDevices([in, count=len]int *device_arr, int len);
+        public cudaError_t cudaSetDeviceFlags(unsigned int flags);
+        public cudaError_t cudaGetDeviceFlags([out, count=1]unsigned int *flags );
+    };
+};

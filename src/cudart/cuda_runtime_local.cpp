@@ -62,7 +62,7 @@ cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void
         args_copy = malloc(total_parameter_sizes);
 
         for (int i = 0;i < n_par;i++) {
-                memcpy(args_copy + args_copy_offset, args[i], parameters[i]);
+                memcpy((char*)args_copy + args_copy_offset, args[i], parameters[i]);
                 args_copy_offset += parameters[i];
         }
 
@@ -73,6 +73,7 @@ cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void
         return ret;
 }
 
+/*
 cudaError_t  cudaMemcpy(void *dst, const void *src, size_t count, enum cudaMemcpyKind kind) {
 	if (kind == cudaMemcpyHostToDevice) {
         return cudaMemcpyToDevice(dst, (void*) src, count);
@@ -82,6 +83,7 @@ cudaError_t  cudaMemcpy(void *dst, const void *src, size_t count, enum cudaMemcp
         return cudaErrorUnknown;
     }
 }
+*/
 
 #define _CASE(x) case x: return #x;
 
