@@ -10,7 +10,7 @@ enclave {
         // public cudaError_t  cudaMalloc([out, size=8]void **devPtr, size_t size);
         // public cudaError_t  cudaMemcpyToHost([out, size=count]void *dst, [user_check]void *src, size_t count);
         // public cudaError_t  cudaMemcpyToDevice([user_check]void *dst, [in, size=count]void *src, size_t count);
-        public cudaError_t  cudaLaunchKernelByName([in, size=func_len] char *funcname, int func_len, dim3 gridDim, dim3 blockDim,
+        public cudaError_t  cudaLaunchKernelByName([in, string] char *funcname, dim3 gridDim, dim3 blockDim,
             [in, size=argbufsize]void *argbuf, int argbufsize, [in, size=partotal_size]uint32_t* parameters, int partotal_size, size_t sharedMem, cudaStream_t stream);
         // we do a hack by making n_par and parameters as in/out are not supported
         // bugs using static array

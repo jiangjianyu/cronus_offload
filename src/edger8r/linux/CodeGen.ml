@@ -222,7 +222,7 @@ let get_ptr_length (ty: Ast.atype) (attr: Ast.ptr_attr) (declr: Ast.declarator) 
       Some a -> mk_len_size a
     | None   ->
       match attr.Ast.pa_size.Ast.ps_sizefunc with
-        None   -> if is_none then "0" else sprintf "sizeof(*%s)" mk_sizeof_name
+        None   -> if attr.Ast.pa_isstr then sprintf "strlen((const char*)%s) + 1" mk_sizeof_name else (if is_none then "0" else sprintf "sizeof(*%s)" mk_sizeof_name)
       | Some a -> a
   in
     match attr.Ast.pa_size.Ast.ps_count with
@@ -374,6 +374,13 @@ let is_const_ptr (pt: Ast.parameter_type) =
         match aty with
           Ast.Foreign _ -> false
         | _             -> true
+
+let is_string (pt: Ast.parameter_type) =
+  let aty = Ast.get_param_atype pt in
+    match pt with
+      Ast.PTVal _      -> false
+    | Ast.PTPtr(_, pa) ->
+      if pa.Ast.pa_isptr then true else false
 
 (* Generate parameter representation. *)
 let gen_parm_str (p: Ast.pdecl) =
@@ -721,6 +728,9 @@ let gen_func_logging (fd: Ast.func_decl) (logfunc: string)
     let tystr = get_param_tystr pt in
       if is_const_ptr pt then sprintf "(const %s)%s" tystr parm_name else parm_name
   in
+  let gen_parm_format pt = 
+      if is_string pt then "%s" else "%lx"
+  in
   let gen_ret_format = 
     if fd.Ast.rtype <> Ast.Void then " => %lx" else " => Void"
   in
@@ -733,7 +743,7 @@ let gen_func_logging (fd: Ast.func_decl) (logfunc: string)
     | (pt, (declr : Ast.declarator)) :: ps ->
         sprintf "\"(%s)%s\", "
           (List.fold_left (fun acc (pty, dlr) ->
-                               acc ^ ", " ^ "%lx") "%lx" ps) gen_ret_format
+                               acc ^ ", " ^ gen_parm_format pty) (gen_parm_format pt) ps) gen_ret_format
   in
     match fd.Ast.plist with
       [] -> sprintf "%s(\"()%s\" %s);" logfunc gen_ret_format gen_ret_name

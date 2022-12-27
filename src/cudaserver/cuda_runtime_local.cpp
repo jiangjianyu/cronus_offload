@@ -47,7 +47,7 @@ void __cudaRegisterFunction(
     cudaRegisterFuncPtrNames(hostFun, deviceFun);
 }
 
-cudaError_t cudaLaunchKernelByName(char* funcname, int func_len, dim3 gridDim, dim3 blockDim, 
+cudaError_t cudaLaunchKernelByName(char* funcname, dim3 gridDim, dim3 blockDim, 
     void* args_buf, int total_size, uint32_t* parameters, int par_len, size_t sharedMem, cudaStream_t stream) {
     void* handle = dlopen(NULL, RTLD_LAZY);
     void* func_ptr = NULL;

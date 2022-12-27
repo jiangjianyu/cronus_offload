@@ -33,8 +33,6 @@ cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void
         }
 
 		if (!parameter_cache[func_idx]) {
-			parameter_cache[func_idx] = (uint32_t*) malloc(sizeof(uint32_t) * 20);
-			parameters = parameter_cache[func_idx];
 			// ret = cudaFuncGetParametersByName(&n_par, parameters, func_name, strlen(func_name) + 1);
 
 			// if (ret) {
@@ -44,6 +42,9 @@ cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void
 			if (func == NULL) {
 				return cudaErrorLaunchFailure;
 			}
+			parameter_cache[func_idx] = (uint32_t*) malloc(sizeof(uint32_t) * 20);
+			parameters = parameter_cache[func_idx];
+			
 			n_par = 0;
 			for (auto &param : func->param_data) {
 				parameters[func->param_data.size() - 1 - n_par] = param.size;
@@ -66,7 +67,7 @@ cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void
                 args_copy_offset += parameters[i];
         }
 
-        ret = cudaLaunchKernelByName(func_name, strlen(func_name) + 1, gridDim, blockDim, args_copy, total_parameter_sizes, parameters, sizeof(uint32_t) * n_par, sharedMem, stream);
+        ret = cudaLaunchKernelByName(func_name, gridDim, blockDim, args_copy, total_parameter_sizes, parameters, sizeof(uint32_t) * n_par, sharedMem, stream);
 
         free(args_copy);
 
