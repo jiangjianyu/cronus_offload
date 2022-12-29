@@ -29,40 +29,18 @@
  *
  *)
 
-open Unix
-open Printf
 
-open Util
+let _ =
+  let progname = Sys.argv.(0) in
+  let argc = Array.length Sys.argv in
+  let args = if argc = 1 then [||] else Array.sub Sys.argv 1 (argc-1) in
+  let cmd_params = Util.parse_cmdline progname (Array.to_list args) in
 
-(* Run a command and return its results as a process_status*string. *)
-let read_process (command : string) : Unix.process_status * string =
-  let buffer_size = 16 in
-  let buffer = Buffer.create buffer_size in
-  let in_channel = Unix.open_process_in command in
-  let rec read_to_end() =
-      Buffer.add_channel buffer in_channel 1;read_to_end() in
-  try
-    read_to_end()
-  with
-    End_of_file -> (
-      let status = Unix.close_process_in in_channel in
-      let output = Buffer.contents buffer in
-      ( status, output ))
-
-(*Return None if gcc not found, caller should handle it*)
-let processor_macro ( full_path : string) : string option=
-  let gcc_path = snd (read_process "which gcc") in
-  if not (String.contains gcc_path  '/' ) then
-    (eprintf "warning: preprocessor is not found\n"; None)
-  else
-    let command = sprintf "gcc -x c -E -P \"%s\" 2>/dev/null" full_path in
-    let output = read_process command in
-    match fst output with
-      | WEXITED exit_status -> 
-        if exit_status < 0 then
-          failwithf "gcc exited with error code 0x%d\n" exit_status
-        else if exit_status > 0 then
-          failwithf "Preprocessor failed\n"
-        else
-          Some(snd output)
-      | _ -> failwithf "Preprocessor stopped by signal\n"  
+  let real_ast_handler fname =
+    try
+      CodeGen.gen_enclave_code (CodeGen.start_parsing fname) cmd_params
+    with
+      Failure s -> (Printf.eprintf "error: %s\n" s; exit (-1))
+  in
+    if cmd_params.Util.input_files = [] then Util.usage progname
+    else List.iter real_ast_handler cmd_params.Util.input_files

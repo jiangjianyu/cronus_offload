@@ -29,40 +29,12 @@
  *
  *)
 
-open Unix
-open Printf
-
-open Util
-
-(* Run a command and return its results as a process_status*string. *)
-let read_process (command : string) : Unix.process_status * string =
-  let buffer_size = 16 in
-  let buffer = Buffer.create buffer_size in
-  let in_channel = Unix.open_process_in command in
-  let rec read_to_end() =
-      Buffer.add_channel buffer in_channel 1;read_to_end() in
-  try
-    read_to_end()
-  with
-    End_of_file -> (
-      let status = Unix.close_process_in in_channel in
-      let output = Buffer.contents buffer in
-      ( status, output ))
-
-(*Return None if gcc not found, caller should handle it*)
-let processor_macro ( full_path : string) : string option=
-  let gcc_path = snd (read_process "which gcc") in
-  if not (String.contains gcc_path  '/' ) then
-    (eprintf "warning: preprocessor is not found\n"; None)
-  else
-    let command = sprintf "gcc -x c -E -P \"%s\" 2>/dev/null" full_path in
-    let output = read_process command in
-    match fst output with
-      | WEXITED exit_status -> 
-        if exit_status < 0 then
-          failwithf "gcc exited with error code 0x%d\n" exit_status
-        else if exit_status > 0 then
-          failwithf "Preprocessor failed\n"
-        else
-          Some(snd output)
-      | _ -> failwithf "Preprocessor stopped by signal\n"  
+type 'a t = { mutable c : 'a list }
+exception Empty
+let create () = { c = [] }
+let push x s = s.c <- x :: s.c
+let pop s =
+  match s.c with
+      hd::tl -> s.c <- tl; hd
+    | []     -> raise Empty
+let mem x s = List.mem x s.c

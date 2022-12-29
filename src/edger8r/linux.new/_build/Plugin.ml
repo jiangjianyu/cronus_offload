@@ -29,40 +29,25 @@
  *
  *)
 
-open Unix
-open Printf
+(* 
+    Dependency injection plugin to allow custom code generation
+    from EDL. CodeGen.ml calls into Plugin.available to check 
+    if a plugin available. If a plugin is available, then it calls 
+    Plugin.gen_edge_routines to generate custom code. 
+    Otherwise, it generates code for Intel(R) SGX  SDK.
+*)
 
-open Util
+type plugin = {
+    mutable available: bool;
+    mutable gen_edge_routines:
+         Ast.enclave_content -> Util.edger8r_params -> unit;
+}
 
-(* Run a command and return its results as a process_status*string. *)
-let read_process (command : string) : Unix.process_status * string =
-  let buffer_size = 16 in
-  let buffer = Buffer.create buffer_size in
-  let in_channel = Unix.open_process_in command in
-  let rec read_to_end() =
-      Buffer.add_channel buffer in_channel 1;read_to_end() in
-  try
-    read_to_end()
-  with
-    End_of_file -> (
-      let status = Unix.close_process_in in_channel in
-      let output = Buffer.contents buffer in
-      ( status, output ))
+(* Instance fields will be populated by Open Enclave *)
+let instance = {
+    available = false;
+    gen_edge_routines = fun ec ep -> Printf.printf "Plugin not loaded.\n"
+}
 
-(*Return None if gcc not found, caller should handle it*)
-let processor_macro ( full_path : string) : string option=
-  let gcc_path = snd (read_process "which gcc") in
-  if not (String.contains gcc_path  '/' ) then
-    (eprintf "warning: preprocessor is not found\n"; None)
-  else
-    let command = sprintf "gcc -x c -E -P \"%s\" 2>/dev/null" full_path in
-    let output = read_process command in
-    match fst output with
-      | WEXITED exit_status -> 
-        if exit_status < 0 then
-          failwithf "gcc exited with error code 0x%d\n" exit_status
-        else if exit_status > 0 then
-          failwithf "Preprocessor failed\n"
-        else
-          Some(snd output)
-      | _ -> failwithf "Preprocessor stopped by signal\n"  
+let available () = instance.available
+let gen_edge_routines ec ep = instance.gen_edge_routines ec ep

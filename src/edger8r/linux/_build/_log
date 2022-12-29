@@ -1,0 +1,196 @@
+### Starting build.
+# Target: Edger8r.ml.depends, tags: { extension:ml, file:Edger8r.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules Edger8r.ml > Edger8r.ml.depends
+# Target: CodeGen.ml.depends, tags: { extension:ml, file:CodeGen.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules CodeGen.ml > CodeGen.ml.depends
+# Target: Ast.ml.depends, tags: { extension:ml, file:Ast.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules Ast.ml > Ast.ml.depends
+# Target: Lexer.mll, tags: { extension:mll, file:Lexer.mll, lexer, ocaml, ocamllex, quiet }
+ocamllex.opt -q Lexer.mll
+# Target: Lexer.ml.depends, tags: { extension:ml, file:Lexer.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules Lexer.ml > Lexer.ml.depends
+# Target: Parser.mly, tags: { extension:mly, file:Parser.mly, infer, ocaml, ocamlyacc, parser, quiet }
+ocamlyacc Parser.mly
+# Target: Parser.mli.depends, tags: { extension:mli, file:Parser.mli, ocaml, ocamldep, quiet }
+ocamldep.opt -modules Parser.mli > Parser.mli.depends
+# Target: Ast.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Ast.cmo, file:Ast.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o Ast.cmo Ast.ml
+# Target: Parser.cmi, tags: { byte, compile, extension:mli, file:Parser.mli, interf, ocaml, quiet }
+ocamlc.opt -c -o Parser.cmi Parser.mli
+# Target: Preprocessor.ml.depends, tags: { extension:ml, file:Preprocessor.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules Preprocessor.ml > Preprocessor.ml.depends
+# Target: Util.ml.depends, tags: { extension:ml, file:Util.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules Util.ml > Util.ml.depends
+# Target: Util.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Util.cmo, file:Util.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o Util.cmo Util.ml
++ ocamlc.opt -c -o Util.cmo Util.ml
+File "Util.ml", line 117, characters 16-32:
+117 |           match String.lowercase op with
+                      ^^^^^^^^^^^^^^^^
+Alert deprecated: Stdlib.String.lowercase
+Use String.lowercase_ascii/StringLabels.lowercase_ascii instead.
+# Target: SimpleStack.ml.depends, tags: { extension:ml, file:SimpleStack.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules SimpleStack.ml > SimpleStack.ml.depends
+# Target: Lexer.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Lexer.cmo, file:Lexer.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o Lexer.cmo Lexer.ml
+# Target: Preprocessor.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Preprocessor.cmo, file:Preprocessor.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o Preprocessor.cmo Preprocessor.ml
+# Target: SimpleStack.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:SimpleStack.cmo, file:SimpleStack.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o SimpleStack.cmo SimpleStack.ml
+# Target: CodeGen.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:CodeGen.cmo, file:CodeGen.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o CodeGen.cmo CodeGen.ml
++ ocamlc.opt -c -o CodeGen.cmo CodeGen.ml
+File "CodeGen.ml", line 584, characters 40-56:
+584 |   let guard_macro = sprintf "%s_U_H__" (String.uppercase ec.enclave_name) in
+                                              ^^^^^^^^^^^^^^^^
+Alert deprecated: Stdlib.String.uppercase
+Use String.uppercase_ascii/StringLabels.uppercase_ascii instead.
+File "CodeGen.ml", line 654, characters 40-56:
+654 |   let guard_macro = sprintf "%s_T_H__" (String.uppercase ec.enclave_name) in
+                                              ^^^^^^^^^^^^^^^^
+Alert deprecated: Stdlib.String.uppercase
+Use String.uppercase_ascii/StringLabels.uppercase_ascii instead.
+File "CodeGen.ml", line 211, characters 6-16:
+211 |   let atype_name = Ast.get_tystr ty in
+            ^^^^^^^^^^
+Warning 26 [unused-var]: unused variable atype_name.
+File "CodeGen.ml", line 379, characters 6-9:
+379 |   let aty = Ast.get_param_atype pt in
+            ^^^
+Warning 26 [unused-var]: unused variable aty.
+File "CodeGen.ml", line 526, characters 6-21:
+526 |   let retval_parm_str = gen_parm_retval fd.Ast.rtype in
+            ^^^^^^^^^^^^^^^
+Warning 26 [unused-var]: unused variable retval_parm_str.
+File "CodeGen.ml", line 528, characters 6-18:
+528 |   let eid_parm_str =
+            ^^^^^^^^^^^^
+Warning 26 [unused-var]: unused variable eid_parm_str.
+File "CodeGen.ml", line 557, characters 6-15:
+557 |   let cconv_str = "SGX_" ^ Ast.get_call_conv_str uf.Ast.uf_fattr.Ast.fa_convention in
+            ^^^^^^^^^
+Warning 26 [unused-var]: unused variable cconv_str.
+File "CodeGen.ml", line 874, characters 6-21:
+874 |   let ocall_table_ptr =
+            ^^^^^^^^^^^^^^^
+Warning 26 [unused-var]: unused variable ocall_table_ptr.
+File "CodeGen.ml", line 983, characters 8-26:
+983 |     let gen_check_overflow cnt size_str =
+              ^^^^^^^^^^^^^^^^^^
+Warning 26 [unused-var]: unused variable gen_check_overflow.
+File "CodeGen.ml", line 991, characters 10-18:
+991 |       let size_str =
+                ^^^^^^^^
+Warning 26 [unused-var]: unused variable size_str.
+File "CodeGen.ml", line 1306, characters 16-31:
+1306 |             let in_ptr_dst_name = mk_in_ptr_dst_name attr.Ast.pa_rdonly parm_accessor in
+                       ^^^^^^^^^^^^^^^
+Warning 26 [unused-var]: unused variable in_ptr_dst_name.
+File "CodeGen.ml", line 1454, characters 6-18:
+1454 |   let include_uuid = "TEEC_UUID uuid = { 0x8aaaf200, 0x2450, 0x11e4, { 0xab, 0xe2, 0x00, 0x02, 0xa5, 0xd5, 0xc5, 0x1b} };\n" in
+             ^^^^^^^^^^^^
+Warning 26 [unused-var]: unused variable include_uuid.
+File "CodeGen.ml", line 1455, characters 6-20:
+1455 |   let include_buffer = "char *enclave_buffer;\n" in
+             ^^^^^^^^^^^^^^
+Warning 26 [unused-var]: unused variable include_buffer.
+File "CodeGen.ml", line 1456, characters 6-25:
+1456 |   let include_buffer_init = "sgx_status_t init_sgx_buffer() {\n\tsgx_status_t status;\n\tinput_sm.size = 10240;\n\tinput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\toutput_sm.size = 10240;\n\toutput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &input_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n\t}\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &output_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n}\n\tocall_add(output_sm.buffer, ocall_table_securecompiler.table);\n}\n" in
+             ^^^^^^^^^^^^^^^^^^^
+Warning 26 [unused-var]: unused variable include_buffer_init.
+File "CodeGen.ml", line 1492, characters 6-17:
+1492 |   let entry_table = gen_entry_table ec in
+             ^^^^^^^^^^^
+Warning 26 [unused-var]: unused variable entry_table.
+# Target: Edger8r.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Edger8r.cmo, file:Edger8r.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o Edger8r.cmo Edger8r.ml
+# Target: Parser.ml.depends, tags: { extension:ml, file:Parser.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules Parser.ml > Parser.ml.depends
+# Target: Ast.cmx, tags: { compile, extension:cmx, extension:ml, file:Ast.cmx, file:Ast.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o Ast.cmx Ast.ml
+# Target: Util.cmx, tags: { compile, extension:cmx, extension:ml, file:Util.cmx, file:Util.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o Util.cmx Util.ml
++ ocamlopt.opt -c -o Util.cmx Util.ml
+File "Util.ml", line 117, characters 16-32:
+117 |           match String.lowercase op with
+                      ^^^^^^^^^^^^^^^^
+Alert deprecated: Stdlib.String.lowercase
+Use String.lowercase_ascii/StringLabels.lowercase_ascii instead.
+# Target: Parser.cmx, tags: { compile, extension:cmx, extension:ml, file:Parser.cmx, file:Parser.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o Parser.cmx Parser.ml
+# Target: Lexer.cmx, tags: { compile, extension:cmx, extension:ml, file:Lexer.cmx, file:Lexer.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o Lexer.cmx Lexer.ml
+# Target: Preprocessor.cmx, tags: { compile, extension:cmx, extension:ml, file:Preprocessor.cmx, file:Preprocessor.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o Preprocessor.cmx Preprocessor.ml
+# Target: SimpleStack.cmx, tags: { compile, extension:cmx, extension:ml, file:SimpleStack.cmx, file:SimpleStack.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o SimpleStack.cmx SimpleStack.ml
+# Target: CodeGen.cmx, tags: { compile, extension:cmx, extension:ml, file:CodeGen.cmx, file:CodeGen.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o CodeGen.cmx CodeGen.ml
++ ocamlopt.opt -c -o CodeGen.cmx CodeGen.ml
+File "CodeGen.ml", line 584, characters 40-56:
+584 |   let guard_macro = sprintf "%s_U_H__" (String.uppercase ec.enclave_name) in
+                                              ^^^^^^^^^^^^^^^^
+Alert deprecated: Stdlib.String.uppercase
+Use String.uppercase_ascii/StringLabels.uppercase_ascii instead.
+File "CodeGen.ml", line 654, characters 40-56:
+654 |   let guard_macro = sprintf "%s_T_H__" (String.uppercase ec.enclave_name) in
+                                              ^^^^^^^^^^^^^^^^
+Alert deprecated: Stdlib.String.uppercase
+Use String.uppercase_ascii/StringLabels.uppercase_ascii instead.
+File "CodeGen.ml", line 211, characters 6-16:
+211 |   let atype_name = Ast.get_tystr ty in
+            ^^^^^^^^^^
+Warning 26 [unused-var]: unused variable atype_name.
+File "CodeGen.ml", line 379, characters 6-9:
+379 |   let aty = Ast.get_param_atype pt in
+            ^^^
+Warning 26 [unused-var]: unused variable aty.
+File "CodeGen.ml", line 526, characters 6-21:
+526 |   let retval_parm_str = gen_parm_retval fd.Ast.rtype in
+            ^^^^^^^^^^^^^^^
+Warning 26 [unused-var]: unused variable retval_parm_str.
+File "CodeGen.ml", line 528, characters 6-18:
+528 |   let eid_parm_str =
+            ^^^^^^^^^^^^
+Warning 26 [unused-var]: unused variable eid_parm_str.
+File "CodeGen.ml", line 557, characters 6-15:
+557 |   let cconv_str = "SGX_" ^ Ast.get_call_conv_str uf.Ast.uf_fattr.Ast.fa_convention in
+            ^^^^^^^^^
+Warning 26 [unused-var]: unused variable cconv_str.
+File "CodeGen.ml", line 874, characters 6-21:
+874 |   let ocall_table_ptr =
+            ^^^^^^^^^^^^^^^
+Warning 26 [unused-var]: unused variable ocall_table_ptr.
+File "CodeGen.ml", line 983, characters 8-26:
+983 |     let gen_check_overflow cnt size_str =
+              ^^^^^^^^^^^^^^^^^^
+Warning 26 [unused-var]: unused variable gen_check_overflow.
+File "CodeGen.ml", line 991, characters 10-18:
+991 |       let size_str =
+                ^^^^^^^^
+Warning 26 [unused-var]: unused variable size_str.
+File "CodeGen.ml", line 1306, characters 16-31:
+1306 |             let in_ptr_dst_name = mk_in_ptr_dst_name attr.Ast.pa_rdonly parm_accessor in
+                       ^^^^^^^^^^^^^^^
+Warning 26 [unused-var]: unused variable in_ptr_dst_name.
+File "CodeGen.ml", line 1454, characters 6-18:
+1454 |   let include_uuid = "TEEC_UUID uuid = { 0x8aaaf200, 0x2450, 0x11e4, { 0xab, 0xe2, 0x00, 0x02, 0xa5, 0xd5, 0xc5, 0x1b} };\n" in
+             ^^^^^^^^^^^^
+Warning 26 [unused-var]: unused variable include_uuid.
+File "CodeGen.ml", line 1455, characters 6-20:
+1455 |   let include_buffer = "char *enclave_buffer;\n" in
+             ^^^^^^^^^^^^^^
+Warning 26 [unused-var]: unused variable include_buffer.
+File "CodeGen.ml", line 1456, characters 6-25:
+1456 |   let include_buffer_init = "sgx_status_t init_sgx_buffer() {\n\tsgx_status_t status;\n\tinput_sm.size = 10240;\n\tinput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\toutput_sm.size = 10240;\n\toutput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &input_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n\t}\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &output_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n}\n\tocall_add(output_sm.buffer, ocall_table_securecompiler.table);\n}\n" in
+             ^^^^^^^^^^^^^^^^^^^
+Warning 26 [unused-var]: unused variable include_buffer_init.
+File "CodeGen.ml", line 1492, characters 6-17:
+1492 |   let entry_table = gen_entry_table ec in
+             ^^^^^^^^^^^
+Warning 26 [unused-var]: unused variable entry_table.
+# Target: Edger8r.cmx, tags: { compile, extension:cmx, extension:ml, file:Edger8r.cmx, file:Edger8r.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o Edger8r.cmx Edger8r.ml
+# Target: Edger8r.native, tags: { dont_link_with, extension:native, file:Edger8r.native, link, native, ocaml, program, quiet }
+ocamlopt.opt str.cmxa unix.cmxa Ast.cmx Util.cmx Parser.cmx Lexer.cmx Preprocessor.cmx SimpleStack.cmx CodeGen.cmx Edger8r.cmx -o Edger8r.native
+# Compilation successful.

@@ -1,0 +1,116 @@
+### Starting build.
+# Target: Edger8r.ml.depends, tags: { extension:ml, file:Edger8r.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules Edger8r.ml > Edger8r.ml.depends
+# Target: CodeGen.ml.depends, tags: { extension:ml, file:CodeGen.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules CodeGen.ml > CodeGen.ml.depends
+# Target: Ast.ml.depends, tags: { extension:ml, file:Ast.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules Ast.ml > Ast.ml.depends
+# Target: Lexer.mll, tags: { extension:mll, file:Lexer.mll, lexer, ocaml, ocamllex, quiet }
+ocamllex.opt -q Lexer.mll
+# Target: Lexer.ml.depends, tags: { extension:ml, file:Lexer.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules Lexer.ml > Lexer.ml.depends
+# Target: Parser.mly, tags: { extension:mly, file:Parser.mly, infer, ocaml, ocamlyacc, parser, quiet }
+ocamlyacc Parser.mly
+# Target: Parser.mli.depends, tags: { extension:mli, file:Parser.mli, ocaml, ocamldep, quiet }
+ocamldep.opt -modules Parser.mli > Parser.mli.depends
+# Target: Ast.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Ast.cmo, file:Ast.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o Ast.cmo Ast.ml
+# Target: Parser.cmi, tags: { byte, compile, extension:mli, file:Parser.mli, interf, ocaml, quiet }
+ocamlc.opt -c -o Parser.cmi Parser.mli
+# Target: Plugin.ml.depends, tags: { extension:ml, file:Plugin.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules Plugin.ml > Plugin.ml.depends
+# Target: Util.ml.depends, tags: { extension:ml, file:Util.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules Util.ml > Util.ml.depends
+# Target: Util.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Util.cmo, file:Util.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o Util.cmo Util.ml
++ ocamlc.opt -c -o Util.cmo Util.ml
+File "Util.ml", line 117, characters 16-32:
+117 |           match String.lowercase op with
+                      ^^^^^^^^^^^^^^^^
+Alert deprecated: Stdlib.String.lowercase
+Use String.lowercase_ascii/StringLabels.lowercase_ascii instead.
+# Target: Preprocessor.ml.depends, tags: { extension:ml, file:Preprocessor.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules Preprocessor.ml > Preprocessor.ml.depends
+# Target: SimpleStack.ml.depends, tags: { extension:ml, file:SimpleStack.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules SimpleStack.ml > SimpleStack.ml.depends
+# Target: Lexer.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Lexer.cmo, file:Lexer.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o Lexer.cmo Lexer.ml
+# Target: Plugin.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Plugin.cmo, file:Plugin.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o Plugin.cmo Plugin.ml
+# Target: Preprocessor.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Preprocessor.cmo, file:Preprocessor.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o Preprocessor.cmo Preprocessor.ml
+# Target: SimpleStack.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:SimpleStack.cmo, file:SimpleStack.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o SimpleStack.cmo SimpleStack.ml
+# Target: CodeGen.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:CodeGen.cmo, file:CodeGen.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o CodeGen.cmo CodeGen.ml
++ ocamlc.opt -c -o CodeGen.cmo CodeGen.ml
+File "CodeGen.ml", line 376, characters 6-7:
+376 |     | _                   -> (false, "")
+            ^
+Warning 11 [redundant-case]: this match case is unused.
+File "CodeGen.ml", line 678, characters 43-59:
+678 |   let func_guard = sprintf "%s_DEFINED__" (String.uppercase func_name) in 
+                                                 ^^^^^^^^^^^^^^^^
+Alert deprecated: Stdlib.String.uppercase
+Use String.uppercase_ascii/StringLabels.uppercase_ascii instead.
+File "CodeGen.ml", line 707, characters 40-56:
+707 |   let guard_macro = sprintf "%s_U_H__" (String.uppercase ec.enclave_name) in
+                                              ^^^^^^^^^^^^^^^^
+Alert deprecated: Stdlib.String.uppercase
+Use String.uppercase_ascii/StringLabels.uppercase_ascii instead.
+File "CodeGen.ml", line 740, characters 40-56:
+740 |   let guard_macro = sprintf "%s_T_H__" (String.uppercase ec.enclave_name) in
+                                              ^^^^^^^^^^^^^^^^
+Alert deprecated: Stdlib.String.uppercase
+Use String.uppercase_ascii/StringLabels.uppercase_ascii instead.
+# Target: Edger8r.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Edger8r.cmo, file:Edger8r.ml, implem, ocaml, quiet }
+ocamlc.opt -c -o Edger8r.cmo Edger8r.ml
+# Target: Parser.ml.depends, tags: { extension:ml, file:Parser.ml, ocaml, ocamldep, quiet }
+ocamldep.opt -modules Parser.ml > Parser.ml.depends
+# Target: Ast.cmx, tags: { compile, extension:cmx, extension:ml, file:Ast.cmx, file:Ast.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o Ast.cmx Ast.ml
+# Target: Util.cmx, tags: { compile, extension:cmx, extension:ml, file:Util.cmx, file:Util.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o Util.cmx Util.ml
++ ocamlopt.opt -c -o Util.cmx Util.ml
+File "Util.ml", line 117, characters 16-32:
+117 |           match String.lowercase op with
+                      ^^^^^^^^^^^^^^^^
+Alert deprecated: Stdlib.String.lowercase
+Use String.lowercase_ascii/StringLabels.lowercase_ascii instead.
+# Target: Parser.cmx, tags: { compile, extension:cmx, extension:ml, file:Parser.cmx, file:Parser.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o Parser.cmx Parser.ml
+# Target: Lexer.cmx, tags: { compile, extension:cmx, extension:ml, file:Lexer.cmx, file:Lexer.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o Lexer.cmx Lexer.ml
+# Target: Plugin.cmx, tags: { compile, extension:cmx, extension:ml, file:Plugin.cmx, file:Plugin.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o Plugin.cmx Plugin.ml
+# Target: Preprocessor.cmx, tags: { compile, extension:cmx, extension:ml, file:Preprocessor.cmx, file:Preprocessor.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o Preprocessor.cmx Preprocessor.ml
+# Target: SimpleStack.cmx, tags: { compile, extension:cmx, extension:ml, file:SimpleStack.cmx, file:SimpleStack.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o SimpleStack.cmx SimpleStack.ml
+# Target: CodeGen.cmx, tags: { compile, extension:cmx, extension:ml, file:CodeGen.cmx, file:CodeGen.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o CodeGen.cmx CodeGen.ml
++ ocamlopt.opt -c -o CodeGen.cmx CodeGen.ml
+File "CodeGen.ml", line 376, characters 6-7:
+376 |     | _                   -> (false, "")
+            ^
+Warning 11 [redundant-case]: this match case is unused.
+File "CodeGen.ml", line 678, characters 43-59:
+678 |   let func_guard = sprintf "%s_DEFINED__" (String.uppercase func_name) in 
+                                                 ^^^^^^^^^^^^^^^^
+Alert deprecated: Stdlib.String.uppercase
+Use String.uppercase_ascii/StringLabels.uppercase_ascii instead.
+File "CodeGen.ml", line 707, characters 40-56:
+707 |   let guard_macro = sprintf "%s_U_H__" (String.uppercase ec.enclave_name) in
+                                              ^^^^^^^^^^^^^^^^
+Alert deprecated: Stdlib.String.uppercase
+Use String.uppercase_ascii/StringLabels.uppercase_ascii instead.
+File "CodeGen.ml", line 740, characters 40-56:
+740 |   let guard_macro = sprintf "%s_T_H__" (String.uppercase ec.enclave_name) in
+                                              ^^^^^^^^^^^^^^^^
+Alert deprecated: Stdlib.String.uppercase
+Use String.uppercase_ascii/StringLabels.uppercase_ascii instead.
+# Target: Edger8r.cmx, tags: { compile, extension:cmx, extension:ml, file:Edger8r.cmx, file:Edger8r.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o Edger8r.cmx Edger8r.ml
+# Target: Edger8r.native, tags: { dont_link_with, extension:native, file:Edger8r.native, link, native, ocaml, program, quiet }
+ocamlopt.opt str.cmxa unix.cmxa Ast.cmx Util.cmx Parser.cmx Lexer.cmx Plugin.cmx Preprocessor.cmx SimpleStack.cmx CodeGen.cmx Edger8r.cmx -o Edger8r.native
+# Compilation successful.
