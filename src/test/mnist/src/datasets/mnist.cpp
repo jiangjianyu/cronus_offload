@@ -9,8 +9,6 @@ MNISTDataSet::MNISTDataSet(DataSetType type) {
     // Prepare some placeholders for our dataset
     FILE *file;
     long length;
-    long idx = 0;
-    long readsize = 4096;
 
     // Open file with images and check how long it is
     if (type == TRAIN) {
@@ -24,15 +22,8 @@ MNISTDataSet::MNISTDataSet(DataSetType type) {
 
     // Read whole file with images to the buffer
     unsigned char* bufferImages = (unsigned char *)malloc((length+1)*sizeof(unsigned char));
-    while (length > 0) {
-        if (length < readsize)
-            readsize = length;
-        fread(bufferImages + idx, readsize, 1, file);
-        idx += readsize;
-        length -= readsize;
-    }
+    fread(bufferImages, length, 1, file);
     fclose(file);
-    // fprintf(stderr, "readfile with sizes %d\n", idx);
 
     // Open file with labels and check how long it is
     if (type == TRAIN) {
@@ -46,15 +37,7 @@ MNISTDataSet::MNISTDataSet(DataSetType type) {
 
     // Read whole file with labels to the buffer
     unsigned char* bufferLabels = (unsigned char *)malloc((length+1)*sizeof(unsigned char));
-    readsize = 4096;
-    idx = 0;
-    while (length > 0) {
-        if (length < readsize)
-            readsize = length;
-        fread(bufferLabels  + idx, readsize, 1, file);
-        idx += readsize;
-        length -= readsize;
-    }
+    fread(bufferLabels, length, 1, file);
     fclose(file);
 
     // Keep size of the dataset in the property as we'll be using this value a lot!
@@ -119,10 +102,6 @@ MNISTDataSet::MNISTDataSet(DataSetType type) {
         int label = (int)bufferLabels[BEGIN_OF_LABELS + image];
         this->labels[image][label] = 1;
     }
-    free(bufferLabels);
-    free(bufferImages);
-    delete[] meanImage;
-    delete[] stdDevImage;
 }
 
 int MNISTDataSet::getSize() {

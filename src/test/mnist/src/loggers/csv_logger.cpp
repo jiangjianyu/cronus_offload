@@ -1,14 +1,11 @@
 #include "csv_logger.hpp"
 
+#include <iostream>
+
 CSVLogger::CSVLogger(std::string fileName) {
-    this->csvFile.open(fileName.c_str());
-    if (!this->csvFile.is_open()) {
-        printf("ERROR! Cannot open file for CSVLogger.");
-        exit(1);
-    }
 
     this->epoch = 0;
-    this->csvFile << "epoch,"
+    std::cout << "epoch,"
                   << "trainingLoss,"
                   << "trainingAccuracy,"
                   << "testLoss,"
@@ -20,14 +17,14 @@ CSVLogger::CSVLogger(std::string fileName) {
 }
 
 CSVLogger::~CSVLogger() {
-    this->csvFile.close();
+
 }
 
 void CSVLogger::logEpoch(double trainingLoss, double trainingAccuracy,
                          double testLoss, double testAccuracy,
                          double totalForwardTime, double totalBackwardTime,
                          double batchForwardTime, double batchBackwardTime) {
-    this->csvFile << this->epoch++ << ","
+    std::cout << this->epoch++ << ","
                   << trainingLoss << ","
                   << trainingAccuracy << ","
                   << testLoss << ","

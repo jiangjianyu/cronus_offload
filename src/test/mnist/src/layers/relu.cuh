@@ -1,17 +1,16 @@
 #pragma once
-#ifndef DENSE_HPP
-#define DENSE_HPP
+#ifndef RELU_HPP
+#define RELU_HPP
 
 #include <cstdio>
 #include <cmath>
 
 #include "../tensor/tensor1d.cuh"
 #include "../tensor/tensor2d.cuh"
-#include "../utils.hpp"
 #include "layer.hpp"
 
 
-class DenseLayer: public Layer {
+class ReLuLayer: public Layer {
 private:
     int input;
     int output;
@@ -21,10 +20,10 @@ private:
     Tensor2D* outputBackward;
 
 public:
-    DenseLayer(int input, int output);
+    ReLuLayer(int inputOutput);
 
     Tensor2D* forward(Tensor2D* data);
     Tensor2D* backward(Tensor2D* gradients);
 };
 
-#endif  /* !DENSE_HPP */
+#endif  /* !RELU_HPP */

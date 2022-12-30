@@ -7,7 +7,7 @@
 #include <cstdio>
 #include <fstream>
 
-#include "../configuration.hpp"
+#include "../configuration.cuh"
 
 class CSVLogger {
 private:
