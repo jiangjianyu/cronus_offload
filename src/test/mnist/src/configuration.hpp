@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <cstdio>
 
-#define DEFAULT_NUMBER_OF_EPOCHS    5
+#define DEFAULT_NUMBER_OF_EPOCHS    30
 #define DEFAULT_BATCH_SIZE          512
 #define DEFAULT_LEARNING_RATE       1e-06
 

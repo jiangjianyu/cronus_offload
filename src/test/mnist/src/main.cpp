@@ -16,7 +16,11 @@
 #include "cuda_runtime.h"
 
 long long elapsed_time_ms;
+extern void do_kernel_init();
 extern "C" int main(int argc, char** argv) {
+
+    do_kernel_init();
+
     // Always initialize seed to some random value
     srand(static_cast<unsigned>(time(0)));
 
@@ -28,8 +32,8 @@ extern "C" int main(int argc, char** argv) {
     struct timeval start, end;
 
     // Print our current configuration for this training
-    Configuration::printCurrentConfiguration();
-    Configuration::printCUDAConfiguration();
+    // Configuration::printCurrentConfiguration();
+    // Configuration::printCUDAConfiguration();
 
     // Read both training and test dataset
     MNISTDataSet* trainDataset = new MNISTDataSet(TRAIN);
@@ -59,7 +63,7 @@ extern "C" int main(int argc, char** argv) {
     // fprintf(stderr, "NUmber of train batches:%d\n",numberOfTrainBatches);
    
     numberOfTrainBatches = numberOfTrainBatches / 2;
-    // fprintf(stderr, "NUmber of train batches:%d\n",numberOfTrainBatches);
+    fprintf(stderr, "NUmber of train batches:%d\n",numberOfTrainBatches);
     
     elapsed_time_ms = 0;
 

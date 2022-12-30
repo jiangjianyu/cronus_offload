@@ -14,14 +14,13 @@ MNISTDataSet::MNISTDataSet(DataSetType type) {
 
     // Open file with images and check how long it is
     if (type == TRAIN) {
-        file = fopen("./mnist/train-images", "rb");
+        file = fopen("./mnist/train-images-idx3-ubyte", "rb");
     } else if (type == TEST) {
-        file = fopen("./mnist/test-images", "rb");
+        file = fopen("./mnist/t10k-images-idx3-ubyte", "rb");
     }
-    // fseek(file, 0, SEEK_END);
-    // length = ftell(file);
-    // rewind(file);
-    length = 7840016;
+    fseek(file, 0, SEEK_END);
+    length = ftell(file);
+    rewind(file);
 
     // Read whole file with images to the buffer
     unsigned char* bufferImages = (unsigned char *)malloc((length+1)*sizeof(unsigned char));
@@ -37,14 +36,13 @@ MNISTDataSet::MNISTDataSet(DataSetType type) {
 
     // Open file with labels and check how long it is
     if (type == TRAIN) {
-        file = fopen("./mnist/train-labels", "rb");
+        file = fopen("./mnist/train-labels-idx1-ubyte", "rb");
     } else if (type == TEST) {
-        file = fopen("./mnist/test-labels", "rb");
+        file = fopen("./mnist/t10k-labels-idx1-ubyte", "rb");
     }
-    // fseek(file, 0, SEEK_END);
-    // length = ftell(file);
-    // rewind(file);
-    length = 10008;
+    fseek(file, 0, SEEK_END);
+    length = ftell(file);
+    rewind(file);
 
     // Read whole file with labels to the buffer
     unsigned char* bufferLabels = (unsigned char *)malloc((length+1)*sizeof(unsigned char));
