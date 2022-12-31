@@ -19,16 +19,12 @@ cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void
         int args_copy_offset = 0;
 		int func_idx = 0;
 
-        for (int i = 0;i < __cuda_runtime_func_cnt;i++) {
-                if (__cuda_runtime_func_ptr[i] == func) {
-                        func_name = __cuda_runtime_func_names[i];
-						func_idx = i;
-                }
-        }
-        if (!func_name) {
-                cudart_log_err("cannot found kernel: %lx", func);
+        auto func_name_itr = cuda_runtime_func->find((intptr_t)func);
+        if (func_name_itr == cuda_runtime_func->end()) {
+                cudart_log_err("cannot find kernel's addr: %lx", func);
                 return cudaErrorLaunchFailure;
         }
+        func_name = func_name_itr->second;
 
 		if (true) {
 			// ret = cudaFuncGetParametersByName(&n_par, parameters, func_name, strlen(func_name) + 1);
