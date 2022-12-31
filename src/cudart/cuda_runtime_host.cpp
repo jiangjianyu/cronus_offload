@@ -5,12 +5,14 @@
 #include "cuda_runtime_api.h"
 #include "cuda_runtime_u.h"
 #include "cuda_runtime_header.h"
+#include <list>
+#include <dlfcn.h>
 
 dim3 pushed_gridDim;
 dim3 pushed_blockDim;
 size_t pushed_sharedMem;
 struct CUstream_st *pushed_stream;
-FatBinary *fatbin_handle = NULL;
+std::list<FatBinary*> *fatbins;
 extern "C" void init_rpc();
 
 // for function registration
@@ -52,9 +54,15 @@ extern void** CUDARTAPI __cudaRegisterFatBinary(
 ) {
     cudart_log_call();
     init_rpc();
-    fatbin_handle = new FatBinary(fatCubin);
+
+    if (!fatbins) {
+        fatbins = new std::list<FatBinary*>();
+    }
+
+    auto fatbin_handle = new FatBinary(fatCubin);
     fatbin_handle->parse();
-    return (void**)&fatbin_handle;
+    fatbins->push_back(fatbin_handle);
+    return NULL;
 }
 
 extern void CUDARTAPI __cudaRegisterFatBinaryEnd(

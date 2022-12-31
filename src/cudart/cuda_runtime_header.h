@@ -3,12 +3,16 @@
 
 #include "FatBinary.h"
 #include "debug.h"
+#include <list>
 
+// TODO: no std support
+// currently we cannot use std in the module, as there will be abi compatability problem
 #define MAX_FUNCS (8196 * 4)
+#define MAX_CUBIN (512)
 extern int __cuda_runtime_func_cnt;
 extern char* __cuda_runtime_func_names[];
 extern const char* __cuda_runtime_func_ptr[];
-extern FatBinary *fatbin_handle;
+extern std::list<FatBinary*> *fatbins;
 
 #define cudart_log_info(format, ...) log_info("CUDART: " format, ## __VA_ARGS__)
 #define cudart_log_warn(format, ...) log_warn("CUDART: " format, ## __VA_ARGS__)

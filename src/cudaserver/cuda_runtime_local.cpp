@@ -8,6 +8,7 @@
 #include <cuda_runtime_api.h>
 
 #include "cuda_runtime_t.h"
+#include "cuda_runtime_header.h"
 
 cudaError_t cudaMemcpyToHost(void *dst, void *src, size_t count) {
     return cudaMemcpy(dst, src, count, cudaMemcpyDeviceToHost);
@@ -55,7 +56,7 @@ cudaError_t cudaLaunchKernelByName(char* funcname, dim3 gridDim, dim3 blockDim,
     dlclose(handle);
 
     if (!func_ptr) {
-        printf("cannot find kernel %s\n", funcname);
+        cudaserver_log_err("cannot find kernel %s\n", funcname);
         return cudaErrorLaunchFailure;
     }
 
