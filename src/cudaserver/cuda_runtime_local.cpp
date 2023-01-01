@@ -9,51 +9,70 @@
 
 #include "cuda_runtime_t.h"
 #include "cuda_runtime_header.h"
+#include <unordered_map>
 
-cudaError_t cudaMemcpyToHost(void *dst, void *src, size_t count) {
-    return cudaMemcpy(dst, src, count, cudaMemcpyDeviceToHost);
-}
+std::unordered_map<std::string, const char*> *cudaserver_kernel_functions;
 
-cudaError_t cudaMemcpyToDevice(void *dst, void *src, size_t count) {
-    return cudaMemcpy(dst, src, count, cudaMemcpyHostToDevice);
-}
+typedef void (*cudaRegisterFunction_t)(
+        void   **fatCubinHandle,
+  const char    *hostFun,
+        char    *deviceFun,
+  const char    *deviceName,
+        int      thread_limit,
+        uint3   *tid,
+        uint3   *bid,
+        dim3    *bDim,
+        dim3    *gDim,
+        int     *wSize
+);
 
-extern char* _kernel_func_names[];
-extern const char* _kernel_func_ptrs[];
-extern int _kernel_func_cnt;
-
-#define MAX_FUNCS 50
-
-char* _kernel_func_names[MAX_FUNCS];
-const char* _kernel_func_ptrs[MAX_FUNCS];
-int _kernel_func_cnt = 0;
+ cudaRegisterFunction_t ___cudaRegisterFunction;
 
 void cudaRegisterFuncPtrNames(const char* hostFun, char *deviceFun) {
-	_kernel_func_names[_kernel_func_cnt] = deviceFun;
-	_kernel_func_ptrs[_kernel_func_cnt] = hostFun;
-    _kernel_func_cnt += 1;
+	if (!cudaserver_kernel_functions) {
+        cudaserver_kernel_functions = new std::unordered_map<std::string, const char*> ();
+        ___cudaRegisterFunction = (cudaRegisterFunction_t) dlsym(RTLD_NEXT, "__cudaRegisterFunction");
+    }
+    (*cudaserver_kernel_functions)[std::string(deviceFun)] = hostFun;
 }
 
-void __cudaRegisterFunction(
-        void **fatCubinHandle,
-  const char *hostFun,
-        char *deviceFun,
-  const char *deviceName,
-        int thread_limit,
-        uint3 *tid,
-        uint3 *bid,
-        dim3 *bDim,
-        dim3 *gDim,
-        int *wSize) {
+extern "C" {
+extern void CUDARTAPI __cudaRegisterFunction(
+        void   **fatCubinHandle,
+  const char    *hostFun,
+        char    *deviceFun,
+  const char    *deviceName,
+        int      thread_limit,
+        uint3   *tid,
+        uint3   *bid,
+        dim3    *bDim,
+        dim3    *gDim,
+        int     *wSize
+) {
     cudaRegisterFuncPtrNames(hostFun, deviceFun);
+    ___cudaRegisterFunction(fatCubinHandle, hostFun, deviceFun, deviceName, thread_limit, tid, bid, bDim, gDim, wSize);
+}
+};
+
+static const char* resolve_kernel_function(char* funcname) {
+    void* func_ptr = NULL;
+    void* handle = dlopen(NULL, RTLD_LAZY);
+    func_ptr = dlsym(NULL, funcname);
+    dlclose(handle);
+    if (func_ptr) {
+        return (const char*) func_ptr;
+    }
+
+    auto found_item = cudaserver_kernel_functions->find(std::string(funcname));
+    if (found_item == cudaserver_kernel_functions->end()) {
+        return NULL;
+    }
+    return found_item->second;
 }
 
 cudaError_t cudaLaunchKernelByName(char* funcname, dim3 gridDim, dim3 blockDim, 
     void* args_buf, int total_size, uint32_t* parameters, int par_len, size_t sharedMem, cudaStream_t stream) {
-    void* handle = dlopen(NULL, RTLD_LAZY);
-    void* func_ptr = NULL;
-    func_ptr = dlsym(NULL, funcname);
-    dlclose(handle);
+    const char* func_ptr = resolve_kernel_function(funcname);
 
     if (!func_ptr) {
         cudaserver_log_err("cannot find kernel %s\n", funcname);
@@ -69,23 +88,4 @@ cudaError_t cudaLaunchKernelByName(char* funcname, dim3 gridDim, dim3 blockDim,
     }
 
     return cudaLaunchKernel(func_ptr, gridDim, blockDim, args, sharedMem, stream);
-}
-
-cudaError_t cudaFuncGetParametersByName(uint32_t *n_par, uint32_t parameters[20], const char *funcname, int name_len) {
-    const char* func_ptr = NULL;
-    cudaError_t ret = cudaErrorLaunchFailure;
-
-    for (int i = 0;i < _kernel_func_cnt;i++) {
-        if (strcmp(funcname, _kernel_func_names[i]) == 0) {
-            func_ptr = _kernel_func_ptrs[i];
-        }
-    }
-    if (!func_ptr) {
-        return cudaErrorLaunchFailure;
-    }
-
-    // TODO:
-    // ret = cudaFuncGetParameters(n_par, parameters, func_ptr);
-
-    return ret;
 }

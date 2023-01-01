@@ -144,6 +144,7 @@ extern void CUDARTAPI __cudaRegisterFunction(
         cuda_runtime_func = new std::unordered_map<intptr_t, char*>();
     }
     (*cuda_runtime_func)[(intptr_t)hostFun] = (char*)deviceFun;
+    // cudart_log_info("register %s -> %lx", deviceFun, hostFun);
 }
 
 }
