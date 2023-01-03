@@ -20,8 +20,8 @@ enclave {
         public cudaError_t cudaStreamGetFlags(cudaStream_t hStream, [out,count=1]unsigned int *flags);
         public cudaError_t cudaCtxResetPersistingL2Cache(void);
         public cudaError_t cudaStreamCopyAttributes(cudaStream_t dst, cudaStream_t src);
-        public cudaError_t cudaStreamGetAttribute(cudaStream_t hStream, enum cudaStreamAttrID attr, [out,count=1]union cudaStreamAttrValue *value_out);
-        public cudaError_t cudaStreamSetAttribute(cudaStream_t hStream, enum cudaStreamAttrID attr, [in,count=1]const union cudaStreamAttrValue *value);
+        // public cudaError_t cudaStreamGetAttribute(cudaStream_t hStream, enum cudaStreamAttrID attr, [out,count=1]union cudaStreamAttrValue *value_out);
+        // public cudaError_t cudaStreamSetAttribute(cudaStream_t hStream, enum cudaStreamAttrID attr, [in,count=1]const union cudaStreamAttrValue *value);
         public cudaError_t cudaStreamDestroy(cudaStream_t stream);
         public cudaError_t cudaStreamWaitEvent(cudaStream_t stream, cudaEvent_t event, unsigned int flags);
         // public cudaError_t cudaStreamAddCallback(cudaStream_t stream, cudaStreamCallback_t callback, void *userData, unsigned int flags);

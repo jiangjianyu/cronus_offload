@@ -58,24 +58,6 @@ typedef struct ms_cudaDeviceGetAttribute_t {
 	int ms_device;
 } ms_cudaDeviceGetAttribute_t;
 
-typedef struct ms_cudaDeviceGetDefaultMemPool_t {
-	cudaError_t ms_retval;
-	cudaMemPool_t* ms_memPool;
-	int ms_device;
-} ms_cudaDeviceGetDefaultMemPool_t;
-
-typedef struct ms_cudaDeviceSetMemPool_t {
-	cudaError_t ms_retval;
-	int ms_device;
-	cudaMemPool_t ms_memPool;
-} ms_cudaDeviceSetMemPool_t;
-
-typedef struct ms_cudaDeviceGetMemPool_t {
-	cudaError_t ms_retval;
-	cudaMemPool_t* ms_memPool;
-	int ms_device;
-} ms_cudaDeviceGetMemPool_t;
-
 typedef struct ms_cudaChooseDevice_t {
 	cudaError_t ms_retval;
 	int* ms_device;
@@ -147,20 +129,6 @@ typedef struct ms_cudaStreamCopyAttributes_t {
 	cudaStream_t ms_dst;
 	cudaStream_t ms_src;
 } ms_cudaStreamCopyAttributes_t;
-
-typedef struct ms_cudaStreamGetAttribute_t {
-	cudaError_t ms_retval;
-	cudaStream_t ms_hStream;
-	enum cudaStreamAttrID ms_attr;
-	union cudaStreamAttrValue* ms_value_out;
-} ms_cudaStreamGetAttribute_t;
-
-typedef struct ms_cudaStreamSetAttribute_t {
-	cudaError_t ms_retval;
-	cudaStream_t ms_hStream;
-	enum cudaStreamAttrID ms_attr;
-	union cudaStreamAttrValue* ms_value;
-} ms_cudaStreamSetAttribute_t;
 
 typedef struct ms_cudaStreamDestroy_t {
 	cudaError_t ms_retval;
@@ -1196,78 +1164,6 @@ err:
 	return status;
 }
 
-static TEE_Result tee_cudaDeviceGetDefaultMemPool(char *buffer)
-{
-	ms_cudaDeviceGetDefaultMemPool_t* ms = TEE_CAST(ms_cudaDeviceGetDefaultMemPool_t*, buffer);
-	char* buffer_start = buffer + sizeof(ms_cudaDeviceGetDefaultMemPool_t);
-
-	TEE_Result status = TEE_SUCCESS;
-	cudaMemPool_t* _tmp_memPool = TEE_CAST(cudaMemPool_t*, buffer_start + 0);
-	size_t _len_memPool = 1 * sizeof(*_tmp_memPool);
-	cudaMemPool_t* _in_memPool = NULL;
-
-	if (_tmp_memPool != NULL) {
-		if ((_in_memPool = (cudaMemPool_t*)malloc(_len_memPool)) == NULL) {
-			status = TEE_ERROR_OUT_OF_MEMORY;
-			goto err;
-		}
-
-		memset((void*)_in_memPool, 0, _len_memPool);
-	}
-	ms->ms_retval = cudaDeviceGetDefaultMemPool(_in_memPool, ms->ms_device);
-	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _in_memPool, ms->ms_device, ms->ms_retval);
-err:
-	if (_in_memPool) {
-		memcpy(_tmp_memPool, _in_memPool, _len_memPool);
-		free(_in_memPool);
-	}
-
-	return status;
-}
-
-static TEE_Result tee_cudaDeviceSetMemPool(char *buffer)
-{
-	ms_cudaDeviceSetMemPool_t* ms = TEE_CAST(ms_cudaDeviceSetMemPool_t*, buffer);
-	char* buffer_start = buffer + sizeof(ms_cudaDeviceSetMemPool_t);
-
-	TEE_Result status = TEE_SUCCESS;
-
-	ms->ms_retval = cudaDeviceSetMemPool(ms->ms_device, ms->ms_memPool);
-	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", ms->ms_device, ms->ms_memPool, ms->ms_retval);
-
-
-	return status;
-}
-
-static TEE_Result tee_cudaDeviceGetMemPool(char *buffer)
-{
-	ms_cudaDeviceGetMemPool_t* ms = TEE_CAST(ms_cudaDeviceGetMemPool_t*, buffer);
-	char* buffer_start = buffer + sizeof(ms_cudaDeviceGetMemPool_t);
-
-	TEE_Result status = TEE_SUCCESS;
-	cudaMemPool_t* _tmp_memPool = TEE_CAST(cudaMemPool_t*, buffer_start + 0);
-	size_t _len_memPool = 1 * sizeof(*_tmp_memPool);
-	cudaMemPool_t* _in_memPool = NULL;
-
-	if (_tmp_memPool != NULL) {
-		if ((_in_memPool = (cudaMemPool_t*)malloc(_len_memPool)) == NULL) {
-			status = TEE_ERROR_OUT_OF_MEMORY;
-			goto err;
-		}
-
-		memset((void*)_in_memPool, 0, _len_memPool);
-	}
-	ms->ms_retval = cudaDeviceGetMemPool(_in_memPool, ms->ms_device);
-	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _in_memPool, ms->ms_device, ms->ms_retval);
-err:
-	if (_in_memPool) {
-		memcpy(_tmp_memPool, _in_memPool, _len_memPool);
-		free(_in_memPool);
-	}
-
-	return status;
-}
-
 static TEE_Result tee_cudaChooseDevice(char *buffer)
 {
 	ms_cudaChooseDevice_t* ms = TEE_CAST(ms_cudaChooseDevice_t*, buffer);
@@ -1593,62 +1489,6 @@ static TEE_Result tee_cudaStreamCopyAttributes(char *buffer)
 	ms->ms_retval = cudaStreamCopyAttributes(ms->ms_dst, ms->ms_src);
 	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", ms->ms_dst, ms->ms_src, ms->ms_retval);
 
-
-	return status;
-}
-
-static TEE_Result tee_cudaStreamGetAttribute(char *buffer)
-{
-	ms_cudaStreamGetAttribute_t* ms = TEE_CAST(ms_cudaStreamGetAttribute_t*, buffer);
-	char* buffer_start = buffer + sizeof(ms_cudaStreamGetAttribute_t);
-
-	TEE_Result status = TEE_SUCCESS;
-	union cudaStreamAttrValue* _tmp_value_out = TEE_CAST(union cudaStreamAttrValue*, buffer_start + 0);
-	size_t _len_value_out = 1 * sizeof(*_tmp_value_out);
-	union cudaStreamAttrValue* _in_value_out = NULL;
-
-	if (_tmp_value_out != NULL) {
-		if ((_in_value_out = (union cudaStreamAttrValue*)malloc(_len_value_out)) == NULL) {
-			status = TEE_ERROR_OUT_OF_MEMORY;
-			goto err;
-		}
-
-		memset((void*)_in_value_out, 0, _len_value_out);
-	}
-	ms->ms_retval = cudaStreamGetAttribute(ms->ms_hStream, ms->ms_attr, _in_value_out);
-	RPC_SERVER_DEBUG("(%lx, %lx, %lx) => %lx", ms->ms_hStream, ms->ms_attr, _in_value_out, ms->ms_retval);
-err:
-	if (_in_value_out) {
-		memcpy(_tmp_value_out, _in_value_out, _len_value_out);
-		free(_in_value_out);
-	}
-
-	return status;
-}
-
-static TEE_Result tee_cudaStreamSetAttribute(char *buffer)
-{
-	ms_cudaStreamSetAttribute_t* ms = TEE_CAST(ms_cudaStreamSetAttribute_t*, buffer);
-	char* buffer_start = buffer + sizeof(ms_cudaStreamSetAttribute_t);
-
-	TEE_Result status = TEE_SUCCESS;
-	union cudaStreamAttrValue* _tmp_value = TEE_CAST(union cudaStreamAttrValue*, buffer_start + 0);
-	size_t _len_value = 1 * sizeof(*_tmp_value);
-	union cudaStreamAttrValue* _in_value = NULL;
-
-	if (_tmp_value != NULL) {
-		_in_value = (union cudaStreamAttrValue*)malloc(_len_value);
-		if (_in_value == NULL) {
-			status = TEE_ERROR_OUT_OF_MEMORY;
-			goto err;
-		}
-
-		memcpy((void*)_in_value, _tmp_value, _len_value);
-	}
-	ms->ms_retval = cudaStreamSetAttribute(ms->ms_hStream, ms->ms_attr, (const union cudaStreamAttrValue*)_in_value);
-	RPC_SERVER_DEBUG("(%lx, %lx, %lx) => %lx", ms->ms_hStream, ms->ms_attr, (const union cudaStreamAttrValue*)_in_value, ms->ms_retval);
-err:
-	if (_in_value) free((void*)_in_value);
 
 	return status;
 }
@@ -4113,9 +3953,9 @@ err:
 
 const struct {
 	size_t nr_ecall;
-	struct {void* ecall_addr; uint8_t is_priv;} ecall_table[119];
+	struct {void* ecall_addr; uint8_t is_priv;} ecall_table[114];
 } g_ecall_table = {
-	119,
+	114,
 	{
 		{(void*)(uintptr_t)tee_cudaLaunchKernelByName, 0},
 		{(void*)(uintptr_t)tee_cudaFuncGetParametersByName, 0},
@@ -4125,9 +3965,6 @@ const struct {
 		{(void*)(uintptr_t)tee_cudaGetDeviceCount, 0},
 		{(void*)(uintptr_t)tee_cudaGetDeviceProperties, 0},
 		{(void*)(uintptr_t)tee_cudaDeviceGetAttribute, 0},
-		{(void*)(uintptr_t)tee_cudaDeviceGetDefaultMemPool, 0},
-		{(void*)(uintptr_t)tee_cudaDeviceSetMemPool, 0},
-		{(void*)(uintptr_t)tee_cudaDeviceGetMemPool, 0},
 		{(void*)(uintptr_t)tee_cudaChooseDevice, 0},
 		{(void*)(uintptr_t)tee_cudaSetDevice, 0},
 		{(void*)(uintptr_t)tee_cudaGetDevice, 0},
@@ -4141,8 +3978,6 @@ const struct {
 		{(void*)(uintptr_t)tee_cudaStreamGetFlags, 0},
 		{(void*)(uintptr_t)tee_cudaCtxResetPersistingL2Cache, 0},
 		{(void*)(uintptr_t)tee_cudaStreamCopyAttributes, 0},
-		{(void*)(uintptr_t)tee_cudaStreamGetAttribute, 0},
-		{(void*)(uintptr_t)tee_cudaStreamSetAttribute, 0},
 		{(void*)(uintptr_t)tee_cudaStreamDestroy, 0},
 		{(void*)(uintptr_t)tee_cudaStreamWaitEvent, 0},
 		{(void*)(uintptr_t)tee_cudaStreamSynchronize, 0},
