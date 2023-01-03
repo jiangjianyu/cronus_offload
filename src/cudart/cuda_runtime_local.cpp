@@ -9,53 +9,50 @@
 
 #define KERNEL_ARGC_SIZE 64
 
-static uint32_t* parameter_cache[MAX_FUNCS];
-static uint32_t parameter_cnt_cache[MAX_FUNCS];
-
 cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void **args, size_t sharedMem, cudaStream_t stream) {
         char *func_name = NULL;
         cudaError_t ret;
         uint32_t n_par;
-        uint32_t *parameters;
+        uint32_t *parameters = NULL;
         uint32_t total_parameter_sizes = 0;
         void* args_copy = NULL;
         int args_copy_offset = 0;
 		int func_idx = 0;
 
-        for (int i = 0;i < __cuda_runtime_func_cnt;i++) {
-                if (__cuda_runtime_func_ptr[i] == func) {
-                        func_name = __cuda_runtime_func_names[i];
-						func_idx = i;
-                }
-        }
-        if (!func_name) {
+        auto func_name_itr = cuda_runtime_func->find((intptr_t)func);
+        if (func_name_itr == cuda_runtime_func->end()) {
+                cudart_log_err("cannot find kernel's addr: %lx", func);
                 return cudaErrorLaunchFailure;
         }
+        func_name = func_name_itr->second;
 
-		if (!parameter_cache[func_idx]) {
+		if (true) {
 			// ret = cudaFuncGetParametersByName(&n_par, parameters, func_name, strlen(func_name) + 1);
 
 			// if (ret) {
 			// 	return ret;
 			// }
-			auto func = fatbin_handle->get_function(func_name);
-			if (func == NULL) {
-				return cudaErrorLaunchFailure;
-			}
-			parameter_cache[func_idx] = (uint32_t*) malloc(sizeof(uint32_t) * 20);
-			parameters = parameter_cache[func_idx];
-			
-			n_par = 0;
-			for (auto &param : func->param_data) {
-				parameters[func->param_data.size() - 1 - n_par] = param.size;
-				n_par ++;
-			}
-			
-			parameter_cnt_cache[func_idx] = n_par;
-		} else {
-			parameters = parameter_cache[func_idx];
-			n_par = parameter_cnt_cache[func_idx];
-		}
+
+            for (auto &fatbin_handle: *fatbins) {
+                auto func = fatbin_handle->get_function(func_name);
+                if (func == NULL) {
+                    continue;
+                }
+                parameters = new uint32_t[func->param_data.size()];
+
+                n_par = 0;
+                for (auto &param : func->param_data) {
+                    parameters[func->param_data.size() - 1 - n_par] = param.size;
+                    n_par ++;
+                }
+                break;
+            }
+
+            if (parameters == NULL) {
+                cudart_log_err("cannot found %s fatbins size %d", func_name, fatbins->size());
+                return cudaErrorLaunchFailure;
+            }
+        }
 
         for (int i = 0;i < n_par; i++)
                 total_parameter_sizes += parameters[i];

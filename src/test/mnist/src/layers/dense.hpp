@@ -5,8 +5,8 @@
 #include <cstdio>
 #include <cmath>
 
-#include "../tensor/tensor1d.hpp"
-#include "../tensor/tensor2d.hpp"
+#include "../tensor/tensor1d.cuh"
+#include "../tensor/tensor2d.cuh"
 #include "../utils.hpp"
 #include "layer.hpp"
 

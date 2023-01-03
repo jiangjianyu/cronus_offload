@@ -15,7 +15,7 @@ enclave {
         // we do a hack by making n_par and parameters as in/out are not supported
         // bugs using static array
         // what is the hack? this affacts performance by making in/out not sharing the same buffer
-        public cudaError_t  cudaFuncGetParametersByName([out, size=4]uint32_t *n_par, [out,size=80]uint32_t* parameters, [in, size=name_len]const char *entryname, int name_len);
+        // public cudaError_t  cudaFuncGetParametersByName([out, size=4]uint32_t *n_par, [out,size=80]uint32_t* parameters, [in, size=name_len]const char *entryname, int name_len);
         public cudaError_t  cudaThreadSynchronize(void);
         public cudaError_t  cudaDeviceSynchronize(void);
         public cudaError_t  cudaGetLastError(void);

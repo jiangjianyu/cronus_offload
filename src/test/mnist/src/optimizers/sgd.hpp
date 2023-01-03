@@ -6,7 +6,7 @@
 #include <cmath>
 
 #include "../layers/layer.hpp"
-#include "../tensor/tensor2d.hpp"
+#include "../tensor/tensor2d.cuh"
 #include "optimizer.hpp"
 
 

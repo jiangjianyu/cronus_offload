@@ -5,7 +5,7 @@
 #include <cstdio>
 #include <cmath>
 
-#include "../tensor/tensor2d.hpp"
+#include "../tensor/tensor2d.cuh"
 
 class Optimizer {
 public:

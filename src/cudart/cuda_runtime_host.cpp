@@ -5,18 +5,16 @@
 #include "cuda_runtime_api.h"
 #include "cuda_runtime_u.h"
 #include "cuda_runtime_header.h"
+#include <dlfcn.h>
 
 dim3 pushed_gridDim;
 dim3 pushed_blockDim;
 size_t pushed_sharedMem;
 struct CUstream_st *pushed_stream;
-FatBinary *fatbin_handle = NULL;
-extern "C" void init_rpc();
+std::list<FatBinary*> *fatbins;
+std::unordered_map<intptr_t, char*> *cuda_runtime_func;
 
-// for function registration
-char* __cuda_runtime_func_names[MAX_FUNCS];
-const char* __cuda_runtime_func_ptr[MAX_FUNCS];
-int __cuda_runtime_func_cnt = 0;
+extern "C" void init_rpc();
 
 extern "C" unsigned __cudaPushCallConfiguration(
         dim3 gridDim,
@@ -52,9 +50,15 @@ extern void** CUDARTAPI __cudaRegisterFatBinary(
 ) {
     cudart_log_call();
     init_rpc();
-    fatbin_handle = new FatBinary(fatCubin);
+
+    if (!fatbins) {
+        fatbins = new std::list<FatBinary*>();
+    }
+
+    auto fatbin_handle = new FatBinary(fatCubin);
     fatbin_handle->parse();
-    return (void**)&fatbin_handle;
+    fatbins->push_back(fatbin_handle);
+    return NULL;
 }
 
 extern void CUDARTAPI __cudaRegisterFatBinaryEnd(
@@ -136,13 +140,11 @@ extern void CUDARTAPI __cudaRegisterFunction(
         dim3    *gDim,
         int     *wSize
 ) {
-    if (__cuda_runtime_func_cnt >= MAX_FUNCS) {
-        cudart_log_err("OOM of func names: [%d == %d]", __cuda_runtime_func_cnt, MAX_FUNCS);
-        cudart_exit();
+    if (!cuda_runtime_func) {
+        cuda_runtime_func = new std::unordered_map<intptr_t, char*>();
     }
-    __cuda_runtime_func_names[__cuda_runtime_func_cnt] = deviceFun;
-    __cuda_runtime_func_ptr[__cuda_runtime_func_cnt] = hostFun;
-    __cuda_runtime_func_cnt += 1;
+    (*cuda_runtime_func)[(intptr_t)hostFun] = (char*)deviceFun;
+    // cudart_log_info("register %s -> %lx", deviceFun, hostFun);
 }
 
 }

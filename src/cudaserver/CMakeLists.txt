@@ -22,3 +22,8 @@ target_link_libraries(cudaserver ${CUDART})
 target_link_libraries(cudaserver dl)
 
 # set_target_properties(cudaserver PROPERTIES LINK_FLAGS "-Wl,-export-dynamic")
+
+# use c++14 and cxxabi for abi compatability for pytorch
+# see pytorch/torch/share/cmake/Torch/TorchConfig.cmake
+set_property(TARGET cudaserver PROPERTY CXX_STANDARD 14)
+set_property(TARGET cudaserver PROPERTY INTERFACE_COMPILE_OPTIONS "-D_GLIBCXX_USE_CXX11_ABI=1")

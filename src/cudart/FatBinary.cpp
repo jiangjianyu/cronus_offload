@@ -5,11 +5,13 @@
 */
 
 #include "cudaFatBinary.h"
-
-#include <sstream>
 #include "FatBinary.h"
 
+#include <dlfcn.h>
 #include <iostream>
+#include <lz4.h>
+#include <sstream>
+#include <string.h>
 
 #define report(s) { 					\
 	std::stringstream ss;				\
@@ -103,7 +105,7 @@ FatBinary::FatBinary(void* ptr) {
 		char* base = (char*)(header + 1);
 		long long unsigned int offset = 0;
 		__cudaFatCudaBinary2EntryRec* entry = (__cudaFatCudaBinary2EntryRec*)(base);
-		
+		report(" binary flag: " << std::hex << entry->flags << " uncompress size: " << entry->uncompressedBinarySize);
 
 		while (offset < header->length) {
 			_name = (char*)entry + entry->name;
@@ -120,8 +122,26 @@ FatBinary::FatBinary(void* ptr) {
 				}
 			}
 			if (entry->type & FATBIN_2_ELF) {
-				if (!_cubin)
-					_cubin  = (char*)entry + entry->binary;
+				if (!_cubin) {
+					if (entry->flags & COMPRESSED_FATBIN) {
+						unsigned long uncompressed_size = entry->uncompressedBinarySize;
+						unsigned long compressed_size = entry->binarySize;
+						auto uncompressed_output = new uint8_t[uncompressed_size];
+						auto compressed_input = (uint8_t*)entry + entry->binary;
+						auto compressed_input_clean = new uint8_t[compressed_size + 32];
+						::memset(compressed_input_clean, 0, compressed_size + 32);
+						::memcpy(compressed_input_clean, compressed_input, compressed_size);
+						auto r = ::LZ4_decompress_safe((const char*)compressed_input_clean, (char*)uncompressed_output, compressed_size, uncompressed_size);
+						if (r != uncompressed_size) {
+							report("error in decompressing fatbin: " << r << " != " << uncompressed_size << " " << compressed_size);
+						} else {
+							report("same in decompressing fatbin: " << r << " == " << uncompressed_size << " " << compressed_size);
+						}
+						_cubin = uncompressed_output;
+					} else {
+						_cubin  = (char*)entry + entry->binary;
+					}
+				}
 			}
 
 
@@ -171,7 +191,8 @@ FatBinary::FatBinary(void* ptr) {
 #define Elf_Sym	 Elf64_Sym
 #endif
 
-#define GDEV_PRINT(s...) fprintf(stderr, s);
+#define GDEV_PRINT(s...)
+// fprintf(stderr, s);
 #define MALLOC(s) malloc(s)
 
 #define SH_TEXT ".text."
@@ -574,6 +595,8 @@ static uint32_t sm_2_arch(uint32_t sm) {
 	}
 }
 
+static char fname[10240] = {0};
+
 int FatBinary::parse() {
 	Elf_Ehdr *ehead;
 	Elf_Shdr *sheads;
@@ -659,7 +682,6 @@ int FatBinary::parse() {
 				raw_func->bar_count = (sheads[i].sh_flags >> 20) & 0xf;
 			}
 			else if (!strncmp(sh_name, SH_CONST, strlen(SH_CONST))) {
-				char fname[256] = {0};
 				int x; /* cX[] */
 				sscanf(sh_name, SH_CONST "%d.%s", &x, fname);
 				/* global constant spaces. */
@@ -670,7 +692,11 @@ int FatBinary::parse() {
 				else if (x >= 0 && x < NVIDIA_CONST_SEGMENT_MAX_COUNT) {
 					struct cuda_raw_func *func = NULL;
 					/* this function does nothing if func is already allocated. */
-					func = malloc_func_if_necessary(fname);
+					auto flen = strlen(fname);
+					char *duplicated_fname = new char[flen + 1];
+					memcpy(duplicated_fname, fname, flen);
+					duplicated_fname[flen] = '\0';
+					func = malloc_func_if_necessary(duplicated_fname);
 					if (!func)
 						goto fail_malloc_func;
 					func->cmem[x].buf = bin + sheads[i].sh_offset;
