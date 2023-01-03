@@ -24,11 +24,9 @@ target_link_libraries(cukernel dl)
 
 set_target_properties(cukernel PROPERTIES LINK_FLAGS "-Wl,-export-dynamic")
 
-# add_executable(cukernel_server ${srcs})
-
-# target_link_libraries(cukernel_server ${CUDART})
-# target_link_libraries(cukernel_server dl)
-# target_link_libraries(cukernel_server cudaserver)
+add_executable(cukernel_server ${srcs})
+target_link_libraries(cukernel_server dl)
+target_link_libraries(cukernel_server cudaserver)
 
 # add_executable(cukernel_client ${srcs_client})
 # target_link_libraries(cukernel_client cudart_rpc)
