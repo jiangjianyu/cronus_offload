@@ -20,14 +20,6 @@ typedef struct ms_cudaLaunchKernelByName_t {
 	cudaStream_t ms_stream;
 } ms_cudaLaunchKernelByName_t;
 
-typedef struct ms_cudaFuncGetParametersByName_t {
-	cudaError_t ms_retval;
-	uint32_t* ms_n_par;
-	uint32_t* ms_parameters;
-	char* ms_entryname;
-	int ms_name_len;
-} ms_cudaFuncGetParametersByName_t;
-
 typedef struct ms_cudaThreadSynchronize_t {
 	cudaError_t ms_retval;
 } ms_cudaThreadSynchronize_t;
@@ -961,64 +953,6 @@ err:
 	if (_in_funcname) free(_in_funcname);
 	if (_in_argbuf) free(_in_argbuf);
 	if (_in_parameters) free(_in_parameters);
-
-	return status;
-}
-
-static TEE_Result tee_cudaFuncGetParametersByName(char *buffer)
-{
-	ms_cudaFuncGetParametersByName_t* ms = TEE_CAST(ms_cudaFuncGetParametersByName_t*, buffer);
-	char* buffer_start = buffer + sizeof(ms_cudaFuncGetParametersByName_t);
-
-	TEE_Result status = TEE_SUCCESS;
-	uint32_t* _tmp_n_par = TEE_CAST(uint32_t*, buffer_start + 0);
-	size_t _len_n_par = 4;
-	uint32_t* _in_n_par = NULL;
-	uint32_t* _tmp_parameters = TEE_CAST(uint32_t*, buffer_start + 0 + 4);
-	size_t _len_parameters = 80;
-	uint32_t* _in_parameters = NULL;
-	char* _tmp_entryname = TEE_CAST(char*, buffer_start + 0 + 4 + 80);
-	int _tmp_name_len = ms->ms_name_len;
-	size_t _len_entryname = _tmp_name_len;
-	char* _in_entryname = NULL;
-
-	if (_tmp_n_par != NULL) {
-		if ((_in_n_par = (uint32_t*)malloc(_len_n_par)) == NULL) {
-			status = TEE_ERROR_OUT_OF_MEMORY;
-			goto err;
-		}
-
-		memset((void*)_in_n_par, 0, _len_n_par);
-	}
-	if (_tmp_parameters != NULL) {
-		if ((_in_parameters = (uint32_t*)malloc(_len_parameters)) == NULL) {
-			status = TEE_ERROR_OUT_OF_MEMORY;
-			goto err;
-		}
-
-		memset((void*)_in_parameters, 0, _len_parameters);
-	}
-	if (_tmp_entryname != NULL) {
-		_in_entryname = (char*)malloc(_len_entryname);
-		if (_in_entryname == NULL) {
-			status = TEE_ERROR_OUT_OF_MEMORY;
-			goto err;
-		}
-
-		memcpy((void*)_in_entryname, _tmp_entryname, _len_entryname);
-	}
-	ms->ms_retval = cudaFuncGetParametersByName(_in_n_par, _in_parameters, (const char*)_in_entryname, _tmp_name_len);
-	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", _in_n_par, _in_parameters, (const char*)_in_entryname, _tmp_name_len, ms->ms_retval);
-err:
-	if (_in_n_par) {
-		memcpy(_tmp_n_par, _in_n_par, _len_n_par);
-		free(_in_n_par);
-	}
-	if (_in_parameters) {
-		memcpy(_tmp_parameters, _in_parameters, _len_parameters);
-		free(_in_parameters);
-	}
-	if (_in_entryname) free((void*)_in_entryname);
 
 	return status;
 }
@@ -3883,12 +3817,11 @@ err:
 
 const struct {
 	size_t nr_ecall;
-	struct {void* ecall_addr; uint8_t is_priv;} ecall_table[112];
+	struct {void* ecall_addr; uint8_t is_priv;} ecall_table[111];
 } g_ecall_table = {
-	112,
+	111,
 	{
 		{(void*)(uintptr_t)tee_cudaLaunchKernelByName, 0},
-		{(void*)(uintptr_t)tee_cudaFuncGetParametersByName, 0},
 		{(void*)(uintptr_t)tee_cudaThreadSynchronize, 0},
 		{(void*)(uintptr_t)tee_cudaDeviceSynchronize, 0},
 		{(void*)(uintptr_t)tee_cudaGetLastError, 0},

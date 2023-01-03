@@ -14,9 +14,9 @@ file(GLOB srcs_client
 )
 
 include_directories(./)
-include_directories(/usr/local/cuda-11.4/include)
+include_directories(/usr/local/cuda-10.2/include)
 
-find_library(CUDART cudart /usr/local/cuda-11.4/targets/x86_64-linux/lib/)
+find_library(CUDART cudart /usr/local/cuda-10.2/targets/x86_64-linux/lib/)
 
 add_executable(cukernel ${srcs_client})
 target_link_libraries(cukernel ${CUDART})

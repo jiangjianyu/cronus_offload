@@ -86,9 +86,9 @@ extern __host__ __cudart_builtin__ const char* CUDARTAPI cudaGetErrorString(cuda
 extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaGetDeviceCount(int *count) CUDART_NOT_IMPLEMENTED;
 extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaGetDeviceProperties(struct cudaDeviceProp *prop, int device) CUDART_NOT_IMPLEMENTED;
 extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaDeviceGetAttribute(int *value, enum cudaDeviceAttr attr, int device) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaDeviceGetDefaultMemPool(cudaMemPool_t *memPool, int device) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaDeviceSetMemPool(int device, cudaMemPool_t memPool) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaDeviceGetMemPool(cudaMemPool_t *memPool, int device) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaDeviceGetDefaultMemPool(cudaMemPool_t *memPool, int device) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaDeviceSetMemPool(int device, cudaMemPool_t memPool) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaDeviceGetMemPool(cudaMemPool_t *memPool, int device) CUDART_NOT_IMPLEMENTED;
 extern __host__ cudaError_t CUDARTAPI cudaDeviceGetNvSciSyncAttributes(void *nvSciSyncAttrList, int device, int flags) CUDART_NOT_IMPLEMENTED;
 extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaDeviceGetP2PAttribute(int *value, enum cudaDeviceP2PAttr attr, int srcDevice, int dstDevice) CUDART_NOT_IMPLEMENTED;
 extern __host__ cudaError_t CUDARTAPI cudaChooseDevice(int *device, const struct cudaDeviceProp *prop) CUDART_NOT_IMPLEMENTED;
@@ -116,12 +116,12 @@ extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamGetPriority(c
 extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamGetFlags(cudaStream_t hStream, unsigned int *flags) CUDART_NOT_IMPLEMENTED;
 extern __host__ cudaError_t CUDARTAPI cudaCtxResetPersistingL2Cache(void) CUDART_NOT_IMPLEMENTED;
 extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamCopyAttributes(cudaStream_t dst, cudaStream_t src) CUDART_NOT_IMPLEMENTED;
-extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamGetAttribute(
-        cudaStream_t hStream, enum cudaStreamAttrID attr,
-        union cudaStreamAttrValue *value_out) CUDART_NOT_IMPLEMENTED;
-extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamSetAttribute(
-        cudaStream_t hStream, enum cudaStreamAttrID attr,
-        const union cudaStreamAttrValue *value) CUDART_NOT_IMPLEMENTED;
+// extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamGetAttribute(
+//         cudaStream_t hStream, enum cudaStreamAttrID attr,
+//         union cudaStreamAttrValue *value_out) CUDART_NOT_IMPLEMENTED;
+// extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamSetAttribute(
+//         cudaStream_t hStream, enum cudaStreamAttrID attr,
+//         const union cudaStreamAttrValue *value) CUDART_NOT_IMPLEMENTED;
 extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamDestroy(cudaStream_t stream) CUDART_NOT_IMPLEMENTED;
 extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamWaitEvent(cudaStream_t stream, cudaEvent_t event, unsigned int flags __dv(0)) CUDART_NOT_IMPLEMENTED;
 typedef void (CUDART_CB *cudaStreamCallback_t)(cudaStream_t stream, cudaError_t status, void *userData);
@@ -373,26 +373,26 @@ extern __CUDA_DEPRECATED __host__ cudaError_t CUDARTAPI cudaMemcpyFromArrayAsync
  */
 extern __host__ cudaError_t CUDARTAPI cudaMallocAsync(void **devPtr, size_t size, cudaStream_t hStream) CUDART_NOT_IMPLEMENTED;
 extern __host__ cudaError_t CUDARTAPI cudaFreeAsync(void *devPtr, cudaStream_t hStream) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaMemPoolTrimTo(cudaMemPool_t memPool, size_t minBytesToKeep) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaMemPoolSetAttribute(cudaMemPool_t memPool, enum cudaMemPoolAttr attr, void *value ) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaMemPoolGetAttribute(cudaMemPool_t memPool, enum cudaMemPoolAttr attr, void *value ) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaMemPoolSetAccess(cudaMemPool_t memPool, const struct cudaMemAccessDesc *descList, size_t count) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaMemPoolGetAccess(enum cudaMemAccessFlags *flags, cudaMemPool_t memPool, struct cudaMemLocation *location) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaMemPoolCreate(cudaMemPool_t *memPool, const struct cudaMemPoolProps *poolProps) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaMemPoolDestroy(cudaMemPool_t memPool) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaMallocFromPoolAsync(void **ptr, size_t size, cudaMemPool_t memPool, cudaStream_t stream) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaMemPoolExportToShareableHandle(
-    void                            *shareableHandle,
-    cudaMemPool_t                    memPool,
-    enum cudaMemAllocationHandleType handleType,
-    unsigned int                     flags) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaMemPoolImportFromShareableHandle(
-    cudaMemPool_t                   *memPool,
-    void                            *shareableHandle,
-    enum cudaMemAllocationHandleType handleType,
-    unsigned int                     flags) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaMemPoolExportPointer(struct cudaMemPoolPtrExportData *exportData, void *ptr) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaMemPoolImportPointer(void **ptr, cudaMemPool_t memPool, struct cudaMemPoolPtrExportData *exportData) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaMemPoolTrimTo(cudaMemPool_t memPool, size_t minBytesToKeep) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaMemPoolSetAttribute(cudaMemPool_t memPool, enum cudaMemPoolAttr attr, void *value ) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaMemPoolGetAttribute(cudaMemPool_t memPool, enum cudaMemPoolAttr attr, void *value ) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaMemPoolSetAccess(cudaMemPool_t memPool, const struct cudaMemAccessDesc *descList, size_t count) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaMemPoolGetAccess(enum cudaMemAccessFlags *flags, cudaMemPool_t memPool, struct cudaMemLocation *location) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaMemPoolCreate(cudaMemPool_t *memPool, const struct cudaMemPoolProps *poolProps) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaMemPoolDestroy(cudaMemPool_t memPool) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaMallocFromPoolAsync(void **ptr, size_t size, cudaMemPool_t memPool, cudaStream_t stream) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaMemPoolExportToShareableHandle(
+//     void                            *shareableHandle,
+//     cudaMemPool_t                    memPool,
+//     enum cudaMemAllocationHandleType handleType,
+//     unsigned int                     flags) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaMemPoolImportFromShareableHandle(
+//     cudaMemPool_t                   *memPool,
+//     void                            *shareableHandle,
+//     enum cudaMemAllocationHandleType handleType,
+//     unsigned int                     flags) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaMemPoolExportPointer(struct cudaMemPoolPtrExportData *exportData, void *ptr) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaMemPoolImportPointer(void **ptr, cudaMemPool_t memPool, struct cudaMemPoolPtrExportData *exportData) CUDART_NOT_IMPLEMENTED;
 
 /**
  * \defgroup CUDART_UNIFIED Unified Addressing
@@ -889,11 +889,11 @@ extern __host__ cudaError_t CUDARTAPI cudaGraphLaunch(cudaGraphExec_t graphExec,
 extern __host__ cudaError_t CUDARTAPI cudaGraphExecDestroy(cudaGraphExec_t graphExec) CUDART_NOT_IMPLEMENTED;
 extern __host__ cudaError_t CUDARTAPI cudaGraphDestroy(cudaGraph_t graph) CUDART_NOT_IMPLEMENTED;
 extern __host__ cudaError_t CUDARTAPI cudaGraphDebugDotPrint(cudaGraph_t graph, const char *path, unsigned int flags) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaUserObjectCreate(cudaUserObject_t *object_out, void *ptr, cudaHostFn_t destroy, unsigned int initialRefcount, unsigned int flags) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaUserObjectRetain(cudaUserObject_t object, unsigned int count __dv(1)) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaUserObjectRelease(cudaUserObject_t object, unsigned int count __dv(1)) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaGraphRetainUserObject(cudaGraph_t graph, cudaUserObject_t object, unsigned int count __dv(1), unsigned int flags __dv(0)) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaGraphReleaseUserObject(cudaGraph_t graph, cudaUserObject_t object, unsigned int count __dv(1)) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaUserObjectCreate(cudaUserObject_t *object_out, void *ptr, cudaHostFn_t destroy, unsigned int initialRefcount, unsigned int flags) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaUserObjectRetain(cudaUserObject_t object, unsigned int count __dv(1)) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaUserObjectRelease(cudaUserObject_t object, unsigned int count __dv(1)) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaGraphRetainUserObject(cudaGraph_t graph, cudaUserObject_t object, unsigned int count __dv(1), unsigned int flags __dv(0)) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaGraphReleaseUserObject(cudaGraph_t graph, cudaUserObject_t object, unsigned int count __dv(1)) CUDART_NOT_IMPLEMENTED;
 
 /**
  * \defgroup CUDART_DRIVER_ENTRY_POINT Driver Entry Point Access
@@ -1070,7 +1070,7 @@ extern __host__ cudaError_t CUDARTAPI cudaGetExportTable(const void **ppExportTa
  *
  */
 
-extern __host__ cudaError_t CUDARTAPI_CDECL cudaGetFuncBySymbol(cudaFunction_t* functionPtr, const void* symbolPtr) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI_CDECL cudaGetFuncBySymbol(cudaFunction_t* functionPtr, const void* symbolPtr) CUDART_NOT_IMPLEMENTED;
 
 #if defined(__cplusplus)
 }

@@ -20,9 +20,9 @@ file(GLOB cpp_srcs
 file(GLOB cu_srcs
     # "src/kernels.cu"
     "src/tensor/*.cu"
-    "src/layers/*.cu"
+    "src/layers/*.cu"cuda-10.2
     "src/loss/*.cu"
-    "src/models/*.cu"
+    "src/models/*.cu"cuda-10.2
     "src/*.cu"
 )
 

@@ -20,7 +20,6 @@ extern "C" {
 
 
 cudaError_t cudaLaunchKernelByName(char* funcname, dim3 gridDim, dim3 blockDim, void* argbuf, int argbufsize, uint32_t* parameters, int partotal_size, size_t sharedMem, cudaStream_t stream);
-cudaError_t cudaFuncGetParametersByName(uint32_t* n_par, uint32_t* parameters, const char* entryname, int name_len);
 cudaError_t cudaThreadSynchronize();
 cudaError_t cudaDeviceSynchronize();
 cudaError_t cudaGetLastError();

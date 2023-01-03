@@ -11,10 +11,10 @@ file(GLOB srcs
 )
 
 include_directories(./)
-include_directories(/usr/local/cuda-11.4/include)
+include_directories(/usr/local/cuda-10.2/include)
 include_directories(${CMAKE_SOURCE_DIR}/gen/)
 
-find_library(CUDART cudart /usr/local/cuda-11.4/targets/x86_64-linux/lib/)
+find_library(CUDART cudart /usr/local/cuda-10.2/targets/x86_64-linux/lib/)
 
 add_library(cudart_rpc SHARED ${srcs})
 target_link_libraries(cudart_rpc lz4)
