@@ -112,16 +112,6 @@ typedef struct ms_cudaStreamGetFlags_t {
 	unsigned int* ms_flags;
 } ms_cudaStreamGetFlags_t;
 
-typedef struct ms_cudaCtxResetPersistingL2Cache_t {
-	cudaError_t ms_retval;
-} ms_cudaCtxResetPersistingL2Cache_t;
-
-typedef struct ms_cudaStreamCopyAttributes_t {
-	cudaError_t ms_retval;
-	cudaStream_t ms_dst;
-	cudaStream_t ms_src;
-} ms_cudaStreamCopyAttributes_t;
-
 typedef struct ms_cudaStreamDestroy_t {
 	cudaError_t ms_retval;
 	cudaStream_t ms_stream;
@@ -181,14 +171,6 @@ typedef struct ms_cudaStreamGetCaptureInfo_t {
 	enum cudaStreamCaptureStatus* ms_pCaptureStatus;
 	unsigned long long* ms_pId;
 } ms_cudaStreamGetCaptureInfo_t;
-
-typedef struct ms_cudaStreamUpdateCaptureDependencies_t {
-	cudaError_t ms_retval;
-	cudaStream_t ms_stream;
-	cudaGraphNode_t* ms_dependencies;
-	size_t ms_numDependencies;
-	unsigned int ms_flags;
-} ms_cudaStreamUpdateCaptureDependencies_t;
 
 typedef struct ms_cudaMallocManaged_t {
 	cudaError_t ms_retval;
@@ -343,13 +325,6 @@ typedef struct ms_cudaArrayGetInfo_t {
 	unsigned int* ms_flags;
 	cudaArray_t ms_array;
 } ms_cudaArrayGetInfo_t;
-
-typedef struct ms_cudaArrayGetPlane_t {
-	cudaError_t ms_retval;
-	cudaArray_t* ms_pPlaneArray;
-	cudaArray_t ms_hArray;
-	unsigned int ms_planeIdx;
-} ms_cudaArrayGetPlane_t;
 
 typedef struct ms_cudaMemcpyNone_t {
 	cudaError_t ms_retval;
@@ -1387,34 +1362,6 @@ err:
 	return status;
 }
 
-static TEE_Result tee_cudaCtxResetPersistingL2Cache(char *buffer)
-{
-	ms_cudaCtxResetPersistingL2Cache_t* ms = TEE_CAST(ms_cudaCtxResetPersistingL2Cache_t*, buffer);
-	char* buffer_start = buffer + sizeof(ms_cudaCtxResetPersistingL2Cache_t);
-
-	TEE_Result status = TEE_SUCCESS;
-
-	ms->ms_retval = cudaCtxResetPersistingL2Cache();
-	RPC_SERVER_DEBUG("() => %lx" , ms->ms_retval);
-
-
-	return status;
-}
-
-static TEE_Result tee_cudaStreamCopyAttributes(char *buffer)
-{
-	ms_cudaStreamCopyAttributes_t* ms = TEE_CAST(ms_cudaStreamCopyAttributes_t*, buffer);
-	char* buffer_start = buffer + sizeof(ms_cudaStreamCopyAttributes_t);
-
-	TEE_Result status = TEE_SUCCESS;
-
-	ms->ms_retval = cudaStreamCopyAttributes(ms->ms_dst, ms->ms_src);
-	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", ms->ms_dst, ms->ms_src, ms->ms_retval);
-
-
-	return status;
-}
-
 static TEE_Result tee_cudaStreamDestroy(char *buffer)
 {
 	ms_cudaStreamDestroy_t* ms = TEE_CAST(ms_cudaStreamDestroy_t*, buffer);
@@ -1628,34 +1575,6 @@ err:
 		memcpy(_tmp_pId, _in_pId, _len_pId);
 		free(_in_pId);
 	}
-
-	return status;
-}
-
-static TEE_Result tee_cudaStreamUpdateCaptureDependencies(char *buffer)
-{
-	ms_cudaStreamUpdateCaptureDependencies_t* ms = TEE_CAST(ms_cudaStreamUpdateCaptureDependencies_t*, buffer);
-	char* buffer_start = buffer + sizeof(ms_cudaStreamUpdateCaptureDependencies_t);
-
-	TEE_Result status = TEE_SUCCESS;
-	cudaGraphNode_t* _tmp_dependencies = TEE_CAST(cudaGraphNode_t*, buffer_start + 0);
-	size_t _tmp_numDependencies = ms->ms_numDependencies;
-	size_t _len_dependencies = _tmp_numDependencies * sizeof(*_tmp_dependencies);
-	cudaGraphNode_t* _in_dependencies = NULL;
-
-	if (_tmp_dependencies != NULL) {
-		_in_dependencies = (cudaGraphNode_t*)malloc(_len_dependencies);
-		if (_in_dependencies == NULL) {
-			status = TEE_ERROR_OUT_OF_MEMORY;
-			goto err;
-		}
-
-		memcpy(_in_dependencies, _tmp_dependencies, _len_dependencies);
-	}
-	ms->ms_retval = cudaStreamUpdateCaptureDependencies(ms->ms_stream, _in_dependencies, _tmp_numDependencies, ms->ms_flags);
-	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", ms->ms_stream, _in_dependencies, _tmp_numDependencies, ms->ms_flags, ms->ms_retval);
-err:
-	if (_in_dependencies) free(_in_dependencies);
 
 	return status;
 }
@@ -2358,35 +2277,6 @@ err:
 	if (_in_flags) {
 		memcpy(_tmp_flags, _in_flags, _len_flags);
 		free(_in_flags);
-	}
-
-	return status;
-}
-
-static TEE_Result tee_cudaArrayGetPlane(char *buffer)
-{
-	ms_cudaArrayGetPlane_t* ms = TEE_CAST(ms_cudaArrayGetPlane_t*, buffer);
-	char* buffer_start = buffer + sizeof(ms_cudaArrayGetPlane_t);
-
-	TEE_Result status = TEE_SUCCESS;
-	cudaArray_t* _tmp_pPlaneArray = TEE_CAST(cudaArray_t*, buffer_start + 0);
-	size_t _len_pPlaneArray = 1 * sizeof(*_tmp_pPlaneArray);
-	cudaArray_t* _in_pPlaneArray = NULL;
-
-	if (_tmp_pPlaneArray != NULL) {
-		if ((_in_pPlaneArray = (cudaArray_t*)malloc(_len_pPlaneArray)) == NULL) {
-			status = TEE_ERROR_OUT_OF_MEMORY;
-			goto err;
-		}
-
-		memset((void*)_in_pPlaneArray, 0, _len_pPlaneArray);
-	}
-	ms->ms_retval = cudaArrayGetPlane(_in_pPlaneArray, ms->ms_hArray, ms->ms_planeIdx);
-	RPC_SERVER_DEBUG("(%lx, %lx, %lx) => %lx", _in_pPlaneArray, ms->ms_hArray, ms->ms_planeIdx, ms->ms_retval);
-err:
-	if (_in_pPlaneArray) {
-		memcpy(_tmp_pPlaneArray, _in_pPlaneArray, _len_pPlaneArray);
-		free(_in_pPlaneArray);
 	}
 
 	return status;
@@ -3817,9 +3707,9 @@ err:
 
 const struct {
 	size_t nr_ecall;
-	struct {void* ecall_addr; uint8_t is_priv;} ecall_table[111];
+	struct {void* ecall_addr; uint8_t is_priv;} ecall_table[107];
 } g_ecall_table = {
-	111,
+	107,
 	{
 		{(void*)(uintptr_t)tee_cudaLaunchKernelByName, 0},
 		{(void*)(uintptr_t)tee_cudaThreadSynchronize, 0},
@@ -3839,8 +3729,6 @@ const struct {
 		{(void*)(uintptr_t)tee_cudaStreamCreateWithPriority, 0},
 		{(void*)(uintptr_t)tee_cudaStreamGetPriority, 0},
 		{(void*)(uintptr_t)tee_cudaStreamGetFlags, 0},
-		{(void*)(uintptr_t)tee_cudaCtxResetPersistingL2Cache, 0},
-		{(void*)(uintptr_t)tee_cudaStreamCopyAttributes, 0},
 		{(void*)(uintptr_t)tee_cudaStreamDestroy, 0},
 		{(void*)(uintptr_t)tee_cudaStreamWaitEvent, 0},
 		{(void*)(uintptr_t)tee_cudaStreamSynchronize, 0},
@@ -3851,7 +3739,6 @@ const struct {
 		{(void*)(uintptr_t)tee_cudaStreamEndCapture, 0},
 		{(void*)(uintptr_t)tee_cudaStreamIsCapturing, 0},
 		{(void*)(uintptr_t)tee_cudaStreamGetCaptureInfo, 0},
-		{(void*)(uintptr_t)tee_cudaStreamUpdateCaptureDependencies, 0},
 		{(void*)(uintptr_t)tee_cudaMallocManaged, 0},
 		{(void*)(uintptr_t)tee_cudaMalloc, 0},
 		{(void*)(uintptr_t)tee_cudaMallocHost, 0},
@@ -3876,7 +3763,6 @@ const struct {
 		{(void*)(uintptr_t)tee_cudaMemcpy3DPeerAsync, 0},
 		{(void*)(uintptr_t)tee_cudaMemGetInfo, 0},
 		{(void*)(uintptr_t)tee_cudaArrayGetInfo, 0},
-		{(void*)(uintptr_t)tee_cudaArrayGetPlane, 0},
 		{(void*)(uintptr_t)tee_cudaMemcpyNone, 0},
 		{(void*)(uintptr_t)tee_cudaMemcpySrc, 0},
 		{(void*)(uintptr_t)tee_cudaMemcpyDst, 0},

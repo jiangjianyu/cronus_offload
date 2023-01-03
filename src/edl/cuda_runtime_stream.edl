@@ -18,8 +18,8 @@ enclave {
         public cudaError_t cudaStreamCreateWithPriority([out,count=1]cudaStream_t *pStream, unsigned int flags, int priority);
         public cudaError_t cudaStreamGetPriority(cudaStream_t hStream, [out,count=1]int *priority);
         public cudaError_t cudaStreamGetFlags(cudaStream_t hStream, [out,count=1]unsigned int *flags);
-        public cudaError_t cudaCtxResetPersistingL2Cache(void);
-        public cudaError_t cudaStreamCopyAttributes(cudaStream_t dst, cudaStream_t src);
+        // public cudaError_t cudaCtxResetPersistingL2Cache(void);
+        // public cudaError_t cudaStreamCopyAttributes(cudaStream_t dst, cudaStream_t src);
         // public cudaError_t cudaStreamGetAttribute(cudaStream_t hStream, enum cudaStreamAttrID attr, [out,count=1]union cudaStreamAttrValue *value_out);
         // public cudaError_t cudaStreamSetAttribute(cudaStream_t hStream, enum cudaStreamAttrID attr, [in,count=1]const union cudaStreamAttrValue *value);
         public cudaError_t cudaStreamDestroy(cudaStream_t stream);
@@ -40,7 +40,6 @@ enclave {
         public cudaError_t cudaStreamIsCapturing(cudaStream_t stream, [out,count=1]enum cudaStreamCaptureStatus *pCaptureStatus);
         public cudaError_t cudaStreamGetCaptureInfo(cudaStream_t stream, [out,count=1]enum cudaStreamCaptureStatus *pCaptureStatus, [out,count=1]unsigned long long *pId);
         // public cudaError_t cudaStreamGetCaptureInfo_v2(cudaStream_t stream, [out,count=1]enum cudaStreamCaptureStatus *captureStatus_out, [out,count=1]unsigned long long *id_out, [out,count=1]cudaGraph_t *graph_out, [out,count=1]const cudaGraphNode_t **dependencies_out, [out,count=1]size_t *numDependencies_out);
-        public cudaError_t cudaStreamUpdateCaptureDependencies(cudaStream_t stream, [in,count=numDependencies]cudaGraphNode_t *dependencies, size_t numDependencies, unsigned int flags);
-
+        // public cudaError_t cudaStreamUpdateCaptureDependencies(cudaStream_t stream, [in,count=numDependencies]cudaGraphNode_t *dependencies, size_t numDependencies, unsigned int flags);
     };
 };

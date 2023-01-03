@@ -20,16 +20,16 @@ file(GLOB cpp_srcs
 file(GLOB cu_srcs
     # "src/kernels.cu"
     "src/tensor/*.cu"
-    "src/layers/*.cu"cuda-10.2
+    "src/layers/*.cu"
     "src/loss/*.cu"
-    "src/models/*.cu"cuda-10.2
+    "src/models/*.cu"
     "src/*.cu"
 )
 
 include_directories(./)
-include_directories(/usr/local/cuda-11.4/include)
+include_directories(/usr/local/cuda-10.2/include)
 
-find_library(CUDART cudart /usr/local/cuda-11.4/targets/x86_64-linux/lib/)
+find_library(CUDART cudart /usr/local/cuda-10.2/targets/x86_64-linux/lib/)
 
 add_library(mnist_kernel SHARED ${cpp_srcs} ${cu_srcs})
 

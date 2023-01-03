@@ -114,8 +114,8 @@ extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamCreateWithFla
 extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamCreateWithPriority(cudaStream_t *pStream, unsigned int flags, int priority) CUDART_NOT_IMPLEMENTED;
 extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamGetPriority(cudaStream_t hStream, int *priority) CUDART_NOT_IMPLEMENTED;
 extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamGetFlags(cudaStream_t hStream, unsigned int *flags) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaCtxResetPersistingL2Cache(void) CUDART_NOT_IMPLEMENTED;
-extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamCopyAttributes(cudaStream_t dst, cudaStream_t src) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaCtxResetPersistingL2Cache(void) CUDART_NOT_IMPLEMENTED;
+// extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamCopyAttributes(cudaStream_t dst, cudaStream_t src) CUDART_NOT_IMPLEMENTED;
 // extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaStreamGetAttribute(
 //         cudaStream_t hStream, enum cudaStreamAttrID attr,
 //         union cudaStreamAttrValue *value_out) CUDART_NOT_IMPLEMENTED;
@@ -142,7 +142,7 @@ extern __host__ cudaError_t CUDARTAPI cudaStreamEndCapture(cudaStream_t stream, 
 extern __host__ cudaError_t CUDARTAPI cudaStreamIsCapturing(cudaStream_t stream, enum cudaStreamCaptureStatus *pCaptureStatus) CUDART_NOT_IMPLEMENTED;
 extern __host__ cudaError_t CUDARTAPI cudaStreamGetCaptureInfo(cudaStream_t stream, enum cudaStreamCaptureStatus *pCaptureStatus, unsigned long long *pId) CUDART_NOT_IMPLEMENTED;
 extern __host__ cudaError_t CUDARTAPI cudaStreamGetCaptureInfo_v2(cudaStream_t stream, enum cudaStreamCaptureStatus *captureStatus_out, unsigned long long *id_out __dv(0), cudaGraph_t *graph_out __dv(0), const cudaGraphNode_t **dependencies_out __dv(0), size_t *numDependencies_out __dv(0)) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaStreamUpdateCaptureDependencies(cudaStream_t stream, cudaGraphNode_t *dependencies, size_t numDependencies, unsigned int flags __dv(0)) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaStreamUpdateCaptureDependencies(cudaStream_t stream, cudaGraphNode_t *dependencies, size_t numDependencies, unsigned int flags __dv(0)) CUDART_NOT_IMPLEMENTED;
 
 /**
  * \defgroup CUDART_EVENT Event Management
@@ -283,7 +283,7 @@ extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaMemcpy3DAsync(const
 extern __host__ cudaError_t CUDARTAPI cudaMemcpy3DPeerAsync(const struct cudaMemcpy3DPeerParms *p, cudaStream_t stream __dv(0)) CUDART_NOT_IMPLEMENTED;
 extern __host__ cudaError_t CUDARTAPI cudaMemGetInfo(size_t *free, size_t *total) CUDART_NOT_IMPLEMENTED;
 extern __host__ cudaError_t CUDARTAPI cudaArrayGetInfo(struct cudaChannelFormatDesc *desc, struct cudaExtent *extent, unsigned int *flags, cudaArray_t array) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaArrayGetPlane(cudaArray_t *pPlaneArray, cudaArray_t hArray, unsigned int planeIdx) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaArrayGetPlane(cudaArray_t *pPlaneArray, cudaArray_t hArray, unsigned int planeIdx) CUDART_NOT_IMPLEMENTED;
 
 #if __CUDART_API_VERSION >= 11010
  extern __host__ cudaError_t CUDARTAPI cudaArrayGetSparseProperties(struct cudaArraySparseProperties *sparseProperties, cudaArray_t array) CUDART_NOT_IMPLEMENTED;

@@ -60,7 +60,7 @@ enclave {
         public cudaError_t cudaMemcpy3DPeerAsync([in,count=1]const struct cudaMemcpy3DPeerParms *p, cudaStream_t stream);
         public cudaError_t cudaMemGetInfo([out,count=1]size_t *free, [out,count=1]size_t *total);
         public cudaError_t cudaArrayGetInfo([out,count=1]struct cudaChannelFormatDesc *desc, [out,count=1]struct cudaExtent *extent, [out,count=1]unsigned int *flags, cudaArray_t array);
-        public cudaError_t cudaArrayGetPlane([out,count=1]cudaArray_t *pPlaneArray, cudaArray_t hArray, unsigned int planeIdx);
+        // public cudaError_t cudaArrayGetPlane([out,count=1]cudaArray_t *pPlaneArray, cudaArray_t hArray, unsigned int planeIdx);
 
         // #if __CUDART_API_VERSION >= 11010
         // public cudaError_t cudaArrayGetSparseProperties([out,count=1]struct cudaArraySparseProperties *sparseProperties, cudaArray_t array);

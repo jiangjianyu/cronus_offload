@@ -37,8 +37,6 @@ cudaError_t cudaStreamCreateWithFlags(cudaStream_t* pStream, unsigned int flags)
 cudaError_t cudaStreamCreateWithPriority(cudaStream_t* pStream, unsigned int flags, int priority);
 cudaError_t cudaStreamGetPriority(cudaStream_t hStream, int* priority);
 cudaError_t cudaStreamGetFlags(cudaStream_t hStream, unsigned int* flags);
-cudaError_t cudaCtxResetPersistingL2Cache();
-cudaError_t cudaStreamCopyAttributes(cudaStream_t dst, cudaStream_t src);
 cudaError_t cudaStreamDestroy(cudaStream_t stream);
 cudaError_t cudaStreamWaitEvent(cudaStream_t stream, cudaEvent_t event, unsigned int flags);
 cudaError_t cudaStreamSynchronize(cudaStream_t stream);
@@ -49,7 +47,6 @@ cudaError_t cudaThreadExchangeStreamCaptureMode(enum cudaStreamCaptureMode* mode
 cudaError_t cudaStreamEndCapture(cudaStream_t stream, cudaGraph_t* pGraph);
 cudaError_t cudaStreamIsCapturing(cudaStream_t stream, enum cudaStreamCaptureStatus* pCaptureStatus);
 cudaError_t cudaStreamGetCaptureInfo(cudaStream_t stream, enum cudaStreamCaptureStatus* pCaptureStatus, unsigned long long* pId);
-cudaError_t cudaStreamUpdateCaptureDependencies(cudaStream_t stream, cudaGraphNode_t* dependencies, size_t numDependencies, unsigned int flags);
 cudaError_t cudaMallocManaged(void** devPtr, size_t size, unsigned int flags);
 cudaError_t cudaMalloc(void** devPtr, size_t size);
 cudaError_t cudaMallocHost(void** ptr, size_t size);
@@ -74,7 +71,6 @@ cudaError_t cudaMemcpy3DAsync(const struct cudaMemcpy3DParms* p, cudaStream_t st
 cudaError_t cudaMemcpy3DPeerAsync(const struct cudaMemcpy3DPeerParms* p, cudaStream_t stream);
 cudaError_t cudaMemGetInfo(size_t* free, size_t* total);
 cudaError_t cudaArrayGetInfo(struct cudaChannelFormatDesc* desc, struct cudaExtent* extent, unsigned int* flags, cudaArray_t array);
-cudaError_t cudaArrayGetPlane(cudaArray_t* pPlaneArray, cudaArray_t hArray, unsigned int planeIdx);
 cudaError_t cudaMemcpyNone(void* dst, const void* src, size_t count, enum cudaMemcpyKind kind);
 cudaError_t cudaMemcpySrc(void* dst, const void* src, size_t count, enum cudaMemcpyKind kind);
 cudaError_t cudaMemcpyDst(void* dst, const void* src, size_t count, enum cudaMemcpyKind kind);
