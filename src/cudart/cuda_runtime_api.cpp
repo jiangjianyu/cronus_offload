@@ -632,20 +632,20 @@ extern __host__ __cudart_builtin__ cudaError_t CUDARTAPI cudaRuntimeGetVersion(i
  * @{
  */
 extern __host__ cudaError_t CUDARTAPI cudaGraphCreate(cudaGraph_t *pGraph, unsigned int flags) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaGraphAddKernelNode(cudaGraphNode_t *pGraphNode, cudaGraph_t graph, const cudaGraphNode_t *pDependencies, size_t numDependencies, const struct cudaKernelNodeParams *pNodeParams) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaGraphKernelNodeGetParams(cudaGraphNode_t node, struct cudaKernelNodeParams *pNodeParams) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaGraphKernelNodeSetParams(cudaGraphNode_t node, const struct cudaKernelNodeParams *pNodeParams) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaGraphAddKernelNode(cudaGraphNode_t *pGraphNode, cudaGraph_t graph, const cudaGraphNode_t *pDependencies, size_t numDependencies, const struct cudaKernelNodeParams *pNodeParams) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaGraphKernelNodeGetParams(cudaGraphNode_t node, struct cudaKernelNodeParams *pNodeParams) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaGraphKernelNodeSetParams(cudaGraphNode_t node, const struct cudaKernelNodeParams *pNodeParams) CUDART_NOT_IMPLEMENTED;
 extern __host__ cudaError_t CUDARTAPI cudaGraphKernelNodeCopyAttributes(
         cudaGraphNode_t hSrc,
         cudaGraphNode_t hDst) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaGraphKernelNodeGetAttribute(
-    cudaGraphNode_t hNode,
-    enum cudaKernelNodeAttrID attr,
-    union cudaKernelNodeAttrValue *value_out) CUDART_NOT_IMPLEMENTED;
-extern __host__ cudaError_t CUDARTAPI cudaGraphKernelNodeSetAttribute(
-    cudaGraphNode_t hNode,
-    enum cudaKernelNodeAttrID attr,
-    const union cudaKernelNodeAttrValue *value) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaGraphKernelNodeGetAttribute(
+//     cudaGraphNode_t hNode,
+//     enum cudaKernelNodeAttrID attr,
+//     union cudaKernelNodeAttrValue *value_out) CUDART_NOT_IMPLEMENTED;
+// extern __host__ cudaError_t CUDARTAPI cudaGraphKernelNodeSetAttribute(
+//     cudaGraphNode_t hNode,
+//     enum cudaKernelNodeAttrID attr,
+//     const union cudaKernelNodeAttrValue *value) CUDART_NOT_IMPLEMENTED;
 extern __host__ cudaError_t CUDARTAPI cudaGraphAddMemcpyNode(cudaGraphNode_t *pGraphNode, cudaGraph_t graph, const cudaGraphNode_t *pDependencies, size_t numDependencies, const struct cudaMemcpy3DParms *pCopyParams) CUDART_NOT_IMPLEMENTED;
 
 #if __CUDART_API_VERSION >= 11010
