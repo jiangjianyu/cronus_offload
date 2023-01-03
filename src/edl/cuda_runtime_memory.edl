@@ -63,11 +63,11 @@ enclave {
         public cudaError_t cudaArrayGetPlane([out,count=1]cudaArray_t *pPlaneArray, cudaArray_t hArray, unsigned int planeIdx);
 
         // #if __CUDART_API_VERSION >= 11010
-        public cudaError_t cudaArrayGetSparseProperties([out,count=1]struct cudaArraySparseProperties *sparseProperties, cudaArray_t array);
+        // public cudaError_t cudaArrayGetSparseProperties([out,count=1]struct cudaArraySparseProperties *sparseProperties, cudaArray_t array);
         // #endif
 
         // #if __CUDART_API_VERSION >= 11010
-        public cudaError_t cudaMipmappedArrayGetSparseProperties([out,count=1]struct cudaArraySparseProperties *sparseProperties, cudaMipmappedArray_t mipmap);
+        // public cudaError_t cudaMipmappedArrayGetSparseProperties([out,count=1]struct cudaArraySparseProperties *sparseProperties, cudaMipmappedArray_t mipmap);
         // #endif
 
         // public cudaError_t cudaMemcpy(void *dst, const void *src, size_t count, enum cudaMemcpyKind kind);

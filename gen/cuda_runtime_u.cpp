@@ -353,18 +353,6 @@ typedef struct ms_cudaArrayGetPlane_t {
 	unsigned int ms_planeIdx;
 } ms_cudaArrayGetPlane_t;
 
-typedef struct ms_cudaArrayGetSparseProperties_t {
-	cudaError_t ms_retval;
-	struct cudaArraySparseProperties* ms_sparseProperties;
-	cudaArray_t ms_array;
-} ms_cudaArrayGetSparseProperties_t;
-
-typedef struct ms_cudaMipmappedArrayGetSparseProperties_t {
-	cudaError_t ms_retval;
-	struct cudaArraySparseProperties* ms_sparseProperties;
-	cudaMipmappedArray_t ms_mipmap;
-} ms_cudaMipmappedArrayGetSparseProperties_t;
-
 typedef struct ms_cudaMemcpyNone_t {
 	cudaError_t ms_retval;
 	void* ms_dst;
@@ -2459,60 +2447,6 @@ cudaError_t cudaArrayGetPlane(cudaArray_t* pPlaneArray, cudaArray_t hArray, unsi
 	return cudaErrorInvalidValue;
 }
 
-cudaError_t cudaArrayGetSparseProperties(struct cudaArraySparseProperties* sparseProperties, cudaArray_t array)
-{
-	TEE_Result status;
-	int bufsize;
-	char *enclave_buffer = rpc_buffer();
-	cudaError_t retval;
-	ms_cudaArrayGetSparseProperties_t* ms = TEE_CAST(ms_cudaArrayGetSparseProperties_t*, enclave_buffer);;
-	
-
-	ms->ms_sparseProperties = sparseProperties;
-	ms->ms_array = array;
-	bufsize = sizeof(ms_cudaArrayGetSparseProperties_t) + 1 * sizeof(*sparseProperties);
-
-	if(bufsize > buffer_size_in_bytes) {
-		return cudaErrorMemoryValueTooLarge;
-	}
-	status = rpc_ecall(57, enclave_buffer, bufsize);
-
-	if (status == TEE_SUCCESS) {
-		retval = ms->ms_retval;
-		memcpy(sparseProperties, enclave_buffer + sizeof(ms_cudaArrayGetSparseProperties_t), 1 * sizeof(*sparseProperties));
-		RPC_DEBUG("ret -> %d (%d)", retval, status);
-		return retval;
-	}
-	return cudaErrorInvalidValue;
-}
-
-cudaError_t cudaMipmappedArrayGetSparseProperties(struct cudaArraySparseProperties* sparseProperties, cudaMipmappedArray_t mipmap)
-{
-	TEE_Result status;
-	int bufsize;
-	char *enclave_buffer = rpc_buffer();
-	cudaError_t retval;
-	ms_cudaMipmappedArrayGetSparseProperties_t* ms = TEE_CAST(ms_cudaMipmappedArrayGetSparseProperties_t*, enclave_buffer);;
-	
-
-	ms->ms_sparseProperties = sparseProperties;
-	ms->ms_mipmap = mipmap;
-	bufsize = sizeof(ms_cudaMipmappedArrayGetSparseProperties_t) + 1 * sizeof(*sparseProperties);
-
-	if(bufsize > buffer_size_in_bytes) {
-		return cudaErrorMemoryValueTooLarge;
-	}
-	status = rpc_ecall(58, enclave_buffer, bufsize);
-
-	if (status == TEE_SUCCESS) {
-		retval = ms->ms_retval;
-		memcpy(sparseProperties, enclave_buffer + sizeof(ms_cudaMipmappedArrayGetSparseProperties_t), 1 * sizeof(*sparseProperties));
-		RPC_DEBUG("ret -> %d (%d)", retval, status);
-		return retval;
-	}
-	return cudaErrorInvalidValue;
-}
-
 cudaError_t cudaMemcpyNone(void* dst, const void* src, size_t count, enum cudaMemcpyKind kind)
 {
 	TEE_Result status;
@@ -2531,7 +2465,7 @@ cudaError_t cudaMemcpyNone(void* dst, const void* src, size_t count, enum cudaMe
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(59, enclave_buffer, bufsize);
+	status = rpc_ecall(57, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -2560,7 +2494,7 @@ cudaError_t cudaMemcpySrc(void* dst, const void* src, size_t count, enum cudaMem
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(60, enclave_buffer, bufsize);
+	status = rpc_ecall(58, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -2588,7 +2522,7 @@ cudaError_t cudaMemcpyDst(void* dst, const void* src, size_t count, enum cudaMem
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(61, enclave_buffer, bufsize);
+	status = rpc_ecall(59, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -2618,7 +2552,7 @@ cudaError_t cudaMemcpySrcDst(void* dst, const void* src, size_t count, enum cuda
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(62, enclave_buffer, bufsize);
+	status = rpc_ecall(60, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -2648,7 +2582,7 @@ cudaError_t cudaMemcpyPeer(void* dst, int dstDevice, const void* src, int srcDev
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(63, enclave_buffer, bufsize);
+	status = rpc_ecall(61, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -2679,7 +2613,7 @@ cudaError_t cudaMemcpy2DNone(void* dst, size_t dpitch, const void* src, size_t s
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(64, enclave_buffer, bufsize);
+	status = rpc_ecall(62, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -2711,7 +2645,7 @@ cudaError_t cudaMemcpy2DSrc(void* dst, size_t dpitch, const void* src, size_t sp
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(65, enclave_buffer, bufsize);
+	status = rpc_ecall(63, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -2742,7 +2676,7 @@ cudaError_t cudaMemcpy2DDst(void* dst, size_t dpitch, const void* src, size_t sp
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(66, enclave_buffer, bufsize);
+	status = rpc_ecall(64, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -2775,7 +2709,7 @@ cudaError_t cudaMemcpy2DSrcDst(void* dst, size_t dpitch, const void* src, size_t
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(67, enclave_buffer, bufsize);
+	status = rpc_ecall(65, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -2808,7 +2742,7 @@ cudaError_t cudaMemcpy2DToArrayNone(cudaArray_t dst, size_t wOffset, size_t hOff
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(68, enclave_buffer, bufsize);
+	status = rpc_ecall(66, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -2841,7 +2775,7 @@ cudaError_t cudaMemcpy2DToArraySrc(cudaArray_t dst, size_t wOffset, size_t hOffs
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(69, enclave_buffer, bufsize);
+	status = rpc_ecall(67, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -2873,7 +2807,7 @@ cudaError_t cudaMemcpy2DFromArrayNone(void* dst, size_t dpitch, cudaArray_const_
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(70, enclave_buffer, bufsize);
+	status = rpc_ecall(68, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -2905,7 +2839,7 @@ cudaError_t cudaMemcpy2DFromArrayDst(void* dst, size_t dpitch, cudaArray_const_t
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(71, enclave_buffer, bufsize);
+	status = rpc_ecall(69, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -2939,7 +2873,7 @@ cudaError_t cudaMemcpy2DArrayToArray(cudaArray_t dst, size_t wOffsetDst, size_t 
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(72, enclave_buffer, bufsize);
+	status = rpc_ecall(70, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -2969,7 +2903,7 @@ cudaError_t cudaMemcpyToSymbolNone(const void* symbol, const void* src, size_t c
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(73, enclave_buffer, bufsize);
+	status = rpc_ecall(71, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3000,7 +2934,7 @@ cudaError_t cudaMemcpyToSymbolSrc(const void* symbol, const void* src, size_t co
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(74, enclave_buffer, bufsize);
+	status = rpc_ecall(72, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3030,7 +2964,7 @@ cudaError_t cudaMemcpyFromSymbolNone(void* dst, const void* symbol, size_t count
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(75, enclave_buffer, bufsize);
+	status = rpc_ecall(73, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3060,7 +2994,7 @@ cudaError_t cudaMemcpyFromSymbolDst(void* dst, const void* symbol, size_t count,
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(76, enclave_buffer, bufsize);
+	status = rpc_ecall(74, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3090,7 +3024,7 @@ cudaError_t cudaMemcpyAsyncNone(void* dst, const void* src, size_t count, enum c
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(77, enclave_buffer, bufsize);
+	status = rpc_ecall(75, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3120,7 +3054,7 @@ cudaError_t cudaMemcpyAsyncSrc(void* dst, const void* src, size_t count, enum cu
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(78, enclave_buffer, bufsize);
+	status = rpc_ecall(76, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3149,7 +3083,7 @@ cudaError_t cudaMemcpyAsyncDst(void* dst, const void* src, size_t count, enum cu
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(79, enclave_buffer, bufsize);
+	status = rpc_ecall(77, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3180,7 +3114,7 @@ cudaError_t cudaMemcpyAsyncSrcDst(void* dst, const void* src, size_t count, enum
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(80, enclave_buffer, bufsize);
+	status = rpc_ecall(78, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3211,7 +3145,7 @@ cudaError_t cudaMemcpyPeerAsync(void* dst, int dstDevice, const void* src, int s
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(81, enclave_buffer, bufsize);
+	status = rpc_ecall(79, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3243,7 +3177,7 @@ cudaError_t cudaMemcpy2DAsyncNone(void* dst, size_t dpitch, const void* src, siz
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(82, enclave_buffer, bufsize);
+	status = rpc_ecall(80, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3276,7 +3210,7 @@ cudaError_t cudaMemcpy2DAsyncSrc(void* dst, size_t dpitch, const void* src, size
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(83, enclave_buffer, bufsize);
+	status = rpc_ecall(81, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3308,7 +3242,7 @@ cudaError_t cudaMemcpy2DAsyncDst(void* dst, size_t dpitch, const void* src, size
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(84, enclave_buffer, bufsize);
+	status = rpc_ecall(82, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3342,7 +3276,7 @@ cudaError_t cudaMemcpy2DAsyncSrcDst(void* dst, size_t dpitch, const void* src, s
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(85, enclave_buffer, bufsize);
+	status = rpc_ecall(83, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3376,7 +3310,7 @@ cudaError_t cudaMemcpy2DToArrayAsyncNone(cudaArray_t dst, size_t wOffset, size_t
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(86, enclave_buffer, bufsize);
+	status = rpc_ecall(84, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3410,7 +3344,7 @@ cudaError_t cudaMemcpy2DToArrayAsyncSrc(cudaArray_t dst, size_t wOffset, size_t 
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(87, enclave_buffer, bufsize);
+	status = rpc_ecall(85, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3443,7 +3377,7 @@ cudaError_t cudaMemcpy2DFromArrayAsyncNone(void* dst, size_t dpitch, cudaArray_c
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(88, enclave_buffer, bufsize);
+	status = rpc_ecall(86, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3476,7 +3410,7 @@ cudaError_t cudaMemcpy2DFromArrayAsyncDst(void* dst, size_t dpitch, cudaArray_co
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(89, enclave_buffer, bufsize);
+	status = rpc_ecall(87, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3508,7 +3442,7 @@ cudaError_t cudaMemcpyToSymbolAsyncNone(const void* symbol, const void* src, siz
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(90, enclave_buffer, bufsize);
+	status = rpc_ecall(88, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3540,7 +3474,7 @@ cudaError_t cudaMemcpyToSymbolAsyncSrc(const void* symbol, const void* src, size
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(91, enclave_buffer, bufsize);
+	status = rpc_ecall(89, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3571,7 +3505,7 @@ cudaError_t cudaMemcpyFromSymbolAsyncNone(void* dst, const void* symbol, size_t 
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(92, enclave_buffer, bufsize);
+	status = rpc_ecall(90, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3602,7 +3536,7 @@ cudaError_t cudaMemcpyFromSymbolAsyncDst(void* dst, const void* symbol, size_t c
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(93, enclave_buffer, bufsize);
+	status = rpc_ecall(91, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3630,7 +3564,7 @@ cudaError_t cudaMemset(void* devPtr, int value, size_t count)
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(94, enclave_buffer, bufsize);
+	status = rpc_ecall(92, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3659,7 +3593,7 @@ cudaError_t cudaMemset2D(void* devPtr, size_t pitch, int value, size_t width, si
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(95, enclave_buffer, bufsize);
+	status = rpc_ecall(93, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3686,7 +3620,7 @@ cudaError_t cudaMemset3D(struct cudaPitchedPtr pitchedDevPtr, int value, struct 
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(96, enclave_buffer, bufsize);
+	status = rpc_ecall(94, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3714,7 +3648,7 @@ cudaError_t cudaMemsetAsync(void* devPtr, int value, size_t count, cudaStream_t 
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(97, enclave_buffer, bufsize);
+	status = rpc_ecall(95, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3744,7 +3678,7 @@ cudaError_t cudaMemset2DAsync(void* devPtr, size_t pitch, int value, size_t widt
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(98, enclave_buffer, bufsize);
+	status = rpc_ecall(96, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3772,7 +3706,7 @@ cudaError_t cudaMemset3DAsync(struct cudaPitchedPtr pitchedDevPtr, int value, st
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(99, enclave_buffer, bufsize);
+	status = rpc_ecall(97, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3799,7 +3733,7 @@ cudaError_t cudaGetSymbolAddress(void** devPtr, const void* symbol)
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(100, enclave_buffer, bufsize);
+	status = rpc_ecall(98, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3827,7 +3761,7 @@ cudaError_t cudaGetSymbolSize(size_t* size, const void* symbol)
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(101, enclave_buffer, bufsize);
+	status = rpc_ecall(99, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3856,7 +3790,7 @@ cudaError_t cudaMemPrefetchAsync(const void* devPtr, size_t count, int dstDevice
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(102, enclave_buffer, bufsize);
+	status = rpc_ecall(100, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3884,7 +3818,7 @@ cudaError_t cudaMemAdvise(const void* devPtr, size_t count, enum cudaMemoryAdvis
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(103, enclave_buffer, bufsize);
+	status = rpc_ecall(101, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3913,7 +3847,7 @@ cudaError_t cudaMemRangeGetAttribute(void* data, size_t dataSize, enum cudaMemRa
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(104, enclave_buffer, bufsize);
+	status = rpc_ecall(102, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3944,7 +3878,7 @@ cudaError_t cudaMemcpyToArrayNone(cudaArray_t dst, size_t wOffset, size_t hOffse
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(105, enclave_buffer, bufsize);
+	status = rpc_ecall(103, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -3975,7 +3909,7 @@ cudaError_t cudaMemcpyToArraySrc(cudaArray_t dst, size_t wOffset, size_t hOffset
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(106, enclave_buffer, bufsize);
+	status = rpc_ecall(104, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -4005,7 +3939,7 @@ cudaError_t cudaMemcpyFromArrayNone(void* dst, cudaArray_const_t src, size_t wOf
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(107, enclave_buffer, bufsize);
+	status = rpc_ecall(105, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -4035,7 +3969,7 @@ cudaError_t cudaMemcpyFromArrayDst(void* dst, cudaArray_const_t src, size_t wOff
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(108, enclave_buffer, bufsize);
+	status = rpc_ecall(106, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -4068,7 +4002,7 @@ cudaError_t cudaMemcpyArrayToArray(cudaArray_t dst, size_t wOffsetDst, size_t hO
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(109, enclave_buffer, bufsize);
+	status = rpc_ecall(107, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -4099,7 +4033,7 @@ cudaError_t cudaMemcpyToArrayAsyncNone(cudaArray_t dst, size_t wOffset, size_t h
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(110, enclave_buffer, bufsize);
+	status = rpc_ecall(108, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -4131,7 +4065,7 @@ cudaError_t cudaMemcpyToArrayAsyncSrc(cudaArray_t dst, size_t wOffset, size_t hO
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(111, enclave_buffer, bufsize);
+	status = rpc_ecall(109, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -4162,7 +4096,7 @@ cudaError_t cudaMemcpyFromArrayAsyncNone(void* dst, cudaArray_const_t src, size_
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(112, enclave_buffer, bufsize);
+	status = rpc_ecall(110, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
@@ -4193,7 +4127,7 @@ cudaError_t cudaMemcpyFromArrayAsyncDst(void* dst, cudaArray_const_t src, size_t
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
 	}
-	status = rpc_ecall(113, enclave_buffer, bufsize);
+	status = rpc_ecall(111, enclave_buffer, bufsize);
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;

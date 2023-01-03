@@ -359,18 +359,6 @@ typedef struct ms_cudaArrayGetPlane_t {
 	unsigned int ms_planeIdx;
 } ms_cudaArrayGetPlane_t;
 
-typedef struct ms_cudaArrayGetSparseProperties_t {
-	cudaError_t ms_retval;
-	struct cudaArraySparseProperties* ms_sparseProperties;
-	cudaArray_t ms_array;
-} ms_cudaArrayGetSparseProperties_t;
-
-typedef struct ms_cudaMipmappedArrayGetSparseProperties_t {
-	cudaError_t ms_retval;
-	struct cudaArraySparseProperties* ms_sparseProperties;
-	cudaMipmappedArray_t ms_mipmap;
-} ms_cudaMipmappedArrayGetSparseProperties_t;
-
 typedef struct ms_cudaMemcpyNone_t {
 	cudaError_t ms_retval;
 	void* ms_dst;
@@ -2470,64 +2458,6 @@ err:
 	return status;
 }
 
-static TEE_Result tee_cudaArrayGetSparseProperties(char *buffer)
-{
-	ms_cudaArrayGetSparseProperties_t* ms = TEE_CAST(ms_cudaArrayGetSparseProperties_t*, buffer);
-	char* buffer_start = buffer + sizeof(ms_cudaArrayGetSparseProperties_t);
-
-	TEE_Result status = TEE_SUCCESS;
-	struct cudaArraySparseProperties* _tmp_sparseProperties = TEE_CAST(struct cudaArraySparseProperties*, buffer_start + 0);
-	size_t _len_sparseProperties = 1 * sizeof(*_tmp_sparseProperties);
-	struct cudaArraySparseProperties* _in_sparseProperties = NULL;
-
-	if (_tmp_sparseProperties != NULL) {
-		if ((_in_sparseProperties = (struct cudaArraySparseProperties*)malloc(_len_sparseProperties)) == NULL) {
-			status = TEE_ERROR_OUT_OF_MEMORY;
-			goto err;
-		}
-
-		memset((void*)_in_sparseProperties, 0, _len_sparseProperties);
-	}
-	ms->ms_retval = cudaArrayGetSparseProperties(_in_sparseProperties, ms->ms_array);
-	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _in_sparseProperties, ms->ms_array, ms->ms_retval);
-err:
-	if (_in_sparseProperties) {
-		memcpy(_tmp_sparseProperties, _in_sparseProperties, _len_sparseProperties);
-		free(_in_sparseProperties);
-	}
-
-	return status;
-}
-
-static TEE_Result tee_cudaMipmappedArrayGetSparseProperties(char *buffer)
-{
-	ms_cudaMipmappedArrayGetSparseProperties_t* ms = TEE_CAST(ms_cudaMipmappedArrayGetSparseProperties_t*, buffer);
-	char* buffer_start = buffer + sizeof(ms_cudaMipmappedArrayGetSparseProperties_t);
-
-	TEE_Result status = TEE_SUCCESS;
-	struct cudaArraySparseProperties* _tmp_sparseProperties = TEE_CAST(struct cudaArraySparseProperties*, buffer_start + 0);
-	size_t _len_sparseProperties = 1 * sizeof(*_tmp_sparseProperties);
-	struct cudaArraySparseProperties* _in_sparseProperties = NULL;
-
-	if (_tmp_sparseProperties != NULL) {
-		if ((_in_sparseProperties = (struct cudaArraySparseProperties*)malloc(_len_sparseProperties)) == NULL) {
-			status = TEE_ERROR_OUT_OF_MEMORY;
-			goto err;
-		}
-
-		memset((void*)_in_sparseProperties, 0, _len_sparseProperties);
-	}
-	ms->ms_retval = cudaMipmappedArrayGetSparseProperties(_in_sparseProperties, ms->ms_mipmap);
-	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _in_sparseProperties, ms->ms_mipmap, ms->ms_retval);
-err:
-	if (_in_sparseProperties) {
-		memcpy(_tmp_sparseProperties, _in_sparseProperties, _len_sparseProperties);
-		free(_in_sparseProperties);
-	}
-
-	return status;
-}
-
 static TEE_Result tee_cudaMemcpyNone(char *buffer)
 {
 	ms_cudaMemcpyNone_t* ms = TEE_CAST(ms_cudaMemcpyNone_t*, buffer);
@@ -3953,9 +3883,9 @@ err:
 
 const struct {
 	size_t nr_ecall;
-	struct {void* ecall_addr; uint8_t is_priv;} ecall_table[114];
+	struct {void* ecall_addr; uint8_t is_priv;} ecall_table[112];
 } g_ecall_table = {
-	114,
+	112,
 	{
 		{(void*)(uintptr_t)tee_cudaLaunchKernelByName, 0},
 		{(void*)(uintptr_t)tee_cudaFuncGetParametersByName, 0},
@@ -4014,8 +3944,6 @@ const struct {
 		{(void*)(uintptr_t)tee_cudaMemGetInfo, 0},
 		{(void*)(uintptr_t)tee_cudaArrayGetInfo, 0},
 		{(void*)(uintptr_t)tee_cudaArrayGetPlane, 0},
-		{(void*)(uintptr_t)tee_cudaArrayGetSparseProperties, 0},
-		{(void*)(uintptr_t)tee_cudaMipmappedArrayGetSparseProperties, 0},
 		{(void*)(uintptr_t)tee_cudaMemcpyNone, 0},
 		{(void*)(uintptr_t)tee_cudaMemcpySrc, 0},
 		{(void*)(uintptr_t)tee_cudaMemcpyDst, 0},

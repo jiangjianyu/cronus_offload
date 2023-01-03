@@ -76,8 +76,6 @@ cudaError_t cudaMemcpy3DPeerAsync(const struct cudaMemcpy3DPeerParms* p, cudaStr
 cudaError_t cudaMemGetInfo(size_t* free, size_t* total);
 cudaError_t cudaArrayGetInfo(struct cudaChannelFormatDesc* desc, struct cudaExtent* extent, unsigned int* flags, cudaArray_t array);
 cudaError_t cudaArrayGetPlane(cudaArray_t* pPlaneArray, cudaArray_t hArray, unsigned int planeIdx);
-cudaError_t cudaArrayGetSparseProperties(struct cudaArraySparseProperties* sparseProperties, cudaArray_t array);
-cudaError_t cudaMipmappedArrayGetSparseProperties(struct cudaArraySparseProperties* sparseProperties, cudaMipmappedArray_t mipmap);
 cudaError_t cudaMemcpyNone(void* dst, const void* src, size_t count, enum cudaMemcpyKind kind);
 cudaError_t cudaMemcpySrc(void* dst, const void* src, size_t count, enum cudaMemcpyKind kind);
 cudaError_t cudaMemcpyDst(void* dst, const void* src, size_t count, enum cudaMemcpyKind kind);
