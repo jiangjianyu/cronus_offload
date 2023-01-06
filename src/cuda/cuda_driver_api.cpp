@@ -2,6 +2,10 @@
 #include <cuda.h>
 #include "cuda_driver_header.h"
 
+#define CUDARTAPI_OLD CUDARTAPI
+#undef CUDARTAPI
+#define CUDARTAPI __attribute__((weak))
+
 #include <stdlib.h>
 #ifdef _MSC_VER
 typedef unsigned __int32 cuuint32_t;
