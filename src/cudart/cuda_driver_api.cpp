@@ -1,5 +1,6 @@
 
 #include <cuda.h>
+#include "cuda_driver_header.h"
 
 #include <stdlib.h>
 #ifdef _MSC_VER
@@ -86,8 +87,8 @@ extern "C" {
  *
  * @{
  */
-CUresult CUDAAPI cuGetErrorString(CUresult error, const char **pStr);
-CUresult CUDAAPI cuGetErrorName(CUresult error, const char **pStr);
+CUresult CUDAAPI cuGetErrorString(CUresult error, const char **pStr) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGetErrorName(CUresult error, const char **pStr) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_ERROR */
 
 /**
@@ -101,7 +102,7 @@ CUresult CUDAAPI cuGetErrorName(CUresult error, const char **pStr);
  *
  * @{
  */
-CUresult CUDAAPI cuInit(unsigned int Flags);
+CUresult CUDAAPI cuInit(unsigned int Flags) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_INITIALIZE */
 
 /**
@@ -115,7 +116,7 @@ CUresult CUDAAPI cuInit(unsigned int Flags);
  *
  * @{
  */
-CUresult CUDAAPI cuDriverGetVersion(int *driverVersion);
+CUresult CUDAAPI cuDriverGetVersion(int *driverVersion) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_VERSION */
 
 /**
@@ -129,20 +130,20 @@ CUresult CUDAAPI cuDriverGetVersion(int *driverVersion);
  *
  * @{
  */
-CUresult CUDAAPI cuDeviceGet(CUdevice *device, int ordinal);
-CUresult CUDAAPI cuDeviceGetCount(int *count);
-CUresult CUDAAPI cuDeviceGetName(char *name, int len, CUdevice dev);
-CUresult CUDAAPI cuDeviceGetUuid(CUuuid *uuid, CUdevice dev);
-CUresult CUDAAPI cuDeviceGetUuid_v2(CUuuid *uuid, CUdevice dev);
-CUresult CUDAAPI cuDeviceGetLuid(char *luid, unsigned int *deviceNodeMask, CUdevice dev);
-CUresult CUDAAPI cuDeviceTotalMem(size_t *bytes, CUdevice dev);
-CUresult CUDAAPI cuDeviceGetTexture1DLinearMaxWidth(size_t *maxWidthInElements, CUarray_format format, unsigned numChannels, CUdevice dev);
-CUresult CUDAAPI cuDeviceGetAttribute(int *pi, CUdevice_attribute attrib, CUdevice dev);
-CUresult CUDAAPI cuDeviceGetNvSciSyncAttributes(void *nvSciSyncAttrList, CUdevice dev, int flags);
-CUresult CUDAAPI cuDeviceSetMemPool(CUdevice dev, CUmemoryPool pool);
-CUresult CUDAAPI cuDeviceGetMemPool(CUmemoryPool *pool, CUdevice dev);
-CUresult CUDAAPI cuDeviceGetDefaultMemPool(CUmemoryPool *pool_out, CUdevice dev);
-CUresult CUDAAPI cuFlushGPUDirectRDMAWrites(CUflushGPUDirectRDMAWritesTarget target, CUflushGPUDirectRDMAWritesScope scope);
+CUresult CUDAAPI cuDeviceGet(CUdevice *device, int ordinal) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDeviceGetCount(int *count) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDeviceGetName(char *name, int len, CUdevice dev) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDeviceGetUuid(CUuuid *uuid, CUdevice dev) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDeviceGetUuid_v2(CUuuid *uuid, CUdevice dev) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDeviceGetLuid(char *luid, unsigned int *deviceNodeMask, CUdevice dev) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDeviceTotalMem(size_t *bytes, CUdevice dev) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDeviceGetTexture1DLinearMaxWidth(size_t *maxWidthInElements, CUarray_format format, unsigned numChannels, CUdevice dev) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDeviceGetAttribute(int *pi, CUdevice_attribute attrib, CUdevice dev) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDeviceGetNvSciSyncAttributes(void *nvSciSyncAttrList, CUdevice dev, int flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDeviceSetMemPool(CUdevice dev, CUmemoryPool pool) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDeviceGetMemPool(CUmemoryPool *pool, CUdevice dev) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDeviceGetDefaultMemPool(CUmemoryPool *pool_out, CUdevice dev) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuFlushGPUDirectRDMAWrites(CUflushGPUDirectRDMAWritesTarget target, CUflushGPUDirectRDMAWritesScope scope) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_DEVICE */
 
 /**
@@ -156,8 +157,8 @@ CUresult CUDAAPI cuFlushGPUDirectRDMAWrites(CUflushGPUDirectRDMAWritesTarget tar
  *
  * @{
  */
-__CUDA_DEPRECATED CUresult CUDAAPI cuDeviceGetProperties(CUdevprop *prop, CUdevice dev);
-__CUDA_DEPRECATED CUresult CUDAAPI cuDeviceComputeCapability(int *major, int *minor, CUdevice dev);
+__CUDA_DEPRECATED CUresult CUDAAPI cuDeviceGetProperties(CUdevprop *prop, CUdevice dev) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuDeviceComputeCapability(int *major, int *minor, CUdevice dev) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_DEVICE_DEPRECATED */
 
 /**
@@ -174,13 +175,13 @@ __CUDA_DEPRECATED CUresult CUDAAPI cuDeviceComputeCapability(int *major, int *mi
  *
  * @{
  */
-CUresult CUDAAPI cuDevicePrimaryCtxRetain(CUcontext *pctx, CUdevice dev);
-CUresult CUDAAPI cuDevicePrimaryCtxRelease(CUdevice dev);
-CUresult CUDAAPI cuDevicePrimaryCtxSetFlags(CUdevice dev, unsigned int flags);
-CUresult CUDAAPI cuDevicePrimaryCtxGetState(CUdevice dev, unsigned int *flags, int *active);
-CUresult CUDAAPI cuDevicePrimaryCtxReset(CUdevice dev);
+CUresult CUDAAPI cuDevicePrimaryCtxRetain(CUcontext *pctx, CUdevice dev) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDevicePrimaryCtxRelease(CUdevice dev) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDevicePrimaryCtxSetFlags(CUdevice dev, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDevicePrimaryCtxGetState(CUdevice dev, unsigned int *flags, int *active) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDevicePrimaryCtxReset(CUdevice dev) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_PRIMARY_CTX */
-CUresult CUDAAPI cuDeviceGetExecAffinitySupport(int *pi, CUexecAffinityType type, CUdevice dev);
+CUresult CUDAAPI cuDeviceGetExecAffinitySupport(int *pi, CUexecAffinityType type, CUdevice dev) CUDADRV_NOT_IMPLEMENTED;
 
 /**
  * \defgroup CUDA_CTX Context Management
@@ -196,26 +197,26 @@ CUresult CUDAAPI cuDeviceGetExecAffinitySupport(int *pi, CUexecAffinityType type
  *
  * @{
  */
-CUresult CUDAAPI cuCtxCreate(CUcontext *pctx, unsigned int flags, CUdevice dev);
-CUresult CUDAAPI cuCtxCreate_v3(CUcontext *pctx, CUexecAffinityParam *paramsArray, int numParams, unsigned int flags, CUdevice dev);
-CUresult CUDAAPI cuCtxDestroy(CUcontext ctx);
-CUresult CUDAAPI cuCtxPushCurrent(CUcontext ctx);
-CUresult CUDAAPI cuCtxPopCurrent(CUcontext *pctx);
-CUresult CUDAAPI cuCtxSetCurrent(CUcontext ctx);
-CUresult CUDAAPI cuCtxGetCurrent(CUcontext *pctx);
-CUresult CUDAAPI cuCtxGetDevice(CUdevice *device);
-CUresult CUDAAPI cuCtxGetFlags(unsigned int *flags);
-CUresult CUDAAPI cuCtxSynchronize(void);
-CUresult CUDAAPI cuCtxSetLimit(CUlimit limit, size_t value);
-CUresult CUDAAPI cuCtxGetLimit(size_t *pvalue, CUlimit limit);
-CUresult CUDAAPI cuCtxGetCacheConfig(CUfunc_cache *pconfig);
-CUresult CUDAAPI cuCtxSetCacheConfig(CUfunc_cache config);
-CUresult CUDAAPI cuCtxGetSharedMemConfig(CUsharedconfig *pConfig);
-CUresult CUDAAPI cuCtxSetSharedMemConfig(CUsharedconfig config);
-CUresult CUDAAPI cuCtxGetApiVersion(CUcontext ctx, unsigned int *version);
-CUresult CUDAAPI cuCtxGetStreamPriorityRange(int *leastPriority, int *greatestPriority);
-CUresult CUDAAPI cuCtxResetPersistingL2Cache(void);
-CUresult CUDAAPI cuCtxGetExecAffinity(CUexecAffinityParam *pExecAffinity, CUexecAffinityType type);/** @} */ /* END CUDA_CTX */
+CUresult CUDAAPI cuCtxCreate(CUcontext *pctx, unsigned int flags, CUdevice dev) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxCreate_v3(CUcontext *pctx, CUexecAffinityParam *paramsArray, int numParams, unsigned int flags, CUdevice dev) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxDestroy(CUcontext ctx) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxPushCurrent(CUcontext ctx) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxPopCurrent(CUcontext *pctx) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxSetCurrent(CUcontext ctx) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxGetCurrent(CUcontext *pctx) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxGetDevice(CUdevice *device) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxGetFlags(unsigned int *flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxSynchronize(void) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxSetLimit(CUlimit limit, size_t value) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxGetLimit(size_t *pvalue, CUlimit limit) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxGetCacheConfig(CUfunc_cache *pconfig) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxSetCacheConfig(CUfunc_cache config) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxGetSharedMemConfig(CUsharedconfig *pConfig) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxSetSharedMemConfig(CUsharedconfig config) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxGetApiVersion(CUcontext ctx, unsigned int *version) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxGetStreamPriorityRange(int *leastPriority, int *greatestPriority) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxResetPersistingL2Cache(void) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxGetExecAffinity(CUexecAffinityParam *pExecAffinity, CUexecAffinityType type) CUDADRV_NOT_IMPLEMENTED;/** @} */ /* END CUDA_CTX */
 
 /**
  * \defgroup CUDA_CTX_DEPRECATED Context Management [DEPRECATED]
@@ -228,8 +229,9 @@ CUresult CUDAAPI cuCtxGetExecAffinity(CUexecAffinityParam *pExecAffinity, CUexec
  *
  * @{
  */
-__CUDA_DEPRECATED CUresult CUDAAPI cuCtxAttach(CUcontext *pctx, unsigned int flags);
-__CUDA_DEPRECATED CUresult CUDAAPI cuCtxDetach(CUcontext ctx);/** @} */ /* END CUDA_CTX_DEPRECATED */
+__CUDA_DEPRECATED CUresult CUDAAPI cuCtxAttach(CUcontext *pctx, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuCtxDetach(CUcontext ctx) CUDADRV_NOT_IMPLEMENTED;
+/** @} */ /* END CUDA_CTX_DEPRECATED */
 
 
 /**
@@ -243,27 +245,27 @@ __CUDA_DEPRECATED CUresult CUDAAPI cuCtxDetach(CUcontext ctx);/** @} */ /* END C
  *
  * @{
  */
-CUresult CUDAAPI cuModuleLoad(CUmodule *module, const char *fname);
-CUresult CUDAAPI cuModuleLoadData(CUmodule *module, const void *image);
-CUresult CUDAAPI cuModuleLoadDataEx(CUmodule *module, const void *image, unsigned int numOptions, CUjit_option *options, void **optionValues);
-CUresult CUDAAPI cuModuleLoadFatBinary(CUmodule *module, const void *fatCubin);
-CUresult CUDAAPI cuModuleUnload(CUmodule hmod);
-CUresult CUDAAPI cuModuleGetFunction(CUfunction *hfunc, CUmodule hmod, const char *name);
-CUresult CUDAAPI cuModuleGetGlobal(CUdeviceptr *dptr, size_t *bytes, CUmodule hmod, const char *name);
-CUresult CUDAAPI cuModuleGetTexRef(CUtexref *pTexRef, CUmodule hmod, const char *name);
-CUresult CUDAAPI cuModuleGetSurfRef(CUsurfref *pSurfRef, CUmodule hmod, const char *name);
+CUresult CUDAAPI cuModuleLoad(CUmodule *module, const char *fname) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuModuleLoadData(CUmodule *module, const void *image) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuModuleLoadDataEx(CUmodule *module, const void *image, unsigned int numOptions, CUjit_option *options, void **optionValues) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuModuleLoadFatBinary(CUmodule *module, const void *fatCubin) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuModuleUnload(CUmodule hmod) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuModuleGetFunction(CUfunction *hfunc, CUmodule hmod, const char *name) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuModuleGetGlobal(CUdeviceptr *dptr, size_t *bytes, CUmodule hmod, const char *name) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuModuleGetTexRef(CUtexref *pTexRef, CUmodule hmod, const char *name) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuModuleGetSurfRef(CUsurfref *pSurfRef, CUmodule hmod, const char *name) CUDADRV_NOT_IMPLEMENTED;
 CUresult CUDAAPI
-cuLinkCreate(unsigned int numOptions, CUjit_option *options, void **optionValues, CUlinkState *stateOut);
+cuLinkCreate(unsigned int numOptions, CUjit_option *options, void **optionValues, CUlinkState *stateOut) CUDADRV_NOT_IMPLEMENTED;
 CUresult CUDAAPI
 cuLinkAddData(CUlinkState state, CUjitInputType type, void *data, size_t size, const char *name,
-    unsigned int numOptions, CUjit_option *options, void **optionValues);
+    unsigned int numOptions, CUjit_option *options, void **optionValues) CUDADRV_NOT_IMPLEMENTED;
 CUresult CUDAAPI
 cuLinkAddFile(CUlinkState state, CUjitInputType type, const char *path,
-    unsigned int numOptions, CUjit_option *options, void **optionValues);
+    unsigned int numOptions, CUjit_option *options, void **optionValues) CUDADRV_NOT_IMPLEMENTED;
 CUresult CUDAAPI
-cuLinkComplete(CUlinkState state, void **cubinOut, size_t *sizeOut);
+cuLinkComplete(CUlinkState state, void **cubinOut, size_t *sizeOut) CUDADRV_NOT_IMPLEMENTED;
 CUresult CUDAAPI
-cuLinkDestroy(CUlinkState state);
+cuLinkDestroy(CUlinkState state) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_MODULE */
 
 
@@ -278,73 +280,73 @@ cuLinkDestroy(CUlinkState state);
  *
  * @{
  */
-CUresult CUDAAPI cuMemGetInfo(size_t *free, size_t *total);
-CUresult CUDAAPI cuMemAlloc(CUdeviceptr *dptr, size_t bytesize);
-CUresult CUDAAPI cuMemAllocPitch(CUdeviceptr *dptr, size_t *pPitch, size_t WidthInBytes, size_t Height, unsigned int ElementSizeBytes);
-CUresult CUDAAPI cuMemFree(CUdeviceptr dptr);
-CUresult CUDAAPI cuMemGetAddressRange(CUdeviceptr *pbase, size_t *psize, CUdeviceptr dptr);
-CUresult CUDAAPI cuMemAllocHost(void **pp, size_t bytesize);
-CUresult CUDAAPI cuMemFreeHost(void *p);
-CUresult CUDAAPI cuMemHostAlloc(void **pp, size_t bytesize, unsigned int Flags);
-CUresult CUDAAPI cuMemHostGetDevicePointer(CUdeviceptr *pdptr, void *p, unsigned int Flags);
-CUresult CUDAAPI cuMemHostGetFlags(unsigned int *pFlags, void *p);
-CUresult CUDAAPI cuMemAllocManaged(CUdeviceptr *dptr, size_t bytesize, unsigned int flags);
-CUresult CUDAAPI cuDeviceGetByPCIBusId(CUdevice *dev, const char *pciBusId);
-CUresult CUDAAPI cuDeviceGetPCIBusId(char *pciBusId, int len, CUdevice dev);
-CUresult CUDAAPI cuIpcGetEventHandle(CUipcEventHandle *pHandle, CUevent event);
-CUresult CUDAAPI cuIpcOpenEventHandle(CUevent *phEvent, CUipcEventHandle handle);
-CUresult CUDAAPI cuIpcGetMemHandle(CUipcMemHandle *pHandle, CUdeviceptr dptr);
-CUresult CUDAAPI cuIpcOpenMemHandle(CUdeviceptr *pdptr, CUipcMemHandle handle, unsigned int Flags);
-CUresult CUDAAPI cuIpcCloseMemHandle(CUdeviceptr dptr);
-CUresult CUDAAPI cuMemHostRegister(void *p, size_t bytesize, unsigned int Flags);
-CUresult CUDAAPI cuMemHostUnregister(void *p);
-CUresult CUDAAPI cuMemcpy(CUdeviceptr dst, CUdeviceptr src, size_t ByteCount);
-CUresult CUDAAPI cuMemcpyPeer(CUdeviceptr dstDevice, CUcontext dstContext, CUdeviceptr srcDevice, CUcontext srcContext, size_t ByteCount);
-CUresult CUDAAPI cuMemcpyHtoD(CUdeviceptr dstDevice, const void *srcHost, size_t ByteCount);
-CUresult CUDAAPI cuMemcpyDtoH(void *dstHost, CUdeviceptr srcDevice, size_t ByteCount);
-CUresult CUDAAPI cuMemcpyDtoD(CUdeviceptr dstDevice, CUdeviceptr srcDevice, size_t ByteCount);
-CUresult CUDAAPI cuMemcpyDtoA(CUarray dstArray, size_t dstOffset, CUdeviceptr srcDevice, size_t ByteCount);
-CUresult CUDAAPI cuMemcpyAtoD(CUdeviceptr dstDevice, CUarray srcArray, size_t srcOffset, size_t ByteCount);
-CUresult CUDAAPI cuMemcpyHtoA(CUarray dstArray, size_t dstOffset, const void *srcHost, size_t ByteCount);
-CUresult CUDAAPI cuMemcpyAtoH(void *dstHost, CUarray srcArray, size_t srcOffset, size_t ByteCount);
-CUresult CUDAAPI cuMemcpyAtoA(CUarray dstArray, size_t dstOffset, CUarray srcArray, size_t srcOffset, size_t ByteCount);
-CUresult CUDAAPI cuMemcpy2D(const CUDA_MEMCPY2D *pCopy);
-CUresult CUDAAPI cuMemcpy2DUnaligned(const CUDA_MEMCPY2D *pCopy);
-CUresult CUDAAPI cuMemcpy3D(const CUDA_MEMCPY3D *pCopy);
-CUresult CUDAAPI cuMemcpy3DPeer(const CUDA_MEMCPY3D_PEER *pCopy);
-CUresult CUDAAPI cuMemcpyAsync(CUdeviceptr dst, CUdeviceptr src, size_t ByteCount, CUstream hStream);
-CUresult CUDAAPI cuMemcpyPeerAsync(CUdeviceptr dstDevice, CUcontext dstContext, CUdeviceptr srcDevice, CUcontext srcContext, size_t ByteCount, CUstream hStream);
-CUresult CUDAAPI cuMemcpyHtoDAsync(CUdeviceptr dstDevice, const void *srcHost, size_t ByteCount, CUstream hStream);
-CUresult CUDAAPI cuMemcpyDtoHAsync(void *dstHost, CUdeviceptr srcDevice, size_t ByteCount, CUstream hStream);
-CUresult CUDAAPI cuMemcpyDtoDAsync(CUdeviceptr dstDevice, CUdeviceptr srcDevice, size_t ByteCount, CUstream hStream);
-CUresult CUDAAPI cuMemcpyHtoAAsync(CUarray dstArray, size_t dstOffset, const void *srcHost, size_t ByteCount, CUstream hStream);
-CUresult CUDAAPI cuMemcpyAtoHAsync(void *dstHost, CUarray srcArray, size_t srcOffset, size_t ByteCount, CUstream hStream);
-CUresult CUDAAPI cuMemcpy2DAsync(const CUDA_MEMCPY2D *pCopy, CUstream hStream);
-CUresult CUDAAPI cuMemcpy3DAsync(const CUDA_MEMCPY3D *pCopy, CUstream hStream);
-CUresult CUDAAPI cuMemcpy3DPeerAsync(const CUDA_MEMCPY3D_PEER *pCopy, CUstream hStream);
-CUresult CUDAAPI cuMemsetD8(CUdeviceptr dstDevice, unsigned char uc, size_t N);
-CUresult CUDAAPI cuMemsetD16(CUdeviceptr dstDevice, unsigned short us, size_t N);
-CUresult CUDAAPI cuMemsetD32(CUdeviceptr dstDevice, unsigned int ui, size_t N);
-CUresult CUDAAPI cuMemsetD2D8(CUdeviceptr dstDevice, size_t dstPitch, unsigned char uc, size_t Width, size_t Height);
-CUresult CUDAAPI cuMemsetD2D16(CUdeviceptr dstDevice, size_t dstPitch, unsigned short us, size_t Width, size_t Height);
-CUresult CUDAAPI cuMemsetD2D32(CUdeviceptr dstDevice, size_t dstPitch, unsigned int ui, size_t Width, size_t Height);
-CUresult CUDAAPI cuMemsetD8Async(CUdeviceptr dstDevice, unsigned char uc, size_t N, CUstream hStream);
-CUresult CUDAAPI cuMemsetD16Async(CUdeviceptr dstDevice, unsigned short us, size_t N, CUstream hStream);
-CUresult CUDAAPI cuMemsetD32Async(CUdeviceptr dstDevice, unsigned int ui, size_t N, CUstream hStream);
-CUresult CUDAAPI cuMemsetD2D8Async(CUdeviceptr dstDevice, size_t dstPitch, unsigned char uc, size_t Width, size_t Height, CUstream hStream);
-CUresult CUDAAPI cuMemsetD2D16Async(CUdeviceptr dstDevice, size_t dstPitch, unsigned short us, size_t Width, size_t Height, CUstream hStream);
-CUresult CUDAAPI cuMemsetD2D32Async(CUdeviceptr dstDevice, size_t dstPitch, unsigned int ui, size_t Width, size_t Height, CUstream hStream);
-CUresult CUDAAPI cuArrayCreate(CUarray *pHandle, const CUDA_ARRAY_DESCRIPTOR *pAllocateArray);
-CUresult CUDAAPI cuArrayGetDescriptor(CUDA_ARRAY_DESCRIPTOR *pArrayDescriptor, CUarray hArray);
-CUresult CUDAAPI cuArrayGetSparseProperties(CUDA_ARRAY_SPARSE_PROPERTIES *sparseProperties, CUarray array);
-CUresult CUDAAPI cuMipmappedArrayGetSparseProperties(CUDA_ARRAY_SPARSE_PROPERTIES *sparseProperties, CUmipmappedArray mipmap);
-CUresult CUDAAPI cuArrayGetPlane(CUarray *pPlaneArray, CUarray hArray, unsigned int planeIdx);
-CUresult CUDAAPI cuArrayDestroy(CUarray hArray);
-CUresult CUDAAPI cuArray3DCreate(CUarray *pHandle, const CUDA_ARRAY3D_DESCRIPTOR *pAllocateArray);
-CUresult CUDAAPI cuArray3DGetDescriptor(CUDA_ARRAY3D_DESCRIPTOR *pArrayDescriptor, CUarray hArray);
-CUresult CUDAAPI cuMipmappedArrayCreate(CUmipmappedArray *pHandle, const CUDA_ARRAY3D_DESCRIPTOR *pMipmappedArrayDesc, unsigned int numMipmapLevels);
-CUresult CUDAAPI cuMipmappedArrayGetLevel(CUarray *pLevelArray, CUmipmappedArray hMipmappedArray, unsigned int level);
-CUresult CUDAAPI cuMipmappedArrayDestroy(CUmipmappedArray hMipmappedArray);
+CUresult CUDAAPI cuMemGetInfo(size_t *free, size_t *total) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemAlloc(CUdeviceptr *dptr, size_t bytesize) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemAllocPitch(CUdeviceptr *dptr, size_t *pPitch, size_t WidthInBytes, size_t Height, unsigned int ElementSizeBytes) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemFree(CUdeviceptr dptr) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemGetAddressRange(CUdeviceptr *pbase, size_t *psize, CUdeviceptr dptr) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemAllocHost(void **pp, size_t bytesize) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemFreeHost(void *p) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemHostAlloc(void **pp, size_t bytesize, unsigned int Flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemHostGetDevicePointer(CUdeviceptr *pdptr, void *p, unsigned int Flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemHostGetFlags(unsigned int *pFlags, void *p) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemAllocManaged(CUdeviceptr *dptr, size_t bytesize, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDeviceGetByPCIBusId(CUdevice *dev, const char *pciBusId) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDeviceGetPCIBusId(char *pciBusId, int len, CUdevice dev) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuIpcGetEventHandle(CUipcEventHandle *pHandle, CUevent event) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuIpcOpenEventHandle(CUevent *phEvent, CUipcEventHandle handle) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuIpcGetMemHandle(CUipcMemHandle *pHandle, CUdeviceptr dptr) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuIpcOpenMemHandle(CUdeviceptr *pdptr, CUipcMemHandle handle, unsigned int Flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuIpcCloseMemHandle(CUdeviceptr dptr) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemHostRegister(void *p, size_t bytesize, unsigned int Flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemHostUnregister(void *p) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpy(CUdeviceptr dst, CUdeviceptr src, size_t ByteCount) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpyPeer(CUdeviceptr dstDevice, CUcontext dstContext, CUdeviceptr srcDevice, CUcontext srcContext, size_t ByteCount) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpyHtoD(CUdeviceptr dstDevice, const void *srcHost, size_t ByteCount) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpyDtoH(void *dstHost, CUdeviceptr srcDevice, size_t ByteCount) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpyDtoD(CUdeviceptr dstDevice, CUdeviceptr srcDevice, size_t ByteCount) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpyDtoA(CUarray dstArray, size_t dstOffset, CUdeviceptr srcDevice, size_t ByteCount) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpyAtoD(CUdeviceptr dstDevice, CUarray srcArray, size_t srcOffset, size_t ByteCount) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpyHtoA(CUarray dstArray, size_t dstOffset, const void *srcHost, size_t ByteCount) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpyAtoH(void *dstHost, CUarray srcArray, size_t srcOffset, size_t ByteCount) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpyAtoA(CUarray dstArray, size_t dstOffset, CUarray srcArray, size_t srcOffset, size_t ByteCount) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpy2D(const CUDA_MEMCPY2D *pCopy) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpy2DUnaligned(const CUDA_MEMCPY2D *pCopy) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpy3D(const CUDA_MEMCPY3D *pCopy) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpy3DPeer(const CUDA_MEMCPY3D_PEER *pCopy) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpyAsync(CUdeviceptr dst, CUdeviceptr src, size_t ByteCount, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpyPeerAsync(CUdeviceptr dstDevice, CUcontext dstContext, CUdeviceptr srcDevice, CUcontext srcContext, size_t ByteCount, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpyHtoDAsync(CUdeviceptr dstDevice, const void *srcHost, size_t ByteCount, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpyDtoHAsync(void *dstHost, CUdeviceptr srcDevice, size_t ByteCount, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpyDtoDAsync(CUdeviceptr dstDevice, CUdeviceptr srcDevice, size_t ByteCount, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpyHtoAAsync(CUarray dstArray, size_t dstOffset, const void *srcHost, size_t ByteCount, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpyAtoHAsync(void *dstHost, CUarray srcArray, size_t srcOffset, size_t ByteCount, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpy2DAsync(const CUDA_MEMCPY2D *pCopy, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpy3DAsync(const CUDA_MEMCPY3D *pCopy, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemcpy3DPeerAsync(const CUDA_MEMCPY3D_PEER *pCopy, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemsetD8(CUdeviceptr dstDevice, unsigned char uc, size_t N) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemsetD16(CUdeviceptr dstDevice, unsigned short us, size_t N) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemsetD32(CUdeviceptr dstDevice, unsigned int ui, size_t N) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemsetD2D8(CUdeviceptr dstDevice, size_t dstPitch, unsigned char uc, size_t Width, size_t Height) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemsetD2D16(CUdeviceptr dstDevice, size_t dstPitch, unsigned short us, size_t Width, size_t Height) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemsetD2D32(CUdeviceptr dstDevice, size_t dstPitch, unsigned int ui, size_t Width, size_t Height) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemsetD8Async(CUdeviceptr dstDevice, unsigned char uc, size_t N, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemsetD16Async(CUdeviceptr dstDevice, unsigned short us, size_t N, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemsetD32Async(CUdeviceptr dstDevice, unsigned int ui, size_t N, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemsetD2D8Async(CUdeviceptr dstDevice, size_t dstPitch, unsigned char uc, size_t Width, size_t Height, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemsetD2D16Async(CUdeviceptr dstDevice, size_t dstPitch, unsigned short us, size_t Width, size_t Height, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemsetD2D32Async(CUdeviceptr dstDevice, size_t dstPitch, unsigned int ui, size_t Width, size_t Height, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuArrayCreate(CUarray *pHandle, const CUDA_ARRAY_DESCRIPTOR *pAllocateArray) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuArrayGetDescriptor(CUDA_ARRAY_DESCRIPTOR *pArrayDescriptor, CUarray hArray) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuArrayGetSparseProperties(CUDA_ARRAY_SPARSE_PROPERTIES *sparseProperties, CUarray array) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMipmappedArrayGetSparseProperties(CUDA_ARRAY_SPARSE_PROPERTIES *sparseProperties, CUmipmappedArray mipmap) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuArrayGetPlane(CUarray *pPlaneArray, CUarray hArray, unsigned int planeIdx) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuArrayDestroy(CUarray hArray) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuArray3DCreate(CUarray *pHandle, const CUDA_ARRAY3D_DESCRIPTOR *pAllocateArray) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuArray3DGetDescriptor(CUDA_ARRAY3D_DESCRIPTOR *pArrayDescriptor, CUarray hArray) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMipmappedArrayCreate(CUmipmappedArray *pHandle, const CUDA_ARRAY3D_DESCRIPTOR *pMipmappedArrayDesc, unsigned int numMipmapLevels) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMipmappedArrayGetLevel(CUarray *pLevelArray, CUmipmappedArray hMipmappedArray, unsigned int level) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMipmappedArrayDestroy(CUmipmappedArray hMipmappedArray) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_MEM */
 
 /**
@@ -359,20 +361,20 @@ CUresult CUDAAPI cuMipmappedArrayDestroy(CUmipmappedArray hMipmappedArray);
  * @{
  */
 
-CUresult CUDAAPI cuMemAddressReserve(CUdeviceptr *ptr, size_t size, size_t alignment, CUdeviceptr addr, unsigned long long flags);
-CUresult CUDAAPI cuMemAddressFree(CUdeviceptr ptr, size_t size);
-CUresult CUDAAPI cuMemCreate(CUmemGenericAllocationHandle *handle, size_t size, const CUmemAllocationProp *prop, unsigned long long flags);
-CUresult CUDAAPI cuMemRelease(CUmemGenericAllocationHandle handle);
-CUresult CUDAAPI cuMemMap(CUdeviceptr ptr, size_t size, size_t offset, CUmemGenericAllocationHandle handle, unsigned long long flags);
-CUresult CUDAAPI cuMemMapArrayAsync(CUarrayMapInfo  *mapInfoList, unsigned int count, CUstream hStream);
-CUresult CUDAAPI cuMemUnmap(CUdeviceptr ptr, size_t size);
-CUresult CUDAAPI cuMemSetAccess(CUdeviceptr ptr, size_t size, const CUmemAccessDesc *desc, size_t count);
-CUresult CUDAAPI cuMemGetAccess(unsigned long long *flags, const CUmemLocation *location, CUdeviceptr ptr);
-CUresult CUDAAPI cuMemExportToShareableHandle(void *shareableHandle, CUmemGenericAllocationHandle handle, CUmemAllocationHandleType handleType, unsigned long long flags);
-CUresult CUDAAPI cuMemImportFromShareableHandle(CUmemGenericAllocationHandle *handle, void *osHandle, CUmemAllocationHandleType shHandleType);
-CUresult CUDAAPI cuMemGetAllocationGranularity(size_t *granularity, const CUmemAllocationProp *prop, CUmemAllocationGranularity_flags option);
-CUresult CUDAAPI cuMemGetAllocationPropertiesFromHandle(CUmemAllocationProp *prop, CUmemGenericAllocationHandle handle);
-CUresult CUDAAPI cuMemRetainAllocationHandle(CUmemGenericAllocationHandle *handle, void *addr);
+CUresult CUDAAPI cuMemAddressReserve(CUdeviceptr *ptr, size_t size, size_t alignment, CUdeviceptr addr, unsigned long long flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemAddressFree(CUdeviceptr ptr, size_t size) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemCreate(CUmemGenericAllocationHandle *handle, size_t size, const CUmemAllocationProp *prop, unsigned long long flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemRelease(CUmemGenericAllocationHandle handle) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemMap(CUdeviceptr ptr, size_t size, size_t offset, CUmemGenericAllocationHandle handle, unsigned long long flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemMapArrayAsync(CUarrayMapInfo  *mapInfoList, unsigned int count, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemUnmap(CUdeviceptr ptr, size_t size) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemSetAccess(CUdeviceptr ptr, size_t size, const CUmemAccessDesc *desc, size_t count) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemGetAccess(unsigned long long *flags, const CUmemLocation *location, CUdeviceptr ptr) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemExportToShareableHandle(void *shareableHandle, CUmemGenericAllocationHandle handle, CUmemAllocationHandleType handleType, unsigned long long flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemImportFromShareableHandle(CUmemGenericAllocationHandle *handle, void *osHandle, CUmemAllocationHandleType shHandleType) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemGetAllocationGranularity(size_t *granularity, const CUmemAllocationProp *prop, CUmemAllocationGranularity_flags option) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemGetAllocationPropertiesFromHandle(CUmemAllocationProp *prop, CUmemGenericAllocationHandle handle) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemRetainAllocationHandle(CUmemGenericAllocationHandle *handle, void *addr) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_VA */
 
 /**
@@ -387,24 +389,24 @@ CUresult CUDAAPI cuMemRetainAllocationHandle(CUmemGenericAllocationHandle *handl
  *
  * @{
  */
-CUresult CUDAAPI cuMemFreeAsync(CUdeviceptr dptr, CUstream hStream);
-CUresult CUDAAPI cuMemAllocAsync(CUdeviceptr *dptr, size_t bytesize, CUstream hStream);
-CUresult CUDAAPI cuMemPoolTrimTo(CUmemoryPool pool, size_t minBytesToKeep);
-CUresult CUDAAPI cuMemPoolSetAttribute(CUmemoryPool pool, CUmemPool_attribute attr, void *value);
-CUresult CUDAAPI cuMemPoolGetAttribute(CUmemoryPool pool, CUmemPool_attribute attr, void *value);
-CUresult CUDAAPI cuMemPoolSetAccess(CUmemoryPool pool, const CUmemAccessDesc *map, size_t count);
-CUresult CUDAAPI cuMemPoolGetAccess(CUmemAccess_flags *flags, CUmemoryPool memPool, CUmemLocation *location);
-CUresult CUDAAPI cuMemPoolCreate(CUmemoryPool *pool, const CUmemPoolProps *poolProps);
-CUresult CUDAAPI cuMemPoolDestroy(CUmemoryPool pool);
-CUresult CUDAAPI cuMemAllocFromPoolAsync(CUdeviceptr *dptr, size_t bytesize, CUmemoryPool pool, CUstream hStream);
-CUresult CUDAAPI cuMemPoolExportToShareableHandle(void *handle_out, CUmemoryPool pool, CUmemAllocationHandleType handleType, unsigned long long flags);
+CUresult CUDAAPI cuMemFreeAsync(CUdeviceptr dptr, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemAllocAsync(CUdeviceptr *dptr, size_t bytesize, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemPoolTrimTo(CUmemoryPool pool, size_t minBytesToKeep) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemPoolSetAttribute(CUmemoryPool pool, CUmemPool_attribute attr, void *value) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemPoolGetAttribute(CUmemoryPool pool, CUmemPool_attribute attr, void *value) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemPoolSetAccess(CUmemoryPool pool, const CUmemAccessDesc *map, size_t count) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemPoolGetAccess(CUmemAccess_flags *flags, CUmemoryPool memPool, CUmemLocation *location) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemPoolCreate(CUmemoryPool *pool, const CUmemPoolProps *poolProps) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemPoolDestroy(CUmemoryPool pool) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemAllocFromPoolAsync(CUdeviceptr *dptr, size_t bytesize, CUmemoryPool pool, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemPoolExportToShareableHandle(void *handle_out, CUmemoryPool pool, CUmemAllocationHandleType handleType, unsigned long long flags) CUDADRV_NOT_IMPLEMENTED;
 CUresult CUDAAPI cuMemPoolImportFromShareableHandle(
         CUmemoryPool *pool_out,
         void *handle,
         CUmemAllocationHandleType handleType,
-        unsigned long long flags);
-CUresult CUDAAPI cuMemPoolExportPointer(CUmemPoolPtrExportData *shareData_out, CUdeviceptr ptr);
-CUresult CUDAAPI cuMemPoolImportPointer(CUdeviceptr *ptr_out, CUmemoryPool pool, CUmemPoolPtrExportData *shareData);
+        unsigned long long flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemPoolExportPointer(CUmemPoolPtrExportData *shareData_out, CUdeviceptr ptr) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemPoolImportPointer(CUdeviceptr *ptr_out, CUmemoryPool pool, CUmemPoolPtrExportData *shareData) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_MALLOC_ASYNC */
 
 /**
@@ -418,13 +420,13 @@ CUresult CUDAAPI cuMemPoolImportPointer(CUdeviceptr *ptr_out, CUmemoryPool pool,
  *
  * @{
  */
-CUresult CUDAAPI cuPointerGetAttribute(void *data, CUpointer_attribute attribute, CUdeviceptr ptr);
-CUresult CUDAAPI cuMemPrefetchAsync(CUdeviceptr devPtr, size_t count, CUdevice dstDevice, CUstream hStream);
-CUresult CUDAAPI cuMemAdvise(CUdeviceptr devPtr, size_t count, CUmem_advise advice, CUdevice device);
-CUresult CUDAAPI cuMemRangeGetAttribute(void *data, size_t dataSize, CUmem_range_attribute attribute, CUdeviceptr devPtr, size_t count);
-CUresult CUDAAPI cuMemRangeGetAttributes(void **data, size_t *dataSizes, CUmem_range_attribute *attributes, size_t numAttributes, CUdeviceptr devPtr, size_t count);
-CUresult CUDAAPI cuPointerSetAttribute(const void *value, CUpointer_attribute attribute, CUdeviceptr ptr);
-CUresult CUDAAPI cuPointerGetAttributes(unsigned int numAttributes, CUpointer_attribute *attributes, void **data, CUdeviceptr ptr);
+CUresult CUDAAPI cuPointerGetAttribute(void *data, CUpointer_attribute attribute, CUdeviceptr ptr) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemPrefetchAsync(CUdeviceptr devPtr, size_t count, CUdevice dstDevice, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemAdvise(CUdeviceptr devPtr, size_t count, CUmem_advise advice, CUdevice device) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemRangeGetAttribute(void *data, size_t dataSize, CUmem_range_attribute attribute, CUdeviceptr devPtr, size_t count) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuMemRangeGetAttributes(void **data, size_t *dataSizes, CUmem_range_attribute *attributes, size_t numAttributes, CUdeviceptr devPtr, size_t count) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuPointerSetAttribute(const void *value, CUpointer_attribute attribute, CUdeviceptr ptr) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuPointerGetAttributes(unsigned int numAttributes, CUpointer_attribute *attributes, void **data, CUdeviceptr ptr) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_UNIFIED */
 
 /**
@@ -438,30 +440,30 @@ CUresult CUDAAPI cuPointerGetAttributes(unsigned int numAttributes, CUpointer_at
  *
  * @{
  */
-CUresult CUDAAPI cuStreamCreate(CUstream *phStream, unsigned int Flags);
-CUresult CUDAAPI cuStreamCreateWithPriority(CUstream *phStream, unsigned int flags, int priority);
-CUresult CUDAAPI cuStreamGetPriority(CUstream hStream, int *priority);
-CUresult CUDAAPI cuStreamGetFlags(CUstream hStream, unsigned int *flags);
-CUresult CUDAAPI cuStreamGetCtx(CUstream hStream, CUcontext *pctx);
-CUresult CUDAAPI cuStreamWaitEvent(CUstream hStream, CUevent hEvent, unsigned int Flags);
-CUresult CUDAAPI cuStreamAddCallback(CUstream hStream, CUstreamCallback callback, void *userData, unsigned int flags);
-CUresult CUDAAPI cuStreamBeginCapture(CUstream hStream, CUstreamCaptureMode mode);
-CUresult CUDAAPI cuThreadExchangeStreamCaptureMode(CUstreamCaptureMode *mode);
-CUresult CUDAAPI cuStreamEndCapture(CUstream hStream, CUgraph *phGraph);
-CUresult CUDAAPI cuStreamIsCapturing(CUstream hStream, CUstreamCaptureStatus *captureStatus);
-CUresult CUDAAPI cuStreamGetCaptureInfo(CUstream hStream, CUstreamCaptureStatus *captureStatus_out, cuuint64_t *id_out);
+CUresult CUDAAPI cuStreamCreate(CUstream *phStream, unsigned int Flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamCreateWithPriority(CUstream *phStream, unsigned int flags, int priority) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamGetPriority(CUstream hStream, int *priority) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamGetFlags(CUstream hStream, unsigned int *flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamGetCtx(CUstream hStream, CUcontext *pctx) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamWaitEvent(CUstream hStream, CUevent hEvent, unsigned int Flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamAddCallback(CUstream hStream, CUstreamCallback callback, void *userData, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamBeginCapture(CUstream hStream, CUstreamCaptureMode mode) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuThreadExchangeStreamCaptureMode(CUstreamCaptureMode *mode) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamEndCapture(CUstream hStream, CUgraph *phGraph) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamIsCapturing(CUstream hStream, CUstreamCaptureStatus *captureStatus) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamGetCaptureInfo(CUstream hStream, CUstreamCaptureStatus *captureStatus_out, cuuint64_t *id_out) CUDADRV_NOT_IMPLEMENTED;
 CUresult CUDAAPI cuStreamGetCaptureInfo_v2(CUstream hStream, CUstreamCaptureStatus *captureStatus_out,
-        cuuint64_t *id_out, CUgraph *graph_out, const CUgraphNode **dependencies_out, size_t *numDependencies_out);
-CUresult CUDAAPI cuStreamUpdateCaptureDependencies(CUstream hStream, CUgraphNode *dependencies, size_t numDependencies, unsigned int flags);
-CUresult CUDAAPI cuStreamAttachMemAsync(CUstream hStream, CUdeviceptr dptr, size_t length, unsigned int flags);
-CUresult CUDAAPI cuStreamQuery(CUstream hStream);
-CUresult CUDAAPI cuStreamSynchronize(CUstream hStream);
-CUresult CUDAAPI cuStreamDestroy(CUstream hStream);
-CUresult CUDAAPI cuStreamCopyAttributes(CUstream dst, CUstream src);
+        cuuint64_t *id_out, CUgraph *graph_out, const CUgraphNode **dependencies_out, size_t *numDependencies_out) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamUpdateCaptureDependencies(CUstream hStream, CUgraphNode *dependencies, size_t numDependencies, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamAttachMemAsync(CUstream hStream, CUdeviceptr dptr, size_t length, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamQuery(CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamSynchronize(CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamDestroy(CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamCopyAttributes(CUstream dst, CUstream src) CUDADRV_NOT_IMPLEMENTED;
 CUresult CUDAAPI cuStreamGetAttribute(CUstream hStream, CUstreamAttrID attr,
-                                      CUstreamAttrValue *value_out);
+                                      CUstreamAttrValue *value_out) CUDADRV_NOT_IMPLEMENTED;
 CUresult CUDAAPI cuStreamSetAttribute(CUstream hStream, CUstreamAttrID attr,
-                                      const CUstreamAttrValue *value);
+                                      const CUstreamAttrValue *value) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_STREAM */
 
 
@@ -476,13 +478,13 @@ CUresult CUDAAPI cuStreamSetAttribute(CUstream hStream, CUstreamAttrID attr,
  *
  * @{
  */
-CUresult CUDAAPI cuEventCreate(CUevent *phEvent, unsigned int Flags);
-CUresult CUDAAPI cuEventRecord(CUevent hEvent, CUstream hStream);
-CUresult CUDAAPI cuEventRecordWithFlags(CUevent hEvent, CUstream hStream, unsigned int flags);
-CUresult CUDAAPI cuEventQuery(CUevent hEvent);
-CUresult CUDAAPI cuEventSynchronize(CUevent hEvent);
-CUresult CUDAAPI cuEventDestroy(CUevent hEvent);
-CUresult CUDAAPI cuEventElapsedTime(float *pMilliseconds, CUevent hStart, CUevent hEnd);
+CUresult CUDAAPI cuEventCreate(CUevent *phEvent, unsigned int Flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuEventRecord(CUevent hEvent, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuEventRecordWithFlags(CUevent hEvent, CUstream hStream, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuEventQuery(CUevent hEvent) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuEventSynchronize(CUevent hEvent) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuEventDestroy(CUevent hEvent) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuEventElapsedTime(float *pMilliseconds, CUevent hStart, CUevent hEnd) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_EVENT */
 
 /**
@@ -497,14 +499,14 @@ CUresult CUDAAPI cuEventElapsedTime(float *pMilliseconds, CUevent hStart, CUeven
  * @{
  */
 
-CUresult CUDAAPI cuImportExternalMemory(CUexternalMemory *extMem_out, const CUDA_EXTERNAL_MEMORY_HANDLE_DESC *memHandleDesc);
-CUresult CUDAAPI cuExternalMemoryGetMappedBuffer(CUdeviceptr *devPtr, CUexternalMemory extMem, const CUDA_EXTERNAL_MEMORY_BUFFER_DESC *bufferDesc);
-CUresult CUDAAPI cuExternalMemoryGetMappedMipmappedArray(CUmipmappedArray *mipmap, CUexternalMemory extMem, const CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC *mipmapDesc);
-CUresult CUDAAPI cuDestroyExternalMemory(CUexternalMemory extMem);
-CUresult CUDAAPI cuImportExternalSemaphore(CUexternalSemaphore *extSem_out, const CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC *semHandleDesc);
-CUresult CUDAAPI cuSignalExternalSemaphoresAsync(const CUexternalSemaphore *extSemArray, const CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS *paramsArray, unsigned int numExtSems, CUstream stream);
-CUresult CUDAAPI cuWaitExternalSemaphoresAsync(const CUexternalSemaphore *extSemArray, const CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS *paramsArray, unsigned int numExtSems, CUstream stream);
-CUresult CUDAAPI cuDestroyExternalSemaphore(CUexternalSemaphore extSem);
+CUresult CUDAAPI cuImportExternalMemory(CUexternalMemory *extMem_out, const CUDA_EXTERNAL_MEMORY_HANDLE_DESC *memHandleDesc) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuExternalMemoryGetMappedBuffer(CUdeviceptr *devPtr, CUexternalMemory extMem, const CUDA_EXTERNAL_MEMORY_BUFFER_DESC *bufferDesc) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuExternalMemoryGetMappedMipmappedArray(CUmipmappedArray *mipmap, CUexternalMemory extMem, const CUDA_EXTERNAL_MEMORY_MIPMAPPED_ARRAY_DESC *mipmapDesc) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDestroyExternalMemory(CUexternalMemory extMem) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuImportExternalSemaphore(CUexternalSemaphore *extSem_out, const CUDA_EXTERNAL_SEMAPHORE_HANDLE_DESC *semHandleDesc) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuSignalExternalSemaphoresAsync(const CUexternalSemaphore *extSemArray, const CUDA_EXTERNAL_SEMAPHORE_SIGNAL_PARAMS *paramsArray, unsigned int numExtSems, CUstream stream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuWaitExternalSemaphoresAsync(const CUexternalSemaphore *extSemArray, const CUDA_EXTERNAL_SEMAPHORE_WAIT_PARAMS *paramsArray, unsigned int numExtSems, CUstream stream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDestroyExternalSemaphore(CUexternalSemaphore extSem) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_EXTRES_INTEROP */
 
 /**
@@ -549,11 +551,11 @@ CUresult CUDAAPI cuDestroyExternalSemaphore(CUexternalSemaphore extSem);
  *
  * @{
  */
-CUresult CUDAAPI cuStreamWaitValue32(CUstream stream, CUdeviceptr addr, cuuint32_t value, unsigned int flags);
-CUresult CUDAAPI cuStreamWaitValue64(CUstream stream, CUdeviceptr addr, cuuint64_t value, unsigned int flags);
-CUresult CUDAAPI cuStreamWriteValue32(CUstream stream, CUdeviceptr addr, cuuint32_t value, unsigned int flags);
-CUresult CUDAAPI cuStreamWriteValue64(CUstream stream, CUdeviceptr addr, cuuint64_t value, unsigned int flags);
-CUresult CUDAAPI cuStreamBatchMemOp(CUstream stream, unsigned int count, CUstreamBatchMemOpParams *paramArray, unsigned int flags);
+CUresult CUDAAPI cuStreamWaitValue32(CUstream stream, CUdeviceptr addr, cuuint32_t value, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamWaitValue64(CUstream stream, CUdeviceptr addr, cuuint64_t value, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamWriteValue32(CUstream stream, CUdeviceptr addr, cuuint32_t value, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamWriteValue64(CUstream stream, CUdeviceptr addr, cuuint64_t value, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuStreamBatchMemOp(CUstream stream, unsigned int count, CUstreamBatchMemOpParams *paramArray, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_MEMOP */
 
 /**
@@ -567,11 +569,11 @@ CUresult CUDAAPI cuStreamBatchMemOp(CUstream stream, unsigned int count, CUstrea
  *
  * @{
  */
-CUresult CUDAAPI cuFuncGetAttribute(int *pi, CUfunction_attribute attrib, CUfunction hfunc);
-CUresult CUDAAPI cuFuncSetAttribute(CUfunction hfunc, CUfunction_attribute attrib, int value);
-CUresult CUDAAPI cuFuncSetCacheConfig(CUfunction hfunc, CUfunc_cache config);
-CUresult CUDAAPI cuFuncSetSharedMemConfig(CUfunction hfunc, CUsharedconfig config);
-CUresult CUDAAPI cuFuncGetModule(CUmodule *hmod, CUfunction hfunc);
+CUresult CUDAAPI cuFuncGetAttribute(int *pi, CUfunction_attribute attrib, CUfunction hfunc) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuFuncSetAttribute(CUfunction hfunc, CUfunction_attribute attrib, int value) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuFuncSetCacheConfig(CUfunction hfunc, CUfunc_cache config) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuFuncSetSharedMemConfig(CUfunction hfunc, CUsharedconfig config) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuFuncGetModule(CUmodule *hmod, CUfunction hfunc) CUDADRV_NOT_IMPLEMENTED;
 CUresult CUDAAPI cuLaunchKernel(CUfunction f,
                                 unsigned int gridDimX,
                                 unsigned int gridDimY,
@@ -582,7 +584,7 @@ CUresult CUDAAPI cuLaunchKernel(CUfunction f,
                                 unsigned int sharedMemBytes,
                                 CUstream hStream,
                                 void **kernelParams,
-                                void **extra);
+                                void **extra) CUDADRV_NOT_IMPLEMENTED;
 CUresult CUDAAPI cuLaunchCooperativeKernel(CUfunction f,
                                 unsigned int gridDimX,
                                 unsigned int gridDimY,
@@ -592,9 +594,9 @@ CUresult CUDAAPI cuLaunchCooperativeKernel(CUfunction f,
                                 unsigned int blockDimZ,
                                 unsigned int sharedMemBytes,
                                 CUstream hStream,
-                                void **kernelParams);
-__CUDA_DEPRECATED CUresult CUDAAPI cuLaunchCooperativeKernelMultiDevice(CUDA_LAUNCH_PARAMS *launchParamsList, unsigned int numDevices, unsigned int flags);
-CUresult CUDAAPI cuLaunchHostFunc(CUstream hStream, CUhostFn fn, void *userData);
+                                void **kernelParams) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuLaunchCooperativeKernelMultiDevice(CUDA_LAUNCH_PARAMS *launchParamsList, unsigned int numDevices, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuLaunchHostFunc(CUstream hStream, CUhostFn fn, void *userData) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_EXEC */
 
 /**
@@ -608,16 +610,16 @@ CUresult CUDAAPI cuLaunchHostFunc(CUstream hStream, CUhostFn fn, void *userData)
  *
  * @{
  */
-__CUDA_DEPRECATED CUresult CUDAAPI cuFuncSetBlockShape(CUfunction hfunc, int x, int y, int z);
-__CUDA_DEPRECATED CUresult CUDAAPI cuFuncSetSharedSize(CUfunction hfunc, unsigned int bytes);
-__CUDA_DEPRECATED CUresult CUDAAPI cuParamSetSize(CUfunction hfunc, unsigned int numbytes);
-__CUDA_DEPRECATED CUresult CUDAAPI cuParamSeti(CUfunction hfunc, int offset, unsigned int value);
-__CUDA_DEPRECATED CUresult CUDAAPI cuParamSetf(CUfunction hfunc, int offset, float value);
-__CUDA_DEPRECATED CUresult CUDAAPI cuParamSetv(CUfunction hfunc, int offset, void *ptr, unsigned int numbytes);
-__CUDA_DEPRECATED CUresult CUDAAPI cuLaunch(CUfunction f);
-__CUDA_DEPRECATED CUresult CUDAAPI cuLaunchGrid(CUfunction f, int grid_width, int grid_height);
-__CUDA_DEPRECATED CUresult CUDAAPI cuLaunchGridAsync(CUfunction f, int grid_width, int grid_height, CUstream hStream);
-__CUDA_DEPRECATED CUresult CUDAAPI cuParamSetTexRef(CUfunction hfunc, int texunit, CUtexref hTexRef);/** @} */ /* END CUDA_EXEC_DEPRECATED */
+__CUDA_DEPRECATED CUresult CUDAAPI cuFuncSetBlockShape(CUfunction hfunc, int x, int y, int z) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuFuncSetSharedSize(CUfunction hfunc, unsigned int bytes) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuParamSetSize(CUfunction hfunc, unsigned int numbytes) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuParamSeti(CUfunction hfunc, int offset, unsigned int value) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuParamSetf(CUfunction hfunc, int offset, float value) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuParamSetv(CUfunction hfunc, int offset, void *ptr, unsigned int numbytes) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuLaunch(CUfunction f) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuLaunchGrid(CUfunction f, int grid_width, int grid_height) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuLaunchGridAsync(CUfunction f, int grid_width, int grid_height, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuParamSetTexRef(CUfunction hfunc, int texunit, CUtexref hTexRef) CUDADRV_NOT_IMPLEMENTED;/** @} */ /* END CUDA_EXEC_DEPRECATED */
 
 /**
  * \defgroup CUDA_GRAPH Graph Management
@@ -630,80 +632,80 @@ __CUDA_DEPRECATED CUresult CUDAAPI cuParamSetTexRef(CUfunction hfunc, int texuni
  *
  * @{
  */
-CUresult CUDAAPI cuGraphCreate(CUgraph *phGraph, unsigned int flags);
-CUresult CUDAAPI cuGraphAddKernelNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, const CUDA_KERNEL_NODE_PARAMS *nodeParams);
-CUresult CUDAAPI cuGraphKernelNodeGetParams(CUgraphNode hNode, CUDA_KERNEL_NODE_PARAMS *nodeParams);
-CUresult CUDAAPI cuGraphKernelNodeSetParams(CUgraphNode hNode, const CUDA_KERNEL_NODE_PARAMS *nodeParams);
-CUresult CUDAAPI cuGraphAddMemcpyNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, const CUDA_MEMCPY3D *copyParams, CUcontext ctx);
-CUresult CUDAAPI cuGraphMemcpyNodeGetParams(CUgraphNode hNode, CUDA_MEMCPY3D *nodeParams);
-CUresult CUDAAPI cuGraphMemcpyNodeSetParams(CUgraphNode hNode, const CUDA_MEMCPY3D *nodeParams);
-CUresult CUDAAPI cuGraphAddMemsetNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, const CUDA_MEMSET_NODE_PARAMS *memsetParams, CUcontext ctx);
-CUresult CUDAAPI cuGraphMemsetNodeGetParams(CUgraphNode hNode, CUDA_MEMSET_NODE_PARAMS *nodeParams);
-CUresult CUDAAPI cuGraphMemsetNodeSetParams(CUgraphNode hNode, const CUDA_MEMSET_NODE_PARAMS *nodeParams);
-CUresult CUDAAPI cuGraphAddHostNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, const CUDA_HOST_NODE_PARAMS *nodeParams);
-CUresult CUDAAPI cuGraphHostNodeGetParams(CUgraphNode hNode, CUDA_HOST_NODE_PARAMS *nodeParams);
-CUresult CUDAAPI cuGraphHostNodeSetParams(CUgraphNode hNode, const CUDA_HOST_NODE_PARAMS *nodeParams);
-CUresult CUDAAPI cuGraphAddChildGraphNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, CUgraph childGraph);
-CUresult CUDAAPI cuGraphChildGraphNodeGetGraph(CUgraphNode hNode, CUgraph *phGraph);
-CUresult CUDAAPI cuGraphAddEmptyNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies);
-CUresult CUDAAPI cuGraphAddEventRecordNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, CUevent event);
- CUresult CUDAAPI cuGraphEventRecordNodeGetEvent(CUgraphNode hNode, CUevent *event_out);
-CUresult CUDAAPI cuGraphEventRecordNodeSetEvent(CUgraphNode hNode, CUevent event);
-CUresult CUDAAPI cuGraphAddEventWaitNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, CUevent event);
-CUresult CUDAAPI cuGraphEventWaitNodeGetEvent(CUgraphNode hNode, CUevent *event_out);
-CUresult CUDAAPI cuGraphEventWaitNodeSetEvent(CUgraphNode hNode, CUevent event);
-CUresult CUDAAPI cuGraphAddExternalSemaphoresSignalNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, const CUDA_EXT_SEM_SIGNAL_NODE_PARAMS *nodeParams);
-CUresult CUDAAPI cuGraphExternalSemaphoresSignalNodeGetParams(CUgraphNode hNode, CUDA_EXT_SEM_SIGNAL_NODE_PARAMS *params_out);
-CUresult CUDAAPI cuGraphExternalSemaphoresSignalNodeSetParams(CUgraphNode hNode, const CUDA_EXT_SEM_SIGNAL_NODE_PARAMS *nodeParams);
-CUresult CUDAAPI cuGraphAddExternalSemaphoresWaitNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, const CUDA_EXT_SEM_WAIT_NODE_PARAMS *nodeParams);
-CUresult CUDAAPI cuGraphExternalSemaphoresWaitNodeGetParams(CUgraphNode hNode, CUDA_EXT_SEM_WAIT_NODE_PARAMS *params_out);
-CUresult CUDAAPI cuGraphExternalSemaphoresWaitNodeSetParams(CUgraphNode hNode, const CUDA_EXT_SEM_WAIT_NODE_PARAMS *nodeParams);
-CUresult CUDAAPI cuGraphAddMemAllocNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, CUDA_MEM_ALLOC_NODE_PARAMS *nodeParams);
-CUresult CUDAAPI cuGraphMemAllocNodeGetParams(CUgraphNode hNode, CUDA_MEM_ALLOC_NODE_PARAMS *params_out);
-CUresult CUDAAPI cuGraphAddMemFreeNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, CUdeviceptr dptr);
-CUresult CUDAAPI cuGraphMemFreeNodeGetParams(CUgraphNode hNode, CUdeviceptr *dptr_out);
-CUresult CUDAAPI cuDeviceGraphMemTrim(CUdevice device);
-CUresult CUDAAPI cuDeviceGetGraphMemAttribute(CUdevice device, CUgraphMem_attribute attr, void* value);
-CUresult CUDAAPI cuDeviceSetGraphMemAttribute(CUdevice device, CUgraphMem_attribute attr, void* value);
-CUresult CUDAAPI cuGraphClone(CUgraph *phGraphClone, CUgraph originalGraph);
-CUresult CUDAAPI cuGraphNodeFindInClone(CUgraphNode *phNode, CUgraphNode hOriginalNode, CUgraph hClonedGraph);
-CUresult CUDAAPI cuGraphNodeGetType(CUgraphNode hNode, CUgraphNodeType *type);
-CUresult CUDAAPI cuGraphGetNodes(CUgraph hGraph, CUgraphNode *nodes, size_t *numNodes);
-CUresult CUDAAPI cuGraphGetRootNodes(CUgraph hGraph, CUgraphNode *rootNodes, size_t *numRootNodes);
-CUresult CUDAAPI cuGraphGetEdges(CUgraph hGraph, CUgraphNode *from, CUgraphNode *to, size_t *numEdges);
-CUresult CUDAAPI cuGraphNodeGetDependencies(CUgraphNode hNode, CUgraphNode *dependencies, size_t *numDependencies);
-CUresult CUDAAPI cuGraphNodeGetDependentNodes(CUgraphNode hNode, CUgraphNode *dependentNodes, size_t *numDependentNodes);
-CUresult CUDAAPI cuGraphAddDependencies(CUgraph hGraph, const CUgraphNode *from, const CUgraphNode *to, size_t numDependencies);
-CUresult CUDAAPI cuGraphRemoveDependencies(CUgraph hGraph, const CUgraphNode *from, const CUgraphNode *to, size_t numDependencies);
-CUresult CUDAAPI cuGraphDestroyNode(CUgraphNode hNode);
-CUresult CUDAAPI cuGraphInstantiate(CUgraphExec *phGraphExec, CUgraph hGraph, CUgraphNode *phErrorNode, char *logBuffer, size_t bufferSize);
-CUresult CUDAAPI cuGraphInstantiateWithFlags(CUgraphExec *phGraphExec, CUgraph hGraph, unsigned long long flags);
-CUresult CUDAAPI cuGraphExecKernelNodeSetParams(CUgraphExec hGraphExec, CUgraphNode hNode, const CUDA_KERNEL_NODE_PARAMS *nodeParams);
-CUresult CUDAAPI cuGraphExecMemcpyNodeSetParams(CUgraphExec hGraphExec, CUgraphNode hNode, const CUDA_MEMCPY3D *copyParams, CUcontext ctx);
-CUresult CUDAAPI cuGraphExecMemsetNodeSetParams(CUgraphExec hGraphExec, CUgraphNode hNode, const CUDA_MEMSET_NODE_PARAMS *memsetParams, CUcontext ctx);
-CUresult CUDAAPI cuGraphExecHostNodeSetParams(CUgraphExec hGraphExec, CUgraphNode hNode, const CUDA_HOST_NODE_PARAMS *nodeParams);
-CUresult CUDAAPI cuGraphExecChildGraphNodeSetParams(CUgraphExec hGraphExec, CUgraphNode hNode, CUgraph childGraph);
-CUresult CUDAAPI cuGraphExecEventRecordNodeSetEvent(CUgraphExec hGraphExec, CUgraphNode hNode, CUevent event);
-CUresult CUDAAPI cuGraphExecEventWaitNodeSetEvent(CUgraphExec hGraphExec, CUgraphNode hNode, CUevent event);
-CUresult CUDAAPI cuGraphExecExternalSemaphoresSignalNodeSetParams(CUgraphExec hGraphExec, CUgraphNode hNode, const CUDA_EXT_SEM_SIGNAL_NODE_PARAMS *nodeParams);
-CUresult CUDAAPI cuGraphExecExternalSemaphoresWaitNodeSetParams(CUgraphExec hGraphExec, CUgraphNode hNode, const CUDA_EXT_SEM_WAIT_NODE_PARAMS *nodeParams);
-CUresult CUDAAPI cuGraphUpload(CUgraphExec hGraphExec, CUstream hStream);
-CUresult CUDAAPI cuGraphLaunch(CUgraphExec hGraphExec, CUstream hStream);
-CUresult CUDAAPI cuGraphExecDestroy(CUgraphExec hGraphExec);
-CUresult CUDAAPI cuGraphDestroy(CUgraph hGraph);
-CUresult CUDAAPI cuGraphExecUpdate(CUgraphExec hGraphExec, CUgraph hGraph, CUgraphNode *hErrorNode_out, CUgraphExecUpdateResult *updateResult_out);
-CUresult CUDAAPI cuGraphKernelNodeCopyAttributes(CUgraphNode dst, CUgraphNode src);
+CUresult CUDAAPI cuGraphCreate(CUgraph *phGraph, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphAddKernelNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, const CUDA_KERNEL_NODE_PARAMS *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphKernelNodeGetParams(CUgraphNode hNode, CUDA_KERNEL_NODE_PARAMS *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphKernelNodeSetParams(CUgraphNode hNode, const CUDA_KERNEL_NODE_PARAMS *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphAddMemcpyNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, const CUDA_MEMCPY3D *copyParams, CUcontext ctx) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphMemcpyNodeGetParams(CUgraphNode hNode, CUDA_MEMCPY3D *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphMemcpyNodeSetParams(CUgraphNode hNode, const CUDA_MEMCPY3D *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphAddMemsetNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, const CUDA_MEMSET_NODE_PARAMS *memsetParams, CUcontext ctx) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphMemsetNodeGetParams(CUgraphNode hNode, CUDA_MEMSET_NODE_PARAMS *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphMemsetNodeSetParams(CUgraphNode hNode, const CUDA_MEMSET_NODE_PARAMS *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphAddHostNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, const CUDA_HOST_NODE_PARAMS *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphHostNodeGetParams(CUgraphNode hNode, CUDA_HOST_NODE_PARAMS *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphHostNodeSetParams(CUgraphNode hNode, const CUDA_HOST_NODE_PARAMS *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphAddChildGraphNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, CUgraph childGraph) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphChildGraphNodeGetGraph(CUgraphNode hNode, CUgraph *phGraph) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphAddEmptyNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphAddEventRecordNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, CUevent event) CUDADRV_NOT_IMPLEMENTED;
+ CUresult CUDAAPI cuGraphEventRecordNodeGetEvent(CUgraphNode hNode, CUevent *event_out) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphEventRecordNodeSetEvent(CUgraphNode hNode, CUevent event) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphAddEventWaitNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, CUevent event) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphEventWaitNodeGetEvent(CUgraphNode hNode, CUevent *event_out) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphEventWaitNodeSetEvent(CUgraphNode hNode, CUevent event) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphAddExternalSemaphoresSignalNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, const CUDA_EXT_SEM_SIGNAL_NODE_PARAMS *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphExternalSemaphoresSignalNodeGetParams(CUgraphNode hNode, CUDA_EXT_SEM_SIGNAL_NODE_PARAMS *params_out) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphExternalSemaphoresSignalNodeSetParams(CUgraphNode hNode, const CUDA_EXT_SEM_SIGNAL_NODE_PARAMS *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphAddExternalSemaphoresWaitNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, const CUDA_EXT_SEM_WAIT_NODE_PARAMS *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphExternalSemaphoresWaitNodeGetParams(CUgraphNode hNode, CUDA_EXT_SEM_WAIT_NODE_PARAMS *params_out) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphExternalSemaphoresWaitNodeSetParams(CUgraphNode hNode, const CUDA_EXT_SEM_WAIT_NODE_PARAMS *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphAddMemAllocNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, CUDA_MEM_ALLOC_NODE_PARAMS *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphMemAllocNodeGetParams(CUgraphNode hNode, CUDA_MEM_ALLOC_NODE_PARAMS *params_out) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphAddMemFreeNode(CUgraphNode *phGraphNode, CUgraph hGraph, const CUgraphNode *dependencies, size_t numDependencies, CUdeviceptr dptr) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphMemFreeNodeGetParams(CUgraphNode hNode, CUdeviceptr *dptr_out) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDeviceGraphMemTrim(CUdevice device) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDeviceGetGraphMemAttribute(CUdevice device, CUgraphMem_attribute attr, void* value) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDeviceSetGraphMemAttribute(CUdevice device, CUgraphMem_attribute attr, void* value) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphClone(CUgraph *phGraphClone, CUgraph originalGraph) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphNodeFindInClone(CUgraphNode *phNode, CUgraphNode hOriginalNode, CUgraph hClonedGraph) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphNodeGetType(CUgraphNode hNode, CUgraphNodeType *type) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphGetNodes(CUgraph hGraph, CUgraphNode *nodes, size_t *numNodes) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphGetRootNodes(CUgraph hGraph, CUgraphNode *rootNodes, size_t *numRootNodes) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphGetEdges(CUgraph hGraph, CUgraphNode *from, CUgraphNode *to, size_t *numEdges) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphNodeGetDependencies(CUgraphNode hNode, CUgraphNode *dependencies, size_t *numDependencies) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphNodeGetDependentNodes(CUgraphNode hNode, CUgraphNode *dependentNodes, size_t *numDependentNodes) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphAddDependencies(CUgraph hGraph, const CUgraphNode *from, const CUgraphNode *to, size_t numDependencies) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphRemoveDependencies(CUgraph hGraph, const CUgraphNode *from, const CUgraphNode *to, size_t numDependencies) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphDestroyNode(CUgraphNode hNode) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphInstantiate(CUgraphExec *phGraphExec, CUgraph hGraph, CUgraphNode *phErrorNode, char *logBuffer, size_t bufferSize) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphInstantiateWithFlags(CUgraphExec *phGraphExec, CUgraph hGraph, unsigned long long flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphExecKernelNodeSetParams(CUgraphExec hGraphExec, CUgraphNode hNode, const CUDA_KERNEL_NODE_PARAMS *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphExecMemcpyNodeSetParams(CUgraphExec hGraphExec, CUgraphNode hNode, const CUDA_MEMCPY3D *copyParams, CUcontext ctx) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphExecMemsetNodeSetParams(CUgraphExec hGraphExec, CUgraphNode hNode, const CUDA_MEMSET_NODE_PARAMS *memsetParams, CUcontext ctx) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphExecHostNodeSetParams(CUgraphExec hGraphExec, CUgraphNode hNode, const CUDA_HOST_NODE_PARAMS *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphExecChildGraphNodeSetParams(CUgraphExec hGraphExec, CUgraphNode hNode, CUgraph childGraph) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphExecEventRecordNodeSetEvent(CUgraphExec hGraphExec, CUgraphNode hNode, CUevent event) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphExecEventWaitNodeSetEvent(CUgraphExec hGraphExec, CUgraphNode hNode, CUevent event) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphExecExternalSemaphoresSignalNodeSetParams(CUgraphExec hGraphExec, CUgraphNode hNode, const CUDA_EXT_SEM_SIGNAL_NODE_PARAMS *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphExecExternalSemaphoresWaitNodeSetParams(CUgraphExec hGraphExec, CUgraphNode hNode, const CUDA_EXT_SEM_WAIT_NODE_PARAMS *nodeParams) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphUpload(CUgraphExec hGraphExec, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphLaunch(CUgraphExec hGraphExec, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphExecDestroy(CUgraphExec hGraphExec) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphDestroy(CUgraph hGraph) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphExecUpdate(CUgraphExec hGraphExec, CUgraph hGraph, CUgraphNode *hErrorNode_out, CUgraphExecUpdateResult *updateResult_out) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphKernelNodeCopyAttributes(CUgraphNode dst, CUgraphNode src) CUDADRV_NOT_IMPLEMENTED;
 CUresult CUDAAPI cuGraphKernelNodeGetAttribute(CUgraphNode hNode, CUkernelNodeAttrID attr,
-                                      CUkernelNodeAttrValue *value_out);
+                                      CUkernelNodeAttrValue *value_out) CUDADRV_NOT_IMPLEMENTED;
 CUresult CUDAAPI cuGraphKernelNodeSetAttribute(CUgraphNode hNode, CUkernelNodeAttrID attr,
-                                      const CUkernelNodeAttrValue *value);
-CUresult CUDAAPI cuGraphDebugDotPrint(CUgraph hGraph, const char *path, unsigned int flags);
+                                      const CUkernelNodeAttrValue *value) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphDebugDotPrint(CUgraph hGraph, const char *path, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
 CUresult CUDAAPI cuUserObjectCreate(CUuserObject *object_out, void *ptr, CUhostFn destroy,
-                                    unsigned int initialRefcount, unsigned int flags);
-CUresult CUDAAPI cuUserObjectRetain(CUuserObject object, unsigned int count);
-CUresult CUDAAPI cuUserObjectRelease(CUuserObject object, unsigned int count);
-CUresult CUDAAPI cuGraphRetainUserObject(CUgraph graph, CUuserObject object, unsigned int count, unsigned int flags);
-CUresult CUDAAPI cuGraphReleaseUserObject(CUgraph graph, CUuserObject object, unsigned int count);
+                                    unsigned int initialRefcount, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuUserObjectRetain(CUuserObject object, unsigned int count) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuUserObjectRelease(CUuserObject object, unsigned int count) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphRetainUserObject(CUgraph graph, CUuserObject object, unsigned int count, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphReleaseUserObject(CUgraph graph, CUuserObject object, unsigned int count) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_GRAPH */
 
 /**
@@ -717,11 +719,11 @@ CUresult CUDAAPI cuGraphReleaseUserObject(CUgraph graph, CUuserObject object, un
  *
  * @{
  */
-CUresult CUDAAPI cuOccupancyMaxActiveBlocksPerMultiprocessor(int *numBlocks, CUfunction func, int blockSize, size_t dynamicSMemSize);
-CUresult CUDAAPI cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(int *numBlocks, CUfunction func, int blockSize, size_t dynamicSMemSize, unsigned int flags);
-CUresult CUDAAPI cuOccupancyMaxPotentialBlockSize(int *minGridSize, int *blockSize, CUfunction func, CUoccupancyB2DSize blockSizeToDynamicSMemSize, size_t dynamicSMemSize, int blockSizeLimit);
-CUresult CUDAAPI cuOccupancyMaxPotentialBlockSizeWithFlags(int *minGridSize, int *blockSize, CUfunction func, CUoccupancyB2DSize blockSizeToDynamicSMemSize, size_t dynamicSMemSize, int blockSizeLimit, unsigned int flags);
-CUresult CUDAAPI cuOccupancyAvailableDynamicSMemPerBlock(size_t *dynamicSmemSize, CUfunction func, int numBlocks, int blockSize);
+CUresult CUDAAPI cuOccupancyMaxActiveBlocksPerMultiprocessor(int *numBlocks, CUfunction func, int blockSize, size_t dynamicSMemSize) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuOccupancyMaxActiveBlocksPerMultiprocessorWithFlags(int *numBlocks, CUfunction func, int blockSize, size_t dynamicSMemSize, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuOccupancyMaxPotentialBlockSize(int *minGridSize, int *blockSize, CUfunction func, CUoccupancyB2DSize blockSizeToDynamicSMemSize, size_t dynamicSMemSize, int blockSizeLimit) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuOccupancyMaxPotentialBlockSizeWithFlags(int *minGridSize, int *blockSize, CUfunction func, CUoccupancyB2DSize blockSizeToDynamicSMemSize, size_t dynamicSMemSize, int blockSizeLimit, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuOccupancyAvailableDynamicSMemPerBlock(size_t *dynamicSmemSize, CUfunction func, int numBlocks, int blockSize) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_OCCUPANCY */
 
 /**
@@ -735,33 +737,33 @@ CUresult CUDAAPI cuOccupancyAvailableDynamicSMemPerBlock(size_t *dynamicSmemSize
  *
  * @{
  */
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetArray(CUtexref hTexRef, CUarray hArray, unsigned int Flags);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetMipmappedArray(CUtexref hTexRef, CUmipmappedArray hMipmappedArray, unsigned int Flags);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetAddress(size_t *ByteOffset, CUtexref hTexRef, CUdeviceptr dptr, size_t bytes);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetAddress2D(CUtexref hTexRef, const CUDA_ARRAY_DESCRIPTOR *desc, CUdeviceptr dptr, size_t Pitch);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetFormat(CUtexref hTexRef, CUarray_format fmt, int NumPackedComponents);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetAddressMode(CUtexref hTexRef, int dim, CUaddress_mode am);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetFilterMode(CUtexref hTexRef, CUfilter_mode fm);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetMipmapFilterMode(CUtexref hTexRef, CUfilter_mode fm);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetMipmapLevelBias(CUtexref hTexRef, float bias);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetMipmapLevelClamp(CUtexref hTexRef, float minMipmapLevelClamp, float maxMipmapLevelClamp);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetMaxAnisotropy(CUtexref hTexRef, unsigned int maxAniso);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetBorderColor(CUtexref hTexRef, float *pBorderColor);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetFlags(CUtexref hTexRef, unsigned int Flags);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetAddress(CUdeviceptr *pdptr, CUtexref hTexRef);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetArray(CUarray *phArray, CUtexref hTexRef);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetMipmappedArray(CUmipmappedArray *phMipmappedArray, CUtexref hTexRef);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetAddressMode(CUaddress_mode *pam, CUtexref hTexRef, int dim);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetFilterMode(CUfilter_mode *pfm, CUtexref hTexRef);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetFormat(CUarray_format *pFormat, int *pNumChannels, CUtexref hTexRef);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetMipmapFilterMode(CUfilter_mode *pfm, CUtexref hTexRef);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetMipmapLevelBias(float *pbias, CUtexref hTexRef);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetMipmapLevelClamp(float *pminMipmapLevelClamp, float *pmaxMipmapLevelClamp, CUtexref hTexRef);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetMaxAnisotropy(int *pmaxAniso, CUtexref hTexRef);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetBorderColor(float *pBorderColor, CUtexref hTexRef);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetFlags(unsigned int *pFlags, CUtexref hTexRef);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefCreate(CUtexref *pTexRef);
-__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefDestroy(CUtexref hTexRef);
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetArray(CUtexref hTexRef, CUarray hArray, unsigned int Flags) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetMipmappedArray(CUtexref hTexRef, CUmipmappedArray hMipmappedArray, unsigned int Flags) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetAddress(size_t *ByteOffset, CUtexref hTexRef, CUdeviceptr dptr, size_t bytes) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetAddress2D(CUtexref hTexRef, const CUDA_ARRAY_DESCRIPTOR *desc, CUdeviceptr dptr, size_t Pitch) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetFormat(CUtexref hTexRef, CUarray_format fmt, int NumPackedComponents) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetAddressMode(CUtexref hTexRef, int dim, CUaddress_mode am) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetFilterMode(CUtexref hTexRef, CUfilter_mode fm) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetMipmapFilterMode(CUtexref hTexRef, CUfilter_mode fm) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetMipmapLevelBias(CUtexref hTexRef, float bias) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetMipmapLevelClamp(CUtexref hTexRef, float minMipmapLevelClamp, float maxMipmapLevelClamp) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetMaxAnisotropy(CUtexref hTexRef, unsigned int maxAniso) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetBorderColor(CUtexref hTexRef, float *pBorderColor) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefSetFlags(CUtexref hTexRef, unsigned int Flags) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetAddress(CUdeviceptr *pdptr, CUtexref hTexRef) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetArray(CUarray *phArray, CUtexref hTexRef) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetMipmappedArray(CUmipmappedArray *phMipmappedArray, CUtexref hTexRef) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetAddressMode(CUaddress_mode *pam, CUtexref hTexRef, int dim) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetFilterMode(CUfilter_mode *pfm, CUtexref hTexRef) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetFormat(CUarray_format *pFormat, int *pNumChannels, CUtexref hTexRef) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetMipmapFilterMode(CUfilter_mode *pfm, CUtexref hTexRef) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetMipmapLevelBias(float *pbias, CUtexref hTexRef) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetMipmapLevelClamp(float *pminMipmapLevelClamp, float *pmaxMipmapLevelClamp, CUtexref hTexRef) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetMaxAnisotropy(int *pmaxAniso, CUtexref hTexRef) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetBorderColor(float *pBorderColor, CUtexref hTexRef) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefGetFlags(unsigned int *pFlags, CUtexref hTexRef) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefCreate(CUtexref *pTexRef) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuTexRefDestroy(CUtexref hTexRef) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_TEXREF_DEPRECATED */
 
 
@@ -776,8 +778,8 @@ __CUDA_DEPRECATED CUresult CUDAAPI cuTexRefDestroy(CUtexref hTexRef);
  *
  * @{
  */
-__CUDA_DEPRECATED CUresult CUDAAPI cuSurfRefSetArray(CUsurfref hSurfRef, CUarray hArray, unsigned int Flags);
-__CUDA_DEPRECATED CUresult CUDAAPI cuSurfRefGetArray(CUarray *phArray, CUsurfref hSurfRef);
+__CUDA_DEPRECATED CUresult CUDAAPI cuSurfRefSetArray(CUsurfref hSurfRef, CUarray hArray, unsigned int Flags) CUDADRV_NOT_IMPLEMENTED;
+__CUDA_DEPRECATED CUresult CUDAAPI cuSurfRefGetArray(CUarray *phArray, CUsurfref hSurfRef) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_SURFREF_DEPRECATED */
 
 /**
@@ -792,11 +794,11 @@ __CUDA_DEPRECATED CUresult CUDAAPI cuSurfRefGetArray(CUarray *phArray, CUsurfref
  *
  * @{
  */
-CUresult CUDAAPI cuTexObjectCreate(CUtexObject *pTexObject, const CUDA_RESOURCE_DESC *pResDesc, const CUDA_TEXTURE_DESC *pTexDesc, const CUDA_RESOURCE_VIEW_DESC *pResViewDesc);
-CUresult CUDAAPI cuTexObjectDestroy(CUtexObject texObject);
-CUresult CUDAAPI cuTexObjectGetResourceDesc(CUDA_RESOURCE_DESC *pResDesc, CUtexObject texObject);
-CUresult CUDAAPI cuTexObjectGetTextureDesc(CUDA_TEXTURE_DESC *pTexDesc, CUtexObject texObject);
-CUresult CUDAAPI cuTexObjectGetResourceViewDesc(CUDA_RESOURCE_VIEW_DESC *pResViewDesc, CUtexObject texObject);
+CUresult CUDAAPI cuTexObjectCreate(CUtexObject *pTexObject, const CUDA_RESOURCE_DESC *pResDesc, const CUDA_TEXTURE_DESC *pTexDesc, const CUDA_RESOURCE_VIEW_DESC *pResViewDesc) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuTexObjectDestroy(CUtexObject texObject) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuTexObjectGetResourceDesc(CUDA_RESOURCE_DESC *pResDesc, CUtexObject texObject) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuTexObjectGetTextureDesc(CUDA_TEXTURE_DESC *pTexDesc, CUtexObject texObject) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuTexObjectGetResourceViewDesc(CUDA_RESOURCE_VIEW_DESC *pResViewDesc, CUtexObject texObject) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_TEXOBJECT */
 
 /**
@@ -811,9 +813,9 @@ CUresult CUDAAPI cuTexObjectGetResourceViewDesc(CUDA_RESOURCE_VIEW_DESC *pResVie
  *
  * @{
  */
-CUresult CUDAAPI cuSurfObjectCreate(CUsurfObject *pSurfObject, const CUDA_RESOURCE_DESC *pResDesc);
-CUresult CUDAAPI cuSurfObjectDestroy(CUsurfObject surfObject);
-CUresult CUDAAPI cuSurfObjectGetResourceDesc(CUDA_RESOURCE_DESC *pResDesc, CUsurfObject surfObject);
+CUresult CUDAAPI cuSurfObjectCreate(CUsurfObject *pSurfObject, const CUDA_RESOURCE_DESC *pResDesc) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuSurfObjectDestroy(CUsurfObject surfObject) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuSurfObjectGetResourceDesc(CUDA_RESOURCE_DESC *pResDesc, CUsurfObject surfObject) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_SURFOBJECT */
 
 /**
@@ -827,10 +829,10 @@ CUresult CUDAAPI cuSurfObjectGetResourceDesc(CUDA_RESOURCE_DESC *pResDesc, CUsur
  *
  * @{
  */
-CUresult CUDAAPI cuDeviceCanAccessPeer(int *canAccessPeer, CUdevice dev, CUdevice peerDev);
-CUresult CUDAAPI cuCtxEnablePeerAccess(CUcontext peerContext, unsigned int Flags);
-CUresult CUDAAPI cuCtxDisablePeerAccess(CUcontext peerContext);
-CUresult CUDAAPI cuDeviceGetP2PAttribute(int* value, CUdevice_P2PAttribute attrib, CUdevice srcDevice, CUdevice dstDevice);
+CUresult CUDAAPI cuDeviceCanAccessPeer(int *canAccessPeer, CUdevice dev, CUdevice peerDev) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxEnablePeerAccess(CUcontext peerContext, unsigned int Flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuCtxDisablePeerAccess(CUcontext peerContext) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuDeviceGetP2PAttribute(int* value, CUdevice_P2PAttribute attrib, CUdevice srcDevice, CUdevice dstDevice) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_PEER_ACCESS */
 
 /**
@@ -844,13 +846,13 @@ CUresult CUDAAPI cuDeviceGetP2PAttribute(int* value, CUdevice_P2PAttribute attri
  *
  * @{
  */
-CUresult CUDAAPI cuGraphicsUnregisterResource(CUgraphicsResource resource);
-CUresult CUDAAPI cuGraphicsSubResourceGetMappedArray(CUarray *pArray, CUgraphicsResource resource, unsigned int arrayIndex, unsigned int mipLevel);
-CUresult CUDAAPI cuGraphicsResourceGetMappedMipmappedArray(CUmipmappedArray *pMipmappedArray, CUgraphicsResource resource);
-CUresult CUDAAPI cuGraphicsResourceGetMappedPointer(CUdeviceptr *pDevPtr, size_t *pSize, CUgraphicsResource resource);
-CUresult CUDAAPI cuGraphicsResourceSetMapFlags(CUgraphicsResource resource, unsigned int flags);
-CUresult CUDAAPI cuGraphicsMapResources(unsigned int count, CUgraphicsResource *resources, CUstream hStream);
-CUresult CUDAAPI cuGraphicsUnmapResources(unsigned int count, CUgraphicsResource *resources, CUstream hStream);
+CUresult CUDAAPI cuGraphicsUnregisterResource(CUgraphicsResource resource) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphicsSubResourceGetMappedArray(CUarray *pArray, CUgraphicsResource resource, unsigned int arrayIndex, unsigned int mipLevel) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphicsResourceGetMappedMipmappedArray(CUmipmappedArray *pMipmappedArray, CUgraphicsResource resource) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphicsResourceGetMappedPointer(CUdeviceptr *pDevPtr, size_t *pSize, CUgraphicsResource resource) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphicsResourceSetMapFlags(CUgraphicsResource resource, unsigned int flags) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphicsMapResources(unsigned int count, CUgraphicsResource *resources, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
+CUresult CUDAAPI cuGraphicsUnmapResources(unsigned int count, CUgraphicsResource *resources, CUstream hStream) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_GRAPHICS */
 
 /**
@@ -864,10 +866,10 @@ CUresult CUDAAPI cuGraphicsUnmapResources(unsigned int count, CUgraphicsResource
  *
  * @{
  */
-CUresult CUDAAPI cuGetProcAddress(const char *symbol, void **pfn, int cudaVersion, cuuint64_t flags);
+CUresult CUDAAPI cuGetProcAddress(const char *symbol, void **pfn, int cudaVersion, cuuint64_t flags) CUDADRV_NOT_IMPLEMENTED;
 /** @} */ /* END CUDA_DRIVER_ENTRY_POINT */
 
-CUresult CUDAAPI cuGetExportTable(const void **ppExportTable, const CUuuid *pExportTableId);
+CUresult CUDAAPI cuGetExportTable(const void **ppExportTable, const CUuuid *pExportTableId) CUDADRV_NOT_IMPLEMENTED;
 
 /**
  * CUDA API versioning support
