@@ -2,9 +2,9 @@
 #include <cuda.h>
 #include "cuda_driver_header.h"
 
-#define CUDARTAPI_OLD CUDARTAPI
-#undef CUDARTAPI
-#define CUDARTAPI __attribute__((weak))
+#define CUDAAPI_OLD CUDAAPI
+#undef CUDAAPI
+#define CUDAAPI __attribute__((weak))
 
 #include <stdlib.h>
 #ifdef _MSC_VER
