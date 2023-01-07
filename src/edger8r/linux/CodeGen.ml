@@ -425,7 +425,7 @@ let gen_ecall_table (tfs: Ast.trusted_func list) =
         sprintf "%s\t\t{(void*)(uintptr_t)%s, %d},\n" acc s (bool_to_int b)) "" tbridge_names priv_bits
     in "\t{\n" ^ inner_table ^ "\t}\n"
   in
-    sprintf "const struct {\n\
+    sprintf "static const struct {\n\
 \tsize_t nr_ecall;\n\
 \tstruct {void* ecall_addr; uint8_t is_priv;} ecall_table[%d];\n\
 } %s = {\n\
@@ -568,6 +568,7 @@ let gen_uheader_preemble (guard: string) (inclist: string)=
 #include <stddef.h>\n\
 #include <string.h>\n\
 #include \"rpc/rpc.h\"\n\
+#include \"dispatch_header.h\"\n\
 #include \"tee_internal_api.h\" /* for sgx_satus_t etc. */\n" in
     grd_hdr ^ inc_exp ^ "\n" ^ inclist ^ "\n" ^ common_macros
 
@@ -661,6 +662,7 @@ let gen_trusted_header (ec: enclave_content) =
 
   let out_chan = open_out header_fname in
     output_string out_chan (guard_code ^ "\n");
+    output_string out_chan (sprintf "int %s_dispatch(char* buffer);\n" ec.file_shortnm);
     List.iter (fun s -> output_string out_chan (s ^ "\n")) comp_def_list;
     gen_sizefunc_proto out_chan ec;
     List.iter (fun s -> output_string out_chan (s ^ ";\n")) func_proto_list;
@@ -878,14 +880,14 @@ let gen_func_uproxy (fd: Ast.func_decl) (idx: int) (ec: enclave_content) =
   let debug_str_null = "\tRPC_DEBUG(\"ret -> (%d)\", status);\n" in
 
   (* Normal case - do ECALL with marshaling structure*)
-  let ecall_with_ms = sprintf "status = rpc_ecall(%d, enclave_buffer, bufsize);\n"
-                              idx in
+  let ecall_with_ms = sprintf "status = rpc_ecall(%s_DISPATCHER, %d, enclave_buffer, bufsize);\n"
+                              (ec.file_shortnm) idx in
 
   (* Rare case - the trusted function doesn't have parameter nor return value.
    * In this situation, no marshaling structure is required - passing in NULL.
    *)
-  let ecall_null = sprintf "status = rpc_ecall(%d, enclave_buffer);\n%s"
-                           idx debug_str_null
+  let ecall_null = sprintf "status = rpc_ecall(%s_DISPATCHER, %d, enclave_buffer);\n%s"
+                           (ec.file_shortnm) idx debug_str_null
   in
   let update_retval = sprintf "if (status == TEE_SUCCESS) {\n\t\t%s = %s->%s;%s%s\t\treturn %s;\n\t}"
                               retval_name ms_struct_val ms_retval_name copy_buffer_out_str debug_str retval_name in
@@ -1478,12 +1480,12 @@ let gen_trusted_source (ec: enclave_content) =
 #include <string.h> /* for memcpy etc */\n\
 #include <stdlib.h> /* for malloc/free etc */\n\n\
 typedef TEE_Result (*ecall_invoke_entry) (char* buffer);\n" in
-  let invoke_table = "int rpc_dispatch(char* buffer)\n\
+  let invoke_table = sprintf "int %s_dispatch(char* buffer)\n\
   {\n\
   \tuint32_t cmd_id = *(uint32_t*)buffer;\n\
   \tecall_invoke_entry entry = TEE_CAST(ecall_invoke_entry, g_ecall_table.ecall_table[cmd_id].ecall_addr);\n\
   \treturn (*entry)(buffer + sizeof(uint32_t));\n\
-  }\n" in
+  }\n" ec.file_shortnm in
   let trusted_fds = tf_list_to_fd_list ec.tfunc_decls in
   let tbridge_list =
     let dummy_var = tbridge_gen_dummy_variable ec in

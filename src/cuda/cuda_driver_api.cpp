@@ -2,10 +2,6 @@
 #include <cuda.h>
 #include "cuda_driver_header.h"
 
-#define CUDAAPI_OLD CUDAAPI
-#undef CUDAAPI
-#define CUDAAPI __attribute__((weak))
-
 #include <stdlib.h>
 #ifdef _MSC_VER
 typedef unsigned __int32 cuuint32_t;
@@ -79,6 +75,10 @@ extern "C" {
 #else
 #define CUDAAPI
 #endif
+
+#define CUDAAPI_OLD CUDAAPI
+#undef CUDAAPI
+#define CUDAAPI __attribute__((weak))
 
 /**
  * \defgroup CUDA_ERROR Error Handling

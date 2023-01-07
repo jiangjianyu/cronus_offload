@@ -6,6 +6,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
 
 file(GLOB srcs
     "*.cpp"
+    "${CMAKE_SOURCE_DIR}/gen/cuda_driver_u.cpp"
 )
 
 include_directories(./)

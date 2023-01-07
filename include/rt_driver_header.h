@@ -1,0 +1,3 @@
+
+#define cudaErrorMemoryValueTooLarge CUDA_ERROR_UNKNOWN
+#define cudaErrorInvalidValue CUDA_ERROR_INVALID_VALUE

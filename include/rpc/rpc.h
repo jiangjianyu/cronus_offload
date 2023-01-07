@@ -14,6 +14,7 @@ extern int buffer_size_in_bytes;
 typedef struct {
     volatile uint8_t is_running;
     volatile uint8_t status;
+    uint16_t dispatch_id;
     uint32_t size;
 } rpc_header_t;
 
@@ -26,7 +27,7 @@ typedef struct {
 #define STATUS_FIN      3
 
 int rpc_open(void* uuid, int buffer_size_in_mb);
-int rpc_ecall(uint32_t idx, void *ecall_buf, int bufsize);
+int rpc_ecall(uint32_t dispatch_id, uint32_t idx, void *ecall_buf, int bufsize);
 void rpc_close();
 char* rpc_buffer();
 
@@ -38,7 +39,7 @@ int rpc_register(void*, rpc_handler);
 // run the rpc loop
 int rpc_run();
 
-int rpc_dispatch(char*);
+int rpc_dispatch(int dispatch_idx, char*);
 int rpc_entry(char*, int);
 
 #ifdef __cplusplus

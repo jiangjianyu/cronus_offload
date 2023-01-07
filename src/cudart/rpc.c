@@ -38,7 +38,7 @@ int rpc_open(void* uuid, int buffer_size_in_mb) {
 
 extern int sockfd;
 
-int rpc_ecall(uint32_t idx, void *ecall_buf, int bufsize) {
+int rpc_ecall(uint32_t dispatch_id, uint32_t idx, void *ecall_buf, int bufsize) {
     int total_size = (bufsize + sizeof(uint32_t));
     int ret = 0, r, cur;
 
@@ -47,6 +47,7 @@ int rpc_ecall(uint32_t idx, void *ecall_buf, int bufsize) {
 
     header->size = total_size;
     header->status = STATUS_START;
+    header->dispatch_id = dispatch_id;
 
     r = write(sockfd, buffer, total_size + sizeof(rpc_header_t));
     READ_UNTIL(sockfd, buffer, r, sizeof(rpc_header_t), cur);

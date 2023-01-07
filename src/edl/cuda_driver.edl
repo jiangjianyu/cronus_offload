@@ -1,0 +1,10 @@
+/* Enclave.edl - Top EDL file. */
+
+enclave {
+    include "cuda.h"
+    include "rt_driver_header.h"
+    // from "cuda_runtime_.edl" import *;
+    trusted {
+        public CUresult cuInit(unsigned int Flags);
+    };
+};

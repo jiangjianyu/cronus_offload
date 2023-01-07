@@ -47,7 +47,7 @@ void func(int connfd)
 
         if (!header->is_running) break;
 
-        rpc_dispatch(buff + sizeof(rpc_header_t));
+        rpc_dispatch(header->dispatch_id, buff + sizeof(rpc_header_t));
 
         write(connfd, buff, sizeof(rpc_header_t) + header->size);
     }
