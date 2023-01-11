@@ -37,10 +37,10 @@ enclave {
         public cudaError_t cudaMallocManaged([out,count=1]void **devPtr, size_t size, unsigned int flags);
         // #endif
 
-        public cudaError_t cudaMalloc([out,count=1]void **devPtr, size_t size);
-        public cudaError_t cudaMallocHost([out,count=1]void **ptr, size_t size);
-        public cudaError_t cudaMallocPitch([out,count=1]void **devPtr, [out,count=1]size_t *pitch, size_t width, size_t height);
-        public cudaError_t cudaMallocArray([out,count=1]cudaArray_t *array, [in,count=1]const struct cudaChannelFormatDesc *desc, size_t width, size_t height, unsigned int flags);
+        public cudaError_t cudaMalloc([user_check]void **devPtr, size_t size);
+        public cudaError_t cudaMallocHost([user_check]void **ptr, size_t size);
+        public cudaError_t cudaMallocPitch([user_check]void **devPtr, [out,count=1]size_t *pitch, size_t width, size_t height);
+        public cudaError_t cudaMallocArray([user_check]cudaArray_t *array, [in,count=1]const struct cudaChannelFormatDesc *desc, size_t width, size_t height, unsigned int flags);
         public cudaError_t cudaFree([user_check]void *devPtr);
         public cudaError_t cudaFreeHost([user_check]void *ptr);
         public cudaError_t cudaFreeArray(cudaArray_t array);

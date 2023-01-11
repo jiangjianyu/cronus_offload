@@ -1614,25 +1614,11 @@ static TEE_Result tee_cudaMalloc(char *buffer)
 	char* buffer_start = buffer + sizeof(ms_cudaMalloc_t);
 
 	TEE_Result status = TEE_SUCCESS;
-	void** _tmp_devPtr = TEE_CAST(void**, buffer_start + 0);
-	size_t _len_devPtr = 1 * sizeof(*_tmp_devPtr);
-	void** _in_devPtr = NULL;
+	void** _tmp_devPtr = ms->ms_devPtr;
 
-	if (_tmp_devPtr != NULL) {
-		if ((_in_devPtr = (void**)malloc(_len_devPtr)) == NULL) {
-			status = TEE_ERROR_OUT_OF_MEMORY;
-			goto err;
-		}
+	ms->ms_retval = cudaMalloc(_tmp_devPtr, ms->ms_size);
+	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _tmp_devPtr, ms->ms_size, ms->ms_retval);
 
-		memset((void*)_in_devPtr, 0, _len_devPtr);
-	}
-	ms->ms_retval = cudaMalloc(_in_devPtr, ms->ms_size);
-	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _in_devPtr, ms->ms_size, ms->ms_retval);
-err:
-	if (_in_devPtr) {
-		memcpy(_tmp_devPtr, _in_devPtr, _len_devPtr);
-		free(_in_devPtr);
-	}
 
 	return status;
 }
@@ -1643,25 +1629,11 @@ static TEE_Result tee_cudaMallocHost(char *buffer)
 	char* buffer_start = buffer + sizeof(ms_cudaMallocHost_t);
 
 	TEE_Result status = TEE_SUCCESS;
-	void** _tmp_ptr = TEE_CAST(void**, buffer_start + 0);
-	size_t _len_ptr = 1 * sizeof(*_tmp_ptr);
-	void** _in_ptr = NULL;
+	void** _tmp_ptr = ms->ms_ptr;
 
-	if (_tmp_ptr != NULL) {
-		if ((_in_ptr = (void**)malloc(_len_ptr)) == NULL) {
-			status = TEE_ERROR_OUT_OF_MEMORY;
-			goto err;
-		}
+	ms->ms_retval = cudaMallocHost(_tmp_ptr, ms->ms_size);
+	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _tmp_ptr, ms->ms_size, ms->ms_retval);
 
-		memset((void*)_in_ptr, 0, _len_ptr);
-	}
-	ms->ms_retval = cudaMallocHost(_in_ptr, ms->ms_size);
-	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _in_ptr, ms->ms_size, ms->ms_retval);
-err:
-	if (_in_ptr) {
-		memcpy(_tmp_ptr, _in_ptr, _len_ptr);
-		free(_in_ptr);
-	}
 
 	return status;
 }
@@ -1672,21 +1644,11 @@ static TEE_Result tee_cudaMallocPitch(char *buffer)
 	char* buffer_start = buffer + sizeof(ms_cudaMallocPitch_t);
 
 	TEE_Result status = TEE_SUCCESS;
-	void** _tmp_devPtr = TEE_CAST(void**, buffer_start + 0);
-	size_t _len_devPtr = 1 * sizeof(*_tmp_devPtr);
-	void** _in_devPtr = NULL;
-	size_t* _tmp_pitch = TEE_CAST(size_t*, buffer_start + 0 + 1 * sizeof(*_tmp_devPtr));
+	void** _tmp_devPtr = ms->ms_devPtr;
+	size_t* _tmp_pitch = TEE_CAST(size_t*, buffer_start + 0 + 0);
 	size_t _len_pitch = 1 * sizeof(*_tmp_pitch);
 	size_t* _in_pitch = NULL;
 
-	if (_tmp_devPtr != NULL) {
-		if ((_in_devPtr = (void**)malloc(_len_devPtr)) == NULL) {
-			status = TEE_ERROR_OUT_OF_MEMORY;
-			goto err;
-		}
-
-		memset((void*)_in_devPtr, 0, _len_devPtr);
-	}
 	if (_tmp_pitch != NULL) {
 		if ((_in_pitch = (size_t*)malloc(_len_pitch)) == NULL) {
 			status = TEE_ERROR_OUT_OF_MEMORY;
@@ -1695,13 +1657,9 @@ static TEE_Result tee_cudaMallocPitch(char *buffer)
 
 		memset((void*)_in_pitch, 0, _len_pitch);
 	}
-	ms->ms_retval = cudaMallocPitch(_in_devPtr, _in_pitch, ms->ms_width, ms->ms_height);
-	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", _in_devPtr, _in_pitch, ms->ms_width, ms->ms_height, ms->ms_retval);
+	ms->ms_retval = cudaMallocPitch(_tmp_devPtr, _in_pitch, ms->ms_width, ms->ms_height);
+	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", _tmp_devPtr, _in_pitch, ms->ms_width, ms->ms_height, ms->ms_retval);
 err:
-	if (_in_devPtr) {
-		memcpy(_tmp_devPtr, _in_devPtr, _len_devPtr);
-		free(_in_devPtr);
-	}
 	if (_in_pitch) {
 		memcpy(_tmp_pitch, _in_pitch, _len_pitch);
 		free(_in_pitch);
@@ -1716,21 +1674,11 @@ static TEE_Result tee_cudaMallocArray(char *buffer)
 	char* buffer_start = buffer + sizeof(ms_cudaMallocArray_t);
 
 	TEE_Result status = TEE_SUCCESS;
-	cudaArray_t* _tmp_array = TEE_CAST(cudaArray_t*, buffer_start + 0);
-	size_t _len_array = 1 * sizeof(*_tmp_array);
-	cudaArray_t* _in_array = NULL;
-	struct cudaChannelFormatDesc* _tmp_desc = TEE_CAST(struct cudaChannelFormatDesc*, buffer_start + 0 + 1 * sizeof(*_tmp_array));
+	cudaArray_t* _tmp_array = ms->ms_array;
+	struct cudaChannelFormatDesc* _tmp_desc = TEE_CAST(struct cudaChannelFormatDesc*, buffer_start + 0 + 0);
 	size_t _len_desc = 1 * sizeof(*_tmp_desc);
 	struct cudaChannelFormatDesc* _in_desc = NULL;
 
-	if (_tmp_array != NULL) {
-		if ((_in_array = (cudaArray_t*)malloc(_len_array)) == NULL) {
-			status = TEE_ERROR_OUT_OF_MEMORY;
-			goto err;
-		}
-
-		memset((void*)_in_array, 0, _len_array);
-	}
 	if (_tmp_desc != NULL) {
 		_in_desc = (struct cudaChannelFormatDesc*)malloc(_len_desc);
 		if (_in_desc == NULL) {
@@ -1740,13 +1688,9 @@ static TEE_Result tee_cudaMallocArray(char *buffer)
 
 		memcpy((void*)_in_desc, _tmp_desc, _len_desc);
 	}
-	ms->ms_retval = cudaMallocArray(_in_array, (const struct cudaChannelFormatDesc*)_in_desc, ms->ms_width, ms->ms_height, ms->ms_flags);
-	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx) => %lx", _in_array, (const struct cudaChannelFormatDesc*)_in_desc, ms->ms_width, ms->ms_height, ms->ms_flags, ms->ms_retval);
+	ms->ms_retval = cudaMallocArray(_tmp_array, (const struct cudaChannelFormatDesc*)_in_desc, ms->ms_width, ms->ms_height, ms->ms_flags);
+	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx) => %lx", _tmp_array, (const struct cudaChannelFormatDesc*)_in_desc, ms->ms_width, ms->ms_height, ms->ms_flags, ms->ms_retval);
 err:
-	if (_in_array) {
-		memcpy(_tmp_array, _in_array, _len_array);
-		free(_in_array);
-	}
 	if (_in_desc) free((void*)_in_desc);
 
 	return status;

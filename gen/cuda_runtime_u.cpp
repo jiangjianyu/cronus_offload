@@ -1656,7 +1656,7 @@ cudaError_t cudaMalloc(void** devPtr, size_t size)
 
 	ms->ms_devPtr = devPtr;
 	ms->ms_size = size;
-	bufsize = sizeof(ms_cudaMalloc_t) + 1 * sizeof(*devPtr);
+	bufsize = sizeof(ms_cudaMalloc_t) + 0;
 
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
@@ -1665,7 +1665,6 @@ cudaError_t cudaMalloc(void** devPtr, size_t size)
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
-		memcpy(devPtr, enclave_buffer + sizeof(ms_cudaMalloc_t), 1 * sizeof(*devPtr));
 		RPC_DEBUG("ret -> %d (%d)", retval, status);
 		return retval;
 	}
@@ -1683,7 +1682,7 @@ cudaError_t cudaMallocHost(void** ptr, size_t size)
 
 	ms->ms_ptr = ptr;
 	ms->ms_size = size;
-	bufsize = sizeof(ms_cudaMallocHost_t) + 1 * sizeof(*ptr);
+	bufsize = sizeof(ms_cudaMallocHost_t) + 0;
 
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
@@ -1692,7 +1691,6 @@ cudaError_t cudaMallocHost(void** ptr, size_t size)
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
-		memcpy(ptr, enclave_buffer + sizeof(ms_cudaMallocHost_t), 1 * sizeof(*ptr));
 		RPC_DEBUG("ret -> %d (%d)", retval, status);
 		return retval;
 	}
@@ -1712,7 +1710,7 @@ cudaError_t cudaMallocPitch(void** devPtr, size_t* pitch, size_t width, size_t h
 	ms->ms_pitch = pitch;
 	ms->ms_width = width;
 	ms->ms_height = height;
-	bufsize = sizeof(ms_cudaMallocPitch_t) + 1 * sizeof(*devPtr) + 1 * sizeof(*pitch);
+	bufsize = sizeof(ms_cudaMallocPitch_t) + 0 + 1 * sizeof(*pitch);
 
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
@@ -1721,8 +1719,7 @@ cudaError_t cudaMallocPitch(void** devPtr, size_t* pitch, size_t width, size_t h
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
-		memcpy(devPtr, enclave_buffer + sizeof(ms_cudaMallocPitch_t), 1 * sizeof(*devPtr));
-		memcpy(pitch, enclave_buffer + sizeof(ms_cudaMallocPitch_t) + 1 * sizeof(*devPtr), 1 * sizeof(*pitch));
+		memcpy(pitch, enclave_buffer + sizeof(ms_cudaMallocPitch_t) + 0, 1 * sizeof(*pitch));
 		RPC_DEBUG("ret -> %d (%d)", retval, status);
 		return retval;
 	}
@@ -1737,14 +1734,14 @@ cudaError_t cudaMallocArray(cudaArray_t* array, const struct cudaChannelFormatDe
 	cudaError_t retval;
 	ms_cudaMallocArray_t* ms = TEE_CAST(ms_cudaMallocArray_t*, enclave_buffer);;
 	
-	memcpy(enclave_buffer + sizeof(ms_cudaMallocArray_t) + 1 * sizeof(*array), desc, 1 * sizeof(*desc));
+	memcpy(enclave_buffer + sizeof(ms_cudaMallocArray_t) + 0, desc, 1 * sizeof(*desc));
 
 	ms->ms_array = array;
 	ms->ms_desc = (struct cudaChannelFormatDesc*)desc;
 	ms->ms_width = width;
 	ms->ms_height = height;
 	ms->ms_flags = flags;
-	bufsize = sizeof(ms_cudaMallocArray_t) + 1 * sizeof(*array) + 1 * sizeof(*desc);
+	bufsize = sizeof(ms_cudaMallocArray_t) + 0 + 1 * sizeof(*desc);
 
 	if(bufsize > buffer_size_in_bytes) {
 		return cudaErrorMemoryValueTooLarge;
@@ -1753,7 +1750,6 @@ cudaError_t cudaMallocArray(cudaArray_t* array, const struct cudaChannelFormatDe
 
 	if (status == TEE_SUCCESS) {
 		retval = ms->ms_retval;
-		memcpy(array, enclave_buffer + sizeof(ms_cudaMallocArray_t), 1 * sizeof(*array));
 		RPC_DEBUG("ret -> %d (%d)", retval, status);
 		return retval;
 	}
