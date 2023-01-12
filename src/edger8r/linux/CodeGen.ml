@@ -1504,16 +1504,16 @@ let gen_trusted_source (ec: enclave_content) =
 #include <string.h> /* for memcpy etc */\n\
 #include <stdlib.h> /* for malloc/free etc */\n\n\
 typedef TEE_Result (*ecall_invoke_entry) (char* buffer);\n\
-int ca_get_offset(void * ptr);\n" in
+void* ca_get_offset(void * ptr);\n" in
   let invoke_table = "int rpc_dispatch(char* buffer)\n\
   {\n\
   \tuint32_t cmd_id = *(uint32_t*)buffer;\n\
   \tecall_invoke_entry entry = TEE_CAST(ecall_invoke_entry, g_ecall_table.ecall_table[cmd_id].ecall_addr);\n\
   \treturn (*entry)(buffer + sizeof(uint32_t));\n\
   }\n" in
-  let offset_func = "int ca_get_offset(void * ptr)\n\
+  let offset_func = "void* ca_get_offset(void * ptr)\n\
   {\n\
-  \treturn CA_get_ptr_offset();\n\
+  \tprintf(\"%lu\\n\", CA_get_ptr_offset());\n\
   }\n" in
   let trusted_fds = tf_list_to_fd_list ec.tfunc_decls in
   let tbridge_list =
