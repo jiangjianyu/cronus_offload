@@ -1244,7 +1244,7 @@ let gen_tbridge_local_vars (plist: Ast.pdecl list) =
     | Ast.PTPtr(ty, attr) ->
     (len ^ " + " ^ get_ptr_length ty attr declr true, acc ^ gen_local_var (pty, declr) len)) ("0", status_var) new_param_list)
 
-(* alex_modified on 12 Jan 2023 *)
+(* alex modified on 12 Jan 2023 *)
 (* It generates trusted bridge code for a trusted function. *)
 
 let get_offset_ptrs (fd: Ast.func_decl) (plist: Ast.pdecl list) 
@@ -1256,7 +1256,7 @@ let get_offset_ptrs (fd: Ast.func_decl) (plist: Ast.pdecl list)
   in
   let check_ptr_offset (pt: Ast.parameter_type) (declr: Ast.declarator) (attr: Ast.ptr_attr) =
     let p_name = gen_parm_str pt declr in
-    if attr.pa_offset then sprintf "ca_get_offset(%s);\n" p_name else "\n"
+    if attr.pa_offset then sprintf "\tca_get_offset(%s);\n" p_name else "\n"
   in
   let new_param_list = List.map conv_array_to_ptr plist
   in
@@ -1297,7 +1297,7 @@ let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
       in
         sprintf "%s%s%s\t%s\n\t%s\n%s" func_open local_vars dummy_var check_pms invoke_func func_close
     else
-      sprintf "%s\t%s\n%s\n%s%s%s\n%s\t%s\n\t%s\n%s\n%s\n%s\n%s"
+      sprintf "%s\t%s\n%s\n%s%s%s\n%s%s\n\t%s\n%s\n%s\n%s\n%s"
         func_open
         declare_ms_ptr
         buffer_var_decl

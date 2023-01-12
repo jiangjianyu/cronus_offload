@@ -41,13 +41,14 @@ enclave {
         public cudaError_t cudaMallocHost([out,count=1]void **ptr, size_t size);
         public cudaError_t cudaMallocPitch([out,count=1]void **devPtr, [out,count=1]size_t *pitch, size_t width, size_t height);
         public cudaError_t cudaMallocArray([out,count=1]cudaArray_t *array, [in,count=1]const struct cudaChannelFormatDesc *desc, size_t width, size_t height, unsigned int flags);
-        public cudaError_t cudaFree([user_check, offset]void *devPtr);
-        public cudaError_t cudaFreeHost([user_check]void *ptr);
+        public cudaError_t cudaFree([user_check,offset]void *devPtr);
+        public cudaError_t cudaFreeHost([user_check,offset]void *ptr);
         public cudaError_t cudaFreeArray(cudaArray_t array);
         public cudaError_t cudaFreeMipmappedArray(cudaMipmappedArray_t mipmappedArray);
         public cudaError_t cudaHostAlloc([out,count=1]void **pHost, size_t size, unsigned int flags);
         public cudaError_t cudaHostRegister([user_check]void *ptr, size_t size, unsigned int flags);
         public cudaError_t cudaHostUnregister([user_check]void *ptr);
+
         public cudaError_t cudaHostGetDevicePointer([out,count=1]void **pDevice, [user_check]void *pHost, unsigned int flags);
         public cudaError_t cudaHostGetFlags([out,count=1]unsigned int *pFlags, [user_check]void *pHost);
         public cudaError_t cudaMalloc3D([out,count=1]struct cudaPitchedPtr* pitchedDevPtr, struct cudaExtent extent);
@@ -71,18 +72,18 @@ enclave {
         // #endif
 
         // public cudaError_t cudaMemcpy(void *dst, const void *src, size_t count, enum cudaMemcpyKind kind);
-        public cudaError_t cudaMemcpyNone([user_check]void *dst, [user_check]const void *src, size_t count, enum cudaMemcpyKind kind);
-        public cudaError_t cudaMemcpySrc([user_check]void *dst, [in,size=count]const void *src, size_t count, enum cudaMemcpyKind kind);
-        public cudaError_t cudaMemcpyDst([out,size=count]void *dst, [user_check]const void *src, size_t count, enum cudaMemcpyKind kind);
-        public cudaError_t cudaMemcpySrcDst([out,size=count]void *dst, [in,size=count]const void *src, size_t count, enum cudaMemcpyKind kind);
+        public cudaError_t cudaMemcpyNone([user_check,offset]void *dst, [user_check,offset]const void *src, size_t count, enum cudaMemcpyKind kind);
+        public cudaError_t cudaMemcpySrc([user_check,offset]void *dst, [in,size=count,offset]const void *src, size_t count, enum cudaMemcpyKind kind);
+        public cudaError_t cudaMemcpyDst([out,size=count,offset]void *dst, [user_check,offset]const void *src, size_t count, enum cudaMemcpyKind kind);
+        public cudaError_t cudaMemcpySrcDst([out,size=count,offset]void *dst, [in,size=count,offset]const void *src, size_t count, enum cudaMemcpyKind kind);
 
-        public cudaError_t cudaMemcpyPeer([user_check]void *dst, int dstDevice, [user_check]const void *src, int srcDevice, size_t count);
+        public cudaError_t cudaMemcpyPeer([user_check,offset]void *dst, int dstDevice, [user_check,offset]const void *src, int srcDevice, size_t count);
 
         // public cudaError_t cudaMemcpy2D(void *dst, size_t dpitch, const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind);
-        public cudaError_t cudaMemcpy2DNone([user_check]void *dst, size_t dpitch, [user_check]const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind);
-        public cudaError_t cudaMemcpy2DSrc([user_check]void *dst, size_t dpitch, [in,size=spitch,count=height]const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind);
-        public cudaError_t cudaMemcpy2DDst([out,size=dpitch,count=height]void *dst, size_t dpitch, [user_check]const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind);
-        public cudaError_t cudaMemcpy2DSrcDst([out,size=dpitch,count=height]void *dst, size_t dpitch, [in,size=spitch,count=height]const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind);
+        public cudaError_t cudaMemcpy2DNone([user_check,offset]void *dst, size_t dpitch, [user_check,offset]const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind);
+        public cudaError_t cudaMemcpy2DSrc([user_check,offset]void *dst, size_t dpitch, [in,size=spitch,count=height,offset]const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind);
+        public cudaError_t cudaMemcpy2DDst([out,size=dpitch,count=height,offset]void *dst, size_t dpitch, [user_check,offset]const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind);
+        public cudaError_t cudaMemcpy2DSrcDst([out,size=dpitch,count=height,offset]void *dst, size_t dpitch, [in,size=spitch,count=height,offset]const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind);
 
         // From the manual, it is possible that kind maybe host->host, but it seems that array must be on device, so we have only two functions
         // public cudaError_t cudaMemcpy2DToArray(cudaArray_t dst, size_t wOffset, size_t hOffset, const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind);
@@ -90,8 +91,8 @@ enclave {
         public cudaError_t cudaMemcpy2DToArraySrc(cudaArray_t dst, size_t wOffset, size_t hOffset, [in,size=spitch,count=height]const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind);
 
         // public cudaError_t cudaMemcpy2DFromArray(void *dst, size_t dpitch, cudaArray_const_t src, size_t wOffset, size_t hOffset, size_t width, size_t height, enum cudaMemcpyKind kind);
-        public cudaError_t cudaMemcpy2DFromArrayNone([user_check]void *dst, size_t dpitch, cudaArray_const_t src, size_t wOffset, size_t hOffset, size_t width, size_t height, enum cudaMemcpyKind kind);
-        public cudaError_t cudaMemcpy2DFromArrayDst([out,size=dpitch,count=height]void *dst, size_t dpitch, cudaArray_const_t src, size_t wOffset, size_t hOffset, size_t width, size_t height, enum cudaMemcpyKind kind);
+        public cudaError_t cudaMemcpy2DFromArrayNone([user_check,offset]void *dst, size_t dpitch, cudaArray_const_t src, size_t wOffset, size_t hOffset, size_t width, size_t height, enum cudaMemcpyKind kind);
+        public cudaError_t cudaMemcpy2DFromArrayDst([out,size=dpitch,count=height,offset]void *dst, size_t dpitch, cudaArray_const_t src, size_t wOffset, size_t hOffset, size_t width, size_t height, enum cudaMemcpyKind kind);
 
         // public cudaError_t cudaMemcpy2DArrayToArray(cudaArray_t dst, size_t wOffsetDst, size_t hOffsetDst, cudaArray_const_t src, size_t wOffsetSrc, size_t hOffsetSrc, size_t width, size_t height, enum cudaMemcpyKind kind __dv(cudaMemcpyDeviceToDevice));
         public cudaError_t cudaMemcpy2DArrayToArray(cudaArray_t dst, size_t wOffsetDst, size_t hOffsetDst, cudaArray_const_t src, size_t wOffsetSrc, size_t hOffsetSrc, size_t width, size_t height, enum cudaMemcpyKind kind);
@@ -105,18 +106,18 @@ enclave {
         public cudaError_t cudaMemcpyFromSymbolDst([out,size=count]void *dst, [in,string]const void *symbol, size_t count, size_t offset, enum cudaMemcpyKind kind);
 
         // public cudaError_t cudaMemcpyAsync(void *dst, const void *src, size_t count, enum cudaMemcpyKind kind, cudaStream_t stream);
-        public cudaError_t cudaMemcpyAsyncNone([user_check]void *dst,[user_check] const void *src, size_t count, enum cudaMemcpyKind kind, cudaStream_t stream);
-        public cudaError_t cudaMemcpyAsyncSrc([user_check]void *dst, [in,size=count]const void *src, size_t count, enum cudaMemcpyKind kind, cudaStream_t stream);
-        public cudaError_t cudaMemcpyAsyncDst([out,size=count]void *dst, [user_check]const void *src, size_t count, enum cudaMemcpyKind kind, cudaStream_t stream);
-        public cudaError_t cudaMemcpyAsyncSrcDst([out,size=count]void *dst, [in,size=count]const void *src, size_t count, enum cudaMemcpyKind kind, cudaStream_t stream);
+        public cudaError_t cudaMemcpyAsyncNone([user_check,offset]void *dst,[user_check,offset] const void *src, size_t count, enum cudaMemcpyKind kind, cudaStream_t stream);
+        public cudaError_t cudaMemcpyAsyncSrc([user_check,offset]void *dst, [in,size=count,offset]const void *src, size_t count, enum cudaMemcpyKind kind, cudaStream_t stream);
+        public cudaError_t cudaMemcpyAsyncDst([out,size=count,offset]void *dst, [user_check,offset]const void *src, size_t count, enum cudaMemcpyKind kind, cudaStream_t stream);
+        public cudaError_t cudaMemcpyAsyncSrcDst([out,size=count,offset]void *dst, [in,size=count,offset]const void *src, size_t count, enum cudaMemcpyKind kind, cudaStream_t stream);
 
         public cudaError_t cudaMemcpyPeerAsync([user_check]void *dst, int dstDevice, [user_check]const void *src, int srcDevice, size_t count, cudaStream_t stream);
 
         // public cudaError_t cudaMemcpy2DAsync(void *dst, size_t dpitch, const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind, cudaStream_t stream);
-        public cudaError_t cudaMemcpy2DAsyncNone([user_check]void *dst, size_t dpitch, [user_check]const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind, cudaStream_t stream);
-        public cudaError_t cudaMemcpy2DAsyncSrc([user_check]void *dst, size_t dpitch, [in,size=spitch,count=height]const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind, cudaStream_t stream);
-        public cudaError_t cudaMemcpy2DAsyncDst([out,size=dpitch,count=height]void *dst, size_t dpitch, [user_check]const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind, cudaStream_t stream);
-        public cudaError_t cudaMemcpy2DAsyncSrcDst([out,size=dpitch,count=height]void *dst, size_t dpitch, [in,size=spitch,count=height]const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind, cudaStream_t stream);
+        public cudaError_t cudaMemcpy2DAsyncNone([user_check,offset]void *dst, size_t dpitch, [user_check,offset]const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind, cudaStream_t stream);
+        public cudaError_t cudaMemcpy2DAsyncSrc([user_check,offset]void *dst, size_t dpitch, [in,size=spitch,count=height,offset]const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind, cudaStream_t stream);
+        public cudaError_t cudaMemcpy2DAsyncDst([out,size=dpitch,count=height,offset]void *dst, size_t dpitch, [user_check,offset]const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind, cudaStream_t stream);
+        public cudaError_t cudaMemcpy2DAsyncSrcDst([out,size=dpitch,count=height,offset]void *dst, size_t dpitch, [in,size=spitch,count=height,offset]const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind, cudaStream_t stream);
 
         // public cudaError_t cudaMemcpy2DToArrayAsync(cudaArray_t dst, size_t wOffset, size_t hOffset, const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind, cudaStream_t stream);
         public cudaError_t cudaMemcpy2DToArrayAsyncNone(cudaArray_t dst, size_t wOffset, size_t hOffset, [user_check]const void *src, size_t spitch, size_t width, size_t height, enum cudaMemcpyKind kind, cudaStream_t stream);
@@ -134,17 +135,17 @@ enclave {
         public cudaError_t cudaMemcpyFromSymbolAsyncNone([user_check]void *dst, [in,string]const void *symbol, size_t count, size_t offset, enum cudaMemcpyKind kind, cudaStream_t stream);
         public cudaError_t cudaMemcpyFromSymbolAsyncDst([out,size=count]void *dst, [in,string]const void *symbol, size_t count, size_t offset, enum cudaMemcpyKind kind, cudaStream_t stream);
 
-        public cudaError_t cudaMemset([user_check]void *devPtr, int value, size_t count);
-        public cudaError_t cudaMemset2D([user_check]void *devPtr, size_t pitch, int value, size_t width, size_t height);
+        public cudaError_t cudaMemset([user_check,offset]void *devPtr, int value, size_t count);
+        public cudaError_t cudaMemset2D([user_check,offset]void *devPtr, size_t pitch, int value, size_t width, size_t height);
         public cudaError_t cudaMemset3D(struct cudaPitchedPtr pitchedDevPtr, int value, struct cudaExtent extent);
-        public cudaError_t cudaMemsetAsync([user_check]void *devPtr, int value, size_t count, cudaStream_t stream);
-        public cudaError_t cudaMemset2DAsync([user_check]void *devPtr, size_t pitch, int value, size_t width, size_t height, cudaStream_t stream);
+        public cudaError_t cudaMemsetAsync([user_check,offset]void *devPtr, int value, size_t count, cudaStream_t stream);
+        public cudaError_t cudaMemset2DAsync([user_check,offset]void *devPtr, size_t pitch, int value, size_t width, size_t height, cudaStream_t stream);
         public cudaError_t cudaMemset3DAsync(struct cudaPitchedPtr pitchedDevPtr, int value, struct cudaExtent extent, cudaStream_t stream);
-        public cudaError_t cudaGetSymbolAddress([out,count=1]void **devPtr, [in,string]const void *symbol);
-        public cudaError_t cudaGetSymbolSize([out,count=1]size_t *size, [in,string]const void *symbol);
-        public cudaError_t cudaMemPrefetchAsync([user_check]const void *devPtr, size_t count, int dstDevice, cudaStream_t stream);
-        public cudaError_t cudaMemAdvise([user_check]const void *devPtr, size_t count, enum cudaMemoryAdvise advice, int device);
-        public cudaError_t cudaMemRangeGetAttribute([out,size=dataSize]void *data, size_t dataSize, enum cudaMemRangeAttribute attribute, [user_check]const void *devPtr, size_t count);
+        public cudaError_t cudaGetSymbolAddress([out,count=1,offset]void **devPtr, [in,string]const void *symbol);
+        public cudaError_t cudaGetSymbolSize([out,count=1,offset]size_t *size, [in,string]const void *symbol);
+        public cudaError_t cudaMemPrefetchAsync([user_check,offset]const void *devPtr, size_t count, int dstDevice, cudaStream_t stream);
+        public cudaError_t cudaMemAdvise([user_check,offset]const void *devPtr, size_t count, enum cudaMemoryAdvise advice, int device);
+        public cudaError_t cudaMemRangeGetAttribute([out,size=dataSize,offset]void *data, size_t dataSize, enum cudaMemRangeAttribute attribute, [user_check]const void *devPtr, size_t count);
         // public cudaError_t cudaMemRangeGetAttributes(void **data, size_t *dataSizes, enum cudaMemRangeAttribute *attributes, size_t numAttributes, const void *devPtr, size_t count);
 
         // deprecated
