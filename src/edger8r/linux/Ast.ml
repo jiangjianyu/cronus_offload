@@ -84,6 +84,7 @@ type ptr_attr = {
   pa_iswstr     : bool;
   pa_rdonly     : bool;       (* If the pointer is 'const' qualified *)
   pa_chkptr     : bool;       (* Whether to generate code to check pointer *)
+  pa_offset     : bool;       (* If a pointer should be added offset *)
 }
 
 (* parameter type *)

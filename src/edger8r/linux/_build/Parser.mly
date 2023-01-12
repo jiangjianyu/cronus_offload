@@ -74,6 +74,8 @@ let has_size (sattr: Ast.ptr_size) =
  * 'in'       - the pointer is used as input
  * 'out'      - the pointer is used as output
  *
+ * 'offset'   - the pointer should be added the offset caused by the chkpt-restore
+ *
  * Note that 'size' and 'sizefunc' are mutual exclusive (but they can
  * be used together with 'count'.  'string' and 'wstring' indicates 'isptr',
  * and they cannot use with only an 'out' attribute.
@@ -110,6 +112,9 @@ let get_ptr_attr (attr_list: (string * Ast.attr_value) list) =
       | "out" ->
         let newdir = get_new_dir "out" Ast.PtrOut res.Ast.pa_direction
         in { res with Ast.pa_direction = newdir }
+      (* alex modified on 12 Jan 2023 *)
+      | "offset" -> { res with Ast.pa_isptr = true; Ast.pa_offset = true; }
+
       | _ -> failwithf "unknown attribute: %s" key
   in
   let rec do_get_ptr_attr alist res_attr =
@@ -169,6 +174,7 @@ let get_ptr_attr (attr_list: (string * Ast.attr_value) list) =
                                           Ast.pa_iswstr = false;
                                           Ast.pa_rdonly = false;
                                           Ast.pa_chkptr = true;
+                                          Ast.pa_offset = false;
                                         }
   in
     if pattr.Ast.pa_isary

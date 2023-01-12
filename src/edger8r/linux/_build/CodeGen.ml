@@ -765,7 +765,7 @@ let gen_ubridge_local_vars (plist: Ast.pdecl list) =
       match pty with
       Ast.PTVal (ty)      -> acc ^ do_gen_local_var ty declr.Ast.identifier
     | Ast.PTPtr(ty, attr) -> acc ^ do_gen_local_var ty declr.Ast.identifier) "" new_param_list
-
+      
 (* Generate untrusted bridge code for a given untrusted function. *)
 let gen_func_ubridge (file_shortnm: string) (ufunc: Ast.untrusted_func) =
   let fd = ufunc.Ast.uf_fdecl in
@@ -800,8 +800,8 @@ let gen_func_ubridge (file_shortnm: string) (ufunc: Ast.untrusted_func) =
         sprintf "if (%s != NULL) return SGX_ERROR_INVALID_PARAMETER;" ms_ptr_name
       in
         sprintf "%s\t%s\n%s%s\n\t%s\n%s" func_open check_pms local_vars (get_first rewrite_buffer) call_with_pms func_close
-      else
-        sprintf "%s\t%s\n%s%s\n\t%s\n%s\n%s" func_open declare_ms_ptr local_vars (get_first rewrite_buffer) call_with_pms set_errno func_close
+    else
+      sprintf "%s\t%s\n%s%s\n\t%s\n%s\n%s" func_open declare_ms_ptr local_vars (get_first rewrite_buffer) call_with_pms set_errno func_close
 
 let fill_ms_field (isptr: bool) (pd: Ast.pdecl) =
   let accessor       = if isptr then "->" else "." in
@@ -1244,7 +1244,29 @@ let gen_tbridge_local_vars (plist: Ast.pdecl list) =
     | Ast.PTPtr(ty, attr) ->
     (len ^ " + " ^ get_ptr_length ty attr declr true, acc ^ gen_local_var (pty, declr) len)) ("0", status_var) new_param_list)
 
+(* alex_modified on 12 Jan 2023 *)
 (* It generates trusted bridge code for a trusted function. *)
+
+let get_offset_ptrs (fd: Ast.func_decl) (plist: Ast.pdecl list) 
+                      (mk_parm_name: Ast.parameter_type -> Ast.declarator -> string) =
+  let gen_parm_str pt declr =
+    let parm_name = mk_parm_name pt declr in
+    let tystr = get_param_tystr pt in
+      if is_const_ptr pt then sprintf "(const %s)%s" tystr parm_name else parm_name
+  in
+  let check_ptr_offset (pt: Ast.parameter_type) (declr: Ast.declarator) (attr: Ast.ptr_attr) =
+    let p_name = gen_parm_str pt declr in
+    if attr.pa_offset then sprintf "ca_get_offset(%s);\n" p_name else "\n"
+  in
+  let new_param_list = List.map conv_array_to_ptr plist
+  in
+    List.fold_left (fun acc (pty, declr) ->
+      match pty with
+        Ast.PTVal (ty)      -> acc
+      | Ast.PTPtr(ty, attr) -> acc ^ check_ptr_offset pty declr attr
+      ) "" new_param_list
+
+
 let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
   let func_open = sprintf "static TEE_Result %s(char *buffer)\n{\n"
                           (mk_tbridge_name fd.Ast.fname)
@@ -1254,7 +1276,6 @@ let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
 
   (* let debug_str = sprintf "\tRPC_SERVER_DEBUG(\"%s\");" in *)
   let debug_str = gen_func_logging fd "\tRPC_SERVER_DEBUG" mk_parm_name_tbridge in
-
   let ms_struct_name = mk_ms_struct_name fd.Ast.fname in
   let declare_ms_ptr = sprintf "%s* %s = TEE_CAST(%s*, %s);"
                                ms_struct_name
@@ -1262,6 +1283,9 @@ let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
                                ms_struct_name
                                "buffer" in
   let buffer_var_decl = sprintf "\tchar* buffer_start = buffer + sizeof(%s);\n" ms_struct_name in
+  (*  *)
+  let ptr_with_offset = get_offset_ptrs fd fd.Ast.plist mk_parm_name_tbridge in
+  (*  *)
   let invoke_func   = gen_func_invoking fd mk_parm_name_tbridge in
   let update_retval = sprintf "%s = %s"
                               (mk_parm_accessor retval_name)
@@ -1273,7 +1297,7 @@ let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
       in
         sprintf "%s%s%s\t%s\n\t%s\n%s" func_open local_vars dummy_var check_pms invoke_func func_close
     else
-      sprintf "%s\t%s\n%s\n%s%s%s\n%s\t%s\n%s\n%s\n%s\n%s"
+      sprintf "%s\t%s\n%s\n%s%s%s\n%s\t%s\n\t%s\n%s\n%s\n%s\n%s"
         func_open
         declare_ms_ptr
         buffer_var_decl
@@ -1283,6 +1307,7 @@ let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
         (mk_check_pms fd.Ast.fname)
 (*        (gen_check_tbridge_ptr_parms fd.Ast.plist)*)
         (gen_parm_ptr_direction_pre fd.Ast.plist)
+        ptr_with_offset
         (if fd.Ast.rtype <> Ast.Void then update_retval else invoke_func)
         debug_str
         (gen_err_mark fd.Ast.plist)
@@ -1475,6 +1500,7 @@ let gen_trusted_source (ec: enclave_content) =
   let include_hd = "#include \"" ^ get_theader_short_name ec.file_shortnm ^ "\"\n\n\
 #include \"tee_internal_api.h\"\n\
 #include \"rpc/rpc.h\"\n\
+#include \"cuda_alloc.h\" /* for CudaAllocator */\n\
 #include <string.h> /* for memcpy etc */\n\
 #include <stdlib.h> /* for malloc/free etc */\n\n\
 typedef TEE_Result (*ecall_invoke_entry) (char* buffer);\n" in
@@ -1483,6 +1509,10 @@ typedef TEE_Result (*ecall_invoke_entry) (char* buffer);\n" in
   \tuint32_t cmd_id = *(uint32_t*)buffer;\n\
   \tecall_invoke_entry entry = TEE_CAST(ecall_invoke_entry, g_ecall_table.ecall_table[cmd_id].ecall_addr);\n\
   \treturn (*entry)(buffer + sizeof(uint32_t));\n\
+  }\n" in
+  let offset_func = "int ca_get_offset(char * ptr)\n\
+  {\n\
+    return CA_get_ptr_offset();\n\
   }\n" in
   let trusted_fds = tf_list_to_fd_list ec.tfunc_decls in
   let tbridge_list =
@@ -1501,6 +1531,7 @@ typedef TEE_Result (*ecall_invoke_entry) (char* buffer);\n" in
     output_string out_chan (ecall_table ^ "\n");
     List.iter (fun s -> output_string out_chan (s ^ "\n")) tproxy_list;
     output_string out_chan invoke_table;
+    output_string out_chan offset_func;
     close_out out_chan
 
 (* We use a stack to keep record of imported files.

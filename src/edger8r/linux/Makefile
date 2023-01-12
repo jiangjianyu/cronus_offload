@@ -50,4 +50,4 @@ $(BUILD_DIR):
 .PHONY:
 clean:
 	@ocamlbuild Edger8r.native -clean
-	@$(RM) $(BUILD_DIR)/sgx_edger8r
+	@$(RM) $(BUILD_DIR)/cronus_edger8r
