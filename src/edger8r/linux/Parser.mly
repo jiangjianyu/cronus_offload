@@ -113,7 +113,7 @@ let get_ptr_attr (attr_list: (string * Ast.attr_value) list) =
         let newdir = get_new_dir "out" Ast.PtrOut res.Ast.pa_direction
         in { res with Ast.pa_direction = newdir }
       (* alex modified on 12 Jan 2023 *)
-      | "offset" -> { res with Ast.pa_isptr = true; Ast.pa_offset = true; }
+      | "offset" -> { res with Ast.pa_offset = true; }
 
       | _ -> failwithf "unknown attribute: %s" key
   in

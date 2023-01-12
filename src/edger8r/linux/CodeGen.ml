@@ -1256,10 +1256,8 @@ let get_offset_ptrs (fd: Ast.func_decl) (plist: Ast.pdecl list)
   in *)
   let check_ptr_offset (pt: Ast.parameter_type) (declr: Ast.declarator) (attr: Ast.ptr_attr) =
     let p_name = mk_parm_name pt declr in
-    if attr.pa_offset then sprintf "\tca_get_offset((void *)%s);\n" p_name else ""
-  in
-  let new_param_list = List.map conv_array_to_ptr plist
-  in
+    if attr.pa_offset then sprintf "\tca_get_offset((void *)%s);\n" p_name else "" in
+    let new_param_list = List.map conv_array_to_ptr plist in
     List.fold_left (fun acc (pty, declr) ->
       match pty with
         Ast.PTVal (ty)      -> acc
@@ -1274,6 +1272,9 @@ let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
   let local_vars = gen_tbridge_local_vars fd.Ast.plist in
   let func_close = "\treturn status;\n}\n" in
 
+  (*  *)
+  let ptr_with_offset = get_offset_ptrs fd fd.Ast.plist mk_parm_name_tbridge in
+  (*  *)
   (* let debug_str = sprintf "\tRPC_SERVER_DEBUG(\"%s\");" in *)
   let debug_str = gen_func_logging fd "\tRPC_SERVER_DEBUG" mk_parm_name_tbridge in
   let ms_struct_name = mk_ms_struct_name fd.Ast.fname in
@@ -1283,9 +1284,6 @@ let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
                                ms_struct_name
                                "buffer" in
   let buffer_var_decl = sprintf "\tchar* buffer_start = buffer + sizeof(%s);\n" ms_struct_name in
-  (*  *)
-  let ptr_with_offset = get_offset_ptrs fd fd.Ast.plist mk_parm_name_tbridge in
-  (*  *)
   let invoke_func   = gen_func_invoking fd mk_parm_name_tbridge in
   let update_retval = sprintf "%s = %s"
                               (mk_parm_accessor retval_name)
