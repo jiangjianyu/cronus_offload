@@ -1249,14 +1249,14 @@ let gen_tbridge_local_vars (plist: Ast.pdecl list) =
 
 let get_offset_ptrs (fd: Ast.func_decl) (plist: Ast.pdecl list) 
                       (mk_parm_name: Ast.parameter_type -> Ast.declarator -> string) =
-  let gen_parm_str pt declr =
+  (* let gen_parm_str pt declr =
     let parm_name = mk_parm_name pt declr in
     let tystr = get_param_tystr pt in
       if is_const_ptr pt then sprintf "(const %s)%s" tystr parm_name else parm_name
-  in
+  in *)
   let check_ptr_offset (pt: Ast.parameter_type) (declr: Ast.declarator) (attr: Ast.ptr_attr) =
-    let p_name = gen_parm_str pt declr in
-    if attr.pa_offset then sprintf "\tca_get_offset(%s);\n" p_name else "\n"
+    let p_name = mk_parm_name pt declr in
+    if attr.pa_offset then sprintf "\tca_get_offset((void *)%s);\n" p_name else "\n"
   in
   let new_param_list = List.map conv_array_to_ptr plist
   in
@@ -1503,16 +1503,17 @@ let gen_trusted_source (ec: enclave_content) =
 #include \"cuda_alloc.h\" /* for CudaAllocator */\n\
 #include <string.h> /* for memcpy etc */\n\
 #include <stdlib.h> /* for malloc/free etc */\n\n\
-typedef TEE_Result (*ecall_invoke_entry) (char* buffer);\n" in
+typedef TEE_Result (*ecall_invoke_entry) (char* buffer);\n\
+int ca_get_offset(void * ptr);\n" in
   let invoke_table = "int rpc_dispatch(char* buffer)\n\
   {\n\
   \tuint32_t cmd_id = *(uint32_t*)buffer;\n\
   \tecall_invoke_entry entry = TEE_CAST(ecall_invoke_entry, g_ecall_table.ecall_table[cmd_id].ecall_addr);\n\
   \treturn (*entry)(buffer + sizeof(uint32_t));\n\
   }\n" in
-  let offset_func = "int ca_get_offset(char * ptr)\n\
+  let offset_func = "int ca_get_offset(void * ptr)\n\
   {\n\
-    return CA_get_ptr_offset();\n\
+  \treturn CA_get_ptr_offset();\n\
   }\n" in
   let trusted_fds = tf_list_to_fd_list ec.tfunc_decls in
   let tbridge_list =

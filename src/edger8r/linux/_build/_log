@@ -92,8 +92,8 @@ File "CodeGen.ml", line 1481, characters 6-25:
 1481 |   let include_buffer_init = "sgx_status_t init_sgx_buffer() {\n\tsgx_status_t status;\n\tinput_sm.size = 10240;\n\tinput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\toutput_sm.size = 10240;\n\toutput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &input_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n\t}\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &output_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n}\n\tocall_add(output_sm.buffer, ocall_table_securecompiler.table);\n}\n" in
              ^^^^^^^^^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable include_buffer_init.
-File "CodeGen.ml", line 1522, characters 6-17:
-1522 |   let entry_table = gen_entry_table ec in
+File "CodeGen.ml", line 1523, characters 6-17:
+1523 |   let entry_table = gen_entry_table ec in
              ^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable entry_table.
 # Target: Edger8r.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Edger8r.cmo, file:Edger8r.ml, implem, ocaml, quiet }
@@ -173,8 +173,8 @@ File "CodeGen.ml", line 1481, characters 6-25:
 1481 |   let include_buffer_init = "sgx_status_t init_sgx_buffer() {\n\tsgx_status_t status;\n\tinput_sm.size = 10240;\n\tinput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\toutput_sm.size = 10240;\n\toutput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &input_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n\t}\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &output_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n}\n\tocall_add(output_sm.buffer, ocall_table_securecompiler.table);\n}\n" in
              ^^^^^^^^^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable include_buffer_init.
-File "CodeGen.ml", line 1522, characters 6-17:
-1522 |   let entry_table = gen_entry_table ec in
+File "CodeGen.ml", line 1523, characters 6-17:
+1523 |   let entry_table = gen_entry_table ec in
              ^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable entry_table.
 # Target: Edger8r.cmx, tags: { compile, extension:cmx, extension:ml, file:Edger8r.cmx, file:Edger8r.ml, implem, native, ocaml, quiet }
