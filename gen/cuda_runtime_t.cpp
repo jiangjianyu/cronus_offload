@@ -1882,15 +1882,11 @@ static TEE_Result tee_cudaFreeHost(char *buffer)
 
 	TEE_Result status = TEE_SUCCESS;
 	void* _tmp_ptr = ms->ms_ptr;
-	void * _tmp_ptr_off_src = NULL;
 
 
-	_tmp_ptr_off_src = _tmp_ptr; 
-	_tmp_ptr = ca_get_offset((void *)_tmp_ptr);
 
 	ms->ms_retval = cudaFreeHost(_tmp_ptr);
 	RPC_SERVER_DEBUG("(%lx) => %lx", _tmp_ptr, ms->ms_retval);
-	_tmp_ptr = _tmp_ptr_off_src;
 
 
 
@@ -3829,7 +3825,6 @@ static TEE_Result tee_cudaGetSymbolAddress(char *buffer)
 	void* _tmp_symbol = TEE_CAST(void*, buffer_start + 0 + 1 * sizeof(*_tmp_devPtr));
 	size_t _len_symbol = _tmp_symbol ? strlen((const char*)(_tmp_symbol)) + 1 : 0;
 	void* _in_symbol = NULL;
-	void * _in_devPtr_off_src = NULL;
 
 
 	if (_tmp_devPtr != NULL) {
@@ -3850,12 +3845,9 @@ static TEE_Result tee_cudaGetSymbolAddress(char *buffer)
 		memcpy((void*)_in_symbol, _tmp_symbol, _len_symbol);
 		((char*)_in_symbol)[_len_symbol - 1] = '\0';
 	}
-	_in_devPtr_off_src = _in_devPtr; 
-	_in_devPtr = ca_get_offset((void *)_in_devPtr);
 
 	ms->ms_retval = cudaGetSymbolAddress(_in_devPtr, (const void*)_in_symbol);
 	RPC_SERVER_DEBUG("(%lx, %s) => %lx", _in_devPtr, (const void*)_in_symbol, ms->ms_retval);
-	_in_devPtr = _in_devPtr_off_src;
 
 err:
 	if (_in_devPtr) {
@@ -3879,7 +3871,6 @@ static TEE_Result tee_cudaGetSymbolSize(char *buffer)
 	void* _tmp_symbol = TEE_CAST(void*, buffer_start + 0 + 1 * sizeof(*_tmp_size));
 	size_t _len_symbol = _tmp_symbol ? strlen((const char*)(_tmp_symbol)) + 1 : 0;
 	void* _in_symbol = NULL;
-	void * _in_size_off_src = NULL;
 
 
 	if (_tmp_size != NULL) {
@@ -3900,12 +3891,9 @@ static TEE_Result tee_cudaGetSymbolSize(char *buffer)
 		memcpy((void*)_in_symbol, _tmp_symbol, _len_symbol);
 		((char*)_in_symbol)[_len_symbol - 1] = '\0';
 	}
-	_in_size_off_src = _in_size; 
-	_in_size = ca_get_offset((void *)_in_size);
 
 	ms->ms_retval = cudaGetSymbolSize(_in_size, (const void*)_in_symbol);
 	RPC_SERVER_DEBUG("(%lx, %s) => %lx", _in_size, (const void*)_in_symbol, ms->ms_retval);
-	_in_size = _in_size_off_src;
 
 err:
 	if (_in_size) {
@@ -4006,11 +3994,15 @@ static TEE_Result tee_cudaMemcpyToArrayNone(char *buffer)
 
 	TEE_Result status = TEE_SUCCESS;
 	void* _tmp_src = ms->ms_src;
+	void * _tmp_src_off_src = NULL;
 
 
+	_tmp_src_off_src = _tmp_src; 
+	_tmp_src = ca_get_offset((void *)_tmp_src);
 
 	ms->ms_retval = cudaMemcpyToArrayNone(ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_tmp_src, ms->ms_count, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx) => %lx", ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_tmp_src, ms->ms_count, ms->ms_kind, ms->ms_retval);
+	_tmp_src = _tmp_src_off_src;
 
 
 
@@ -4027,6 +4019,7 @@ static TEE_Result tee_cudaMemcpyToArraySrc(char *buffer)
 	size_t _tmp_count = ms->ms_count;
 	size_t _len_src = _tmp_count;
 	void* _in_src = NULL;
+	void * _in_src_off_src = NULL;
 
 
 	if (_tmp_src != NULL) {
@@ -4038,9 +4031,12 @@ static TEE_Result tee_cudaMemcpyToArraySrc(char *buffer)
 
 		memcpy((void*)_in_src, _tmp_src, _len_src);
 	}
+	_in_src_off_src = _in_src; 
+	_in_src = ca_get_offset((void *)_in_src);
 
 	ms->ms_retval = cudaMemcpyToArraySrc(ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_in_src, _tmp_count, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx) => %lx", ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_in_src, _tmp_count, ms->ms_kind, ms->ms_retval);
+	_in_src = _in_src_off_src;
 
 err:
 	if (_in_src) free((void*)_in_src);

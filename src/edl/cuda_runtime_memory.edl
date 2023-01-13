@@ -42,7 +42,7 @@ enclave {
         public cudaError_t cudaMallocPitch([out,count=1]void **devPtr, [out,count=1]size_t *pitch, size_t width, size_t height);
         public cudaError_t cudaMallocArray([out,count=1]cudaArray_t *array, [in,count=1]const struct cudaChannelFormatDesc *desc, size_t width, size_t height, unsigned int flags);
         public cudaError_t cudaFree([user_check,offset]void *devPtr);
-        public cudaError_t cudaFreeHost([user_check,offset]void *ptr);
+        public cudaError_t cudaFreeHost([user_check]void *ptr);
         public cudaError_t cudaFreeArray(cudaArray_t array);
         public cudaError_t cudaFreeMipmappedArray(cudaMipmappedArray_t mipmappedArray);
         public cudaError_t cudaHostAlloc([out,count=1]void **pHost, size_t size, unsigned int flags);
@@ -141,8 +141,8 @@ enclave {
         public cudaError_t cudaMemsetAsync([user_check,offset]void *devPtr, int value, size_t count, cudaStream_t stream);
         public cudaError_t cudaMemset2DAsync([user_check,offset]void *devPtr, size_t pitch, int value, size_t width, size_t height, cudaStream_t stream);
         public cudaError_t cudaMemset3DAsync(struct cudaPitchedPtr pitchedDevPtr, int value, struct cudaExtent extent, cudaStream_t stream);
-        public cudaError_t cudaGetSymbolAddress([out,count=1,offset]void **devPtr, [in,string]const void *symbol);
-        public cudaError_t cudaGetSymbolSize([out,count=1,offset]size_t *size, [in,string]const void *symbol);
+        public cudaError_t cudaGetSymbolAddress([out,count=1]void **devPtr, [in,string]const void *symbol);
+        public cudaError_t cudaGetSymbolSize([out,count=1]size_t *size, [in,string]const void *symbol);
         public cudaError_t cudaMemPrefetchAsync([user_check,offset]const void *devPtr, size_t count, int dstDevice, cudaStream_t stream);
         public cudaError_t cudaMemAdvise([user_check,offset]const void *devPtr, size_t count, enum cudaMemoryAdvise advice, int device);
         public cudaError_t cudaMemRangeGetAttribute([out,size=dataSize,offset]void *data, size_t dataSize, enum cudaMemRangeAttribute attribute, [user_check]const void *devPtr, size_t count);
@@ -150,8 +150,8 @@ enclave {
 
         // deprecated
         // public  cudaError_t cudaMemcpyToArray(cudaArray_t dst, size_t wOffset, size_t hOffset, const void *src, size_t count, enum cudaMemcpyKind kind);
-        public  cudaError_t cudaMemcpyToArrayNone(cudaArray_t dst, size_t wOffset, size_t hOffset, [user_check]const void *src, size_t count, enum cudaMemcpyKind kind);
-        public  cudaError_t cudaMemcpyToArraySrc(cudaArray_t dst, size_t wOffset, size_t hOffset, [in,size=count]const void *src, size_t count, enum cudaMemcpyKind kind);
+        public  cudaError_t cudaMemcpyToArrayNone(cudaArray_t dst, size_t wOffset, size_t hOffset, [user_check,offset]const void *src, size_t count, enum cudaMemcpyKind kind);
+        public  cudaError_t cudaMemcpyToArraySrc(cudaArray_t dst, size_t wOffset, size_t hOffset, [in,size=count,offset]const void *src, size_t count, enum cudaMemcpyKind kind);
 
         // public  cudaError_t cudaMemcpyFromArray(void *dst, cudaArray_const_t src, size_t wOffset, size_t hOffset, size_t count, enum cudaMemcpyKind kind);
         public  cudaError_t cudaMemcpyFromArrayNone([user_check]void *dst, cudaArray_const_t src, size_t wOffset, size_t hOffset, size_t count, enum cudaMemcpyKind kind);
