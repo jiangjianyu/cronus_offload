@@ -12,7 +12,7 @@ ocamllex.opt -q Lexer.mll # cached
 # Target: Lexer.ml.depends, tags: { extension:ml, file:Lexer.ml, ocaml, ocamldep, quiet }
 ocamldep.opt -modules Lexer.ml > Lexer.ml.depends # cached
 # Target: Parser.mly, tags: { extension:mly, file:Parser.mly, infer, ocaml, ocamlyacc, parser, quiet }
-ocamlyacc Parser.mly
+ocamlyacc Parser.mly # cached
 # Target: Parser.mli.depends, tags: { extension:mli, file:Parser.mli, ocaml, ocamldep, quiet }
 ocamldep.opt -modules Parser.mli > Parser.mli.depends # cached
 # Target: Parser.cmi, tags: { byte, compile, extension:mli, file:Parser.mli, interf, ocaml, quiet }
@@ -76,42 +76,42 @@ File "CodeGen.ml", line 991, characters 10-18:
 991 |       let size_str =
                 ^^^^^^^^
 Warning 26 [unused-var]: unused variable size_str.
-File "CodeGen.ml", line 1329, characters 16-31:
-1329 |             let in_ptr_dst_name = mk_in_ptr_dst_name attr.Ast.pa_rdonly parm_accessor in
+File "CodeGen.ml", line 1341, characters 16-31:
+1341 |             let in_ptr_dst_name = mk_in_ptr_dst_name attr.Ast.pa_rdonly parm_accessor in
                        ^^^^^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable in_ptr_dst_name.
-File "CodeGen.ml", line 1477, characters 6-18:
-1477 |   let include_uuid = "TEEC_UUID uuid = { 0x8aaaf200, 0x2450, 0x11e4, { 0xab, 0xe2, 0x00, 0x02, 0xa5, 0xd5, 0xc5, 0x1b} };\n" in
+File "CodeGen.ml", line 1489, characters 6-18:
+1489 |   let include_uuid = "TEEC_UUID uuid = { 0x8aaaf200, 0x2450, 0x11e4, { 0xab, 0xe2, 0x00, 0x02, 0xa5, 0xd5, 0xc5, 0x1b} };\n" in
              ^^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable include_uuid.
-File "CodeGen.ml", line 1478, characters 6-20:
-1478 |   let include_buffer = "char *enclave_buffer;\n" in
+File "CodeGen.ml", line 1490, characters 6-20:
+1490 |   let include_buffer = "char *enclave_buffer;\n" in
              ^^^^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable include_buffer.
-File "CodeGen.ml", line 1479, characters 6-25:
-1479 |   let include_buffer_init = "sgx_status_t init_sgx_buffer() {\n\tsgx_status_t status;\n\tinput_sm.size = 10240;\n\tinput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\toutput_sm.size = 10240;\n\toutput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &input_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n\t}\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &output_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n}\n\tocall_add(output_sm.buffer, ocall_table_securecompiler.table);\n}\n" in
+File "CodeGen.ml", line 1491, characters 6-25:
+1491 |   let include_buffer_init = "sgx_status_t init_sgx_buffer() {\n\tsgx_status_t status;\n\tinput_sm.size = 10240;\n\tinput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\toutput_sm.size = 10240;\n\toutput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &input_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n\t}\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &output_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n}\n\tocall_add(output_sm.buffer, ocall_table_securecompiler.table);\n}\n" in
              ^^^^^^^^^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable include_buffer_init.
-File "CodeGen.ml", line 1521, characters 6-17:
-1521 |   let entry_table = gen_entry_table ec in
+File "CodeGen.ml", line 1533, characters 6-17:
+1533 |   let entry_table = gen_entry_table ec in
              ^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable entry_table.
 # Target: Edger8r.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Edger8r.cmo, file:Edger8r.ml, implem, ocaml, quiet }
-ocamlc.opt -c -o Edger8r.cmo Edger8r.ml
+ocamlc.opt -c -o Edger8r.cmo Edger8r.ml # cached
 # Target: Ast.cmx, tags: { compile, extension:cmx, extension:ml, file:Ast.cmx, file:Ast.ml, implem, native, ocaml, quiet }
 ocamlopt.opt -c -o Ast.cmx Ast.ml # cached
 # Target: Parser.ml.depends, tags: { extension:ml, file:Parser.ml, ocaml, ocamldep, quiet }
-ocamldep.opt -modules Parser.ml > Parser.ml.depends
+ocamldep.opt -modules Parser.ml > Parser.ml.depends # cached
 # Target: Util.cmx, tags: { compile, extension:cmx, extension:ml, file:Util.cmx, file:Util.ml, implem, native, ocaml, quiet }
 ocamlopt.opt -c -o Util.cmx Util.ml # cached
 # Target: Parser.cmx, tags: { compile, extension:cmx, extension:ml, file:Parser.cmx, file:Parser.ml, implem, native, ocaml, quiet }
-ocamlopt.opt -c -o Parser.cmx Parser.ml
+ocamlopt.opt -c -o Parser.cmx Parser.ml # cached
+# Target: Lexer.cmx, tags: { compile, extension:cmx, extension:ml, file:Lexer.cmx, file:Lexer.ml, implem, native, ocaml, quiet }
+ocamlopt.opt -c -o Lexer.cmx Lexer.ml # cached
 # Target: Preprocessor.cmx, tags: { compile, extension:cmx, extension:ml, file:Preprocessor.cmx, file:Preprocessor.ml, implem, native, ocaml, quiet }
 ocamlopt.opt -c -o Preprocessor.cmx Preprocessor.ml # cached
 # Target: SimpleStack.cmx, tags: { compile, extension:cmx, extension:ml, file:SimpleStack.cmx, file:SimpleStack.ml, implem, native, ocaml, quiet }
 ocamlopt.opt -c -o SimpleStack.cmx SimpleStack.ml # cached
-# Target: Lexer.cmx, tags: { compile, extension:cmx, extension:ml, file:Lexer.cmx, file:Lexer.ml, implem, native, ocaml, quiet }
-ocamlopt.opt -c -o Lexer.cmx Lexer.ml
 # Target: CodeGen.cmx, tags: { compile, extension:cmx, extension:ml, file:CodeGen.cmx, file:CodeGen.ml, implem, native, ocaml, quiet }
 ocamlopt.opt -c -o CodeGen.cmx CodeGen.ml
 + ocamlopt.opt -c -o CodeGen.cmx CodeGen.ml
@@ -157,28 +157,28 @@ File "CodeGen.ml", line 991, characters 10-18:
 991 |       let size_str =
                 ^^^^^^^^
 Warning 26 [unused-var]: unused variable size_str.
-File "CodeGen.ml", line 1329, characters 16-31:
-1329 |             let in_ptr_dst_name = mk_in_ptr_dst_name attr.Ast.pa_rdonly parm_accessor in
+File "CodeGen.ml", line 1341, characters 16-31:
+1341 |             let in_ptr_dst_name = mk_in_ptr_dst_name attr.Ast.pa_rdonly parm_accessor in
                        ^^^^^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable in_ptr_dst_name.
-File "CodeGen.ml", line 1477, characters 6-18:
-1477 |   let include_uuid = "TEEC_UUID uuid = { 0x8aaaf200, 0x2450, 0x11e4, { 0xab, 0xe2, 0x00, 0x02, 0xa5, 0xd5, 0xc5, 0x1b} };\n" in
+File "CodeGen.ml", line 1489, characters 6-18:
+1489 |   let include_uuid = "TEEC_UUID uuid = { 0x8aaaf200, 0x2450, 0x11e4, { 0xab, 0xe2, 0x00, 0x02, 0xa5, 0xd5, 0xc5, 0x1b} };\n" in
              ^^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable include_uuid.
-File "CodeGen.ml", line 1478, characters 6-20:
-1478 |   let include_buffer = "char *enclave_buffer;\n" in
+File "CodeGen.ml", line 1490, characters 6-20:
+1490 |   let include_buffer = "char *enclave_buffer;\n" in
              ^^^^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable include_buffer.
-File "CodeGen.ml", line 1479, characters 6-25:
-1479 |   let include_buffer_init = "sgx_status_t init_sgx_buffer() {\n\tsgx_status_t status;\n\tinput_sm.size = 10240;\n\tinput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\toutput_sm.size = 10240;\n\toutput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &input_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n\t}\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &output_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n}\n\tocall_add(output_sm.buffer, ocall_table_securecompiler.table);\n}\n" in
+File "CodeGen.ml", line 1491, characters 6-25:
+1491 |   let include_buffer_init = "sgx_status_t init_sgx_buffer() {\n\tsgx_status_t status;\n\tinput_sm.size = 10240;\n\tinput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\toutput_sm.size = 10240;\n\toutput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &input_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n\t}\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &output_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n}\n\tocall_add(output_sm.buffer, ocall_table_securecompiler.table);\n}\n" in
              ^^^^^^^^^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable include_buffer_init.
-File "CodeGen.ml", line 1521, characters 6-17:
-1521 |   let entry_table = gen_entry_table ec in
+File "CodeGen.ml", line 1533, characters 6-17:
+1533 |   let entry_table = gen_entry_table ec in
              ^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable entry_table.
 # Target: Edger8r.cmx, tags: { compile, extension:cmx, extension:ml, file:Edger8r.cmx, file:Edger8r.ml, implem, native, ocaml, quiet }
-ocamlopt.opt -c -o Edger8r.cmx Edger8r.ml
+ocamlopt.opt -c -o Edger8r.cmx Edger8r.ml # cached
 # Target: Edger8r.native, tags: { dont_link_with, extension:native, file:Edger8r.native, link, native, ocaml, program, quiet }
 ocamlopt.opt str.cmxa unix.cmxa Ast.cmx Util.cmx Parser.cmx Lexer.cmx Preprocessor.cmx SimpleStack.cmx CodeGen.cmx Edger8r.cmx -o Edger8r.native
 # Compilation successful.

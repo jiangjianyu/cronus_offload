@@ -1246,17 +1246,14 @@ let gen_tbridge_local_vars (plist: Ast.pdecl list) =
 
 (* alex modified on 12 Jan 2023 *)
 (* It generates trusted bridge code for a trusted function. *)
-
 let get_offset_ptrs (fd: Ast.func_decl) (plist: Ast.pdecl list) 
                       (mk_parm_name: Ast.parameter_type -> Ast.declarator -> string) =
-  (* let gen_parm_str pt declr =
-    let parm_name = mk_parm_name pt declr in
-    let tystr = get_param_tystr pt in
-      if is_const_ptr pt then sprintf "(const %s)%s" tystr parm_name else parm_name
-  in *)
   let check_ptr_offset (pt: Ast.parameter_type) (declr: Ast.declarator) (attr: Ast.ptr_attr) =
     let p_name = mk_parm_name pt declr in
-    if attr.pa_offset then sprintf "\tca_get_offset((void *)%s);\n" p_name else "" in
+    if attr.pa_offset then sprintf "\
+      \tauto %s_off_src = %s; \n\
+      \t%s = ca_get_offset((void *)%s);\n\
+    " p_name p_name p_name p_name else "" in
     let new_param_list = List.map conv_array_to_ptr plist in
     List.fold_left (fun acc (pty, declr) ->
       match pty with
@@ -1264,6 +1261,19 @@ let get_offset_ptrs (fd: Ast.func_decl) (plist: Ast.pdecl list)
       | Ast.PTPtr(ty, attr) -> acc ^ check_ptr_offset pty declr attr
       ) "" new_param_list
 
+let recover_offset_ptrs (fd: Ast.func_decl) (plist: Ast.pdecl list) 
+                      (mk_parm_name: Ast.parameter_type -> Ast.declarator -> string) =
+  let check_ptr_offset (pt: Ast.parameter_type) (declr: Ast.declarator) (attr: Ast.ptr_attr) =
+    let p_name = mk_parm_name pt declr in
+    if attr.pa_offset then sprintf "\
+      \t%s = %s_off_src;\n\
+    " p_name p_name else "" in
+    let new_param_list = List.map conv_array_to_ptr plist in
+    List.fold_left (fun acc (pty, declr) ->
+      match pty with
+        Ast.PTVal (ty)      -> acc
+      | Ast.PTPtr(ty, attr) -> acc ^ check_ptr_offset pty declr attr
+      ) "" new_param_list
 
 let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
   let func_open = sprintf "static TEE_Result %s(char *buffer)\n{\n"
@@ -1274,6 +1284,7 @@ let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
 
   (*  *)
   let ptr_with_offset = get_offset_ptrs fd fd.Ast.plist mk_parm_name_tbridge in
+  let ptr_with_offset_recover = recover_offset_ptrs fd fd.Ast.plist mk_parm_name_tbridge in
   (*  *)
   (* let debug_str = sprintf "\tRPC_SERVER_DEBUG(\"%s\");" in *)
   let debug_str = gen_func_logging fd "\tRPC_SERVER_DEBUG" mk_parm_name_tbridge in
@@ -1295,7 +1306,7 @@ let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
       in
         sprintf "%s%s%s\t%s\n\t%s\n%s" func_open local_vars dummy_var check_pms invoke_func func_close
     else
-      sprintf "%s\t%s\n%s\n%s%s%s\n%s%s\n\t%s\n%s\n%s\n%s\n%s"
+      sprintf "%s\t%s\n%s\n%s%s%s\n%s%s\n\t%s\n%s\n%s\n%s\n%s\n%s"
         func_open
         declare_ms_ptr
         buffer_var_decl
@@ -1308,6 +1319,7 @@ let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
         ptr_with_offset
         (if fd.Ast.rtype <> Ast.Void then update_retval else invoke_func)
         debug_str
+        ptr_with_offset_recover
         (gen_err_mark fd.Ast.plist)
         (gen_parm_ptr_direction_post fd.Ast.plist)
         func_close

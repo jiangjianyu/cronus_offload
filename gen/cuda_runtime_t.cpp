@@ -927,6 +927,7 @@ static TEE_Result tee_cudaLaunchKernelByName(char *buffer)
 
 	ms->ms_retval = cudaLaunchKernelByName(_in_funcname, ms->ms_gridDim, ms->ms_blockDim, _in_argbuf, _tmp_argbufsize, _in_parameters, _tmp_partotal_size, ms->ms_sharedMem, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%s, %lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", _in_funcname, ms->ms_gridDim, ms->ms_blockDim, _in_argbuf, _tmp_argbufsize, _in_parameters, _tmp_partotal_size, ms->ms_sharedMem, ms->ms_stream, ms->ms_retval);
+
 err:
 	if (_in_funcname) free(_in_funcname);
 	if (_in_argbuf) free(_in_argbuf);
@@ -947,6 +948,7 @@ static TEE_Result tee_cudaThreadSynchronize(char *buffer)
 	RPC_SERVER_DEBUG("() => %lx" , ms->ms_retval);
 
 
+
 	return status;
 }
 
@@ -962,6 +964,7 @@ static TEE_Result tee_cudaDeviceSynchronize(char *buffer)
 	RPC_SERVER_DEBUG("() => %lx" , ms->ms_retval);
 
 
+
 	return status;
 }
 
@@ -975,6 +978,7 @@ static TEE_Result tee_cudaGetLastError(char *buffer)
 
 	ms->ms_retval = cudaGetLastError();
 	RPC_SERVER_DEBUG("() => %lx" , ms->ms_retval);
+
 
 
 	return status;
@@ -1001,6 +1005,7 @@ static TEE_Result tee_cudaGetDeviceCount(char *buffer)
 
 	ms->ms_retval = cudaGetDeviceCount(_in_count);
 	RPC_SERVER_DEBUG("(%lx) => %lx", _in_count, ms->ms_retval);
+
 err:
 	if (_in_count) {
 		memcpy(_tmp_count, _in_count, _len_count);
@@ -1031,6 +1036,7 @@ static TEE_Result tee_cudaGetDeviceProperties(char *buffer)
 
 	ms->ms_retval = cudaGetDeviceProperties(_in_prop, ms->ms_device);
 	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _in_prop, ms->ms_device, ms->ms_retval);
+
 err:
 	if (_in_prop) {
 		memcpy(_tmp_prop, _in_prop, _len_prop);
@@ -1061,6 +1067,7 @@ static TEE_Result tee_cudaDeviceGetAttribute(char *buffer)
 
 	ms->ms_retval = cudaDeviceGetAttribute(_in_value, ms->ms_attr, ms->ms_device);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx) => %lx", _in_value, ms->ms_attr, ms->ms_device, ms->ms_retval);
+
 err:
 	if (_in_value) {
 		memcpy(_tmp_value, _in_value, _len_value);
@@ -1103,6 +1110,7 @@ static TEE_Result tee_cudaChooseDevice(char *buffer)
 
 	ms->ms_retval = cudaChooseDevice(_in_device, (const struct cudaDeviceProp*)_in_prop);
 	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _in_device, (const struct cudaDeviceProp*)_in_prop, ms->ms_retval);
+
 err:
 	if (_in_device) {
 		memcpy(_tmp_device, _in_device, _len_device);
@@ -1123,6 +1131,7 @@ static TEE_Result tee_cudaSetDevice(char *buffer)
 
 	ms->ms_retval = cudaSetDevice(ms->ms_device);
 	RPC_SERVER_DEBUG("(%lx) => %lx", ms->ms_device, ms->ms_retval);
+
 
 
 	return status;
@@ -1149,6 +1158,7 @@ static TEE_Result tee_cudaGetDevice(char *buffer)
 
 	ms->ms_retval = cudaGetDevice(_in_device);
 	RPC_SERVER_DEBUG("(%lx) => %lx", _in_device, ms->ms_retval);
+
 err:
 	if (_in_device) {
 		memcpy(_tmp_device, _in_device, _len_device);
@@ -1181,6 +1191,7 @@ static TEE_Result tee_cudaSetValidDevices(char *buffer)
 
 	ms->ms_retval = cudaSetValidDevices(_in_device_arr, _tmp_len);
 	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _in_device_arr, _tmp_len, ms->ms_retval);
+
 err:
 	if (_in_device_arr) free(_in_device_arr);
 
@@ -1197,6 +1208,7 @@ static TEE_Result tee_cudaSetDeviceFlags(char *buffer)
 
 	ms->ms_retval = cudaSetDeviceFlags(ms->ms_flags);
 	RPC_SERVER_DEBUG("(%lx) => %lx", ms->ms_flags, ms->ms_retval);
+
 
 
 	return status;
@@ -1223,6 +1235,7 @@ static TEE_Result tee_cudaGetDeviceFlags(char *buffer)
 
 	ms->ms_retval = cudaGetDeviceFlags(_in_flags);
 	RPC_SERVER_DEBUG("(%lx) => %lx", _in_flags, ms->ms_retval);
+
 err:
 	if (_in_flags) {
 		memcpy(_tmp_flags, _in_flags, _len_flags);
@@ -1253,6 +1266,7 @@ static TEE_Result tee_cudaStreamCreate(char *buffer)
 
 	ms->ms_retval = cudaStreamCreate(_in_pStream);
 	RPC_SERVER_DEBUG("(%lx) => %lx", _in_pStream, ms->ms_retval);
+
 err:
 	if (_in_pStream) {
 		memcpy(_tmp_pStream, _in_pStream, _len_pStream);
@@ -1283,6 +1297,7 @@ static TEE_Result tee_cudaStreamCreateWithFlags(char *buffer)
 
 	ms->ms_retval = cudaStreamCreateWithFlags(_in_pStream, ms->ms_flags);
 	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _in_pStream, ms->ms_flags, ms->ms_retval);
+
 err:
 	if (_in_pStream) {
 		memcpy(_tmp_pStream, _in_pStream, _len_pStream);
@@ -1313,6 +1328,7 @@ static TEE_Result tee_cudaStreamCreateWithPriority(char *buffer)
 
 	ms->ms_retval = cudaStreamCreateWithPriority(_in_pStream, ms->ms_flags, ms->ms_priority);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx) => %lx", _in_pStream, ms->ms_flags, ms->ms_priority, ms->ms_retval);
+
 err:
 	if (_in_pStream) {
 		memcpy(_tmp_pStream, _in_pStream, _len_pStream);
@@ -1343,6 +1359,7 @@ static TEE_Result tee_cudaStreamGetPriority(char *buffer)
 
 	ms->ms_retval = cudaStreamGetPriority(ms->ms_hStream, _in_priority);
 	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", ms->ms_hStream, _in_priority, ms->ms_retval);
+
 err:
 	if (_in_priority) {
 		memcpy(_tmp_priority, _in_priority, _len_priority);
@@ -1373,6 +1390,7 @@ static TEE_Result tee_cudaStreamGetFlags(char *buffer)
 
 	ms->ms_retval = cudaStreamGetFlags(ms->ms_hStream, _in_flags);
 	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", ms->ms_hStream, _in_flags, ms->ms_retval);
+
 err:
 	if (_in_flags) {
 		memcpy(_tmp_flags, _in_flags, _len_flags);
@@ -1394,6 +1412,7 @@ static TEE_Result tee_cudaStreamDestroy(char *buffer)
 	RPC_SERVER_DEBUG("(%lx) => %lx", ms->ms_stream, ms->ms_retval);
 
 
+
 	return status;
 }
 
@@ -1407,6 +1426,7 @@ static TEE_Result tee_cudaStreamWaitEvent(char *buffer)
 
 	ms->ms_retval = cudaStreamWaitEvent(ms->ms_stream, ms->ms_event, ms->ms_flags);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx) => %lx", ms->ms_stream, ms->ms_event, ms->ms_flags, ms->ms_retval);
+
 
 
 	return status;
@@ -1424,6 +1444,7 @@ static TEE_Result tee_cudaStreamSynchronize(char *buffer)
 	RPC_SERVER_DEBUG("(%lx) => %lx", ms->ms_stream, ms->ms_retval);
 
 
+
 	return status;
 }
 
@@ -1437,6 +1458,7 @@ static TEE_Result tee_cudaStreamQuery(char *buffer)
 
 	ms->ms_retval = cudaStreamQuery(ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx) => %lx", ms->ms_stream, ms->ms_retval);
+
 
 
 	return status;
@@ -1455,6 +1477,7 @@ static TEE_Result tee_cudaStreamAttachMemAsync(char *buffer)
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", ms->ms_stream, _tmp_devPtr, ms->ms_length, ms->ms_flags, ms->ms_retval);
 
 
+
 	return status;
 }
 
@@ -1468,6 +1491,7 @@ static TEE_Result tee_cudaStreamBeginCapture(char *buffer)
 
 	ms->ms_retval = cudaStreamBeginCapture(ms->ms_stream, ms->ms_mode);
 	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", ms->ms_stream, ms->ms_mode, ms->ms_retval);
+
 
 
 	return status;
@@ -1495,6 +1519,7 @@ static TEE_Result tee_cudaThreadExchangeStreamCaptureMode(char *buffer)
 
 	ms->ms_retval = cudaThreadExchangeStreamCaptureMode(_in_mode);
 	RPC_SERVER_DEBUG("(%lx) => %lx", _in_mode, ms->ms_retval);
+
 err:
 	if (_in_mode) {
 		memcpy(_tmp_mode, _in_mode, _len_mode);
@@ -1525,6 +1550,7 @@ static TEE_Result tee_cudaStreamEndCapture(char *buffer)
 
 	ms->ms_retval = cudaStreamEndCapture(ms->ms_stream, _in_pGraph);
 	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", ms->ms_stream, _in_pGraph, ms->ms_retval);
+
 err:
 	if (_in_pGraph) {
 		memcpy(_tmp_pGraph, _in_pGraph, _len_pGraph);
@@ -1555,6 +1581,7 @@ static TEE_Result tee_cudaStreamIsCapturing(char *buffer)
 
 	ms->ms_retval = cudaStreamIsCapturing(ms->ms_stream, _in_pCaptureStatus);
 	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", ms->ms_stream, _in_pCaptureStatus, ms->ms_retval);
+
 err:
 	if (_in_pCaptureStatus) {
 		memcpy(_tmp_pCaptureStatus, _in_pCaptureStatus, _len_pCaptureStatus);
@@ -1596,6 +1623,7 @@ static TEE_Result tee_cudaStreamGetCaptureInfo(char *buffer)
 
 	ms->ms_retval = cudaStreamGetCaptureInfo(ms->ms_stream, _in_pCaptureStatus, _in_pId);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx) => %lx", ms->ms_stream, _in_pCaptureStatus, _in_pId, ms->ms_retval);
+
 err:
 	if (_in_pCaptureStatus) {
 		memcpy(_tmp_pCaptureStatus, _in_pCaptureStatus, _len_pCaptureStatus);
@@ -1630,6 +1658,7 @@ static TEE_Result tee_cudaMallocManaged(char *buffer)
 
 	ms->ms_retval = cudaMallocManaged(_in_devPtr, ms->ms_size, ms->ms_flags);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx) => %lx", _in_devPtr, ms->ms_size, ms->ms_flags, ms->ms_retval);
+
 err:
 	if (_in_devPtr) {
 		memcpy(_tmp_devPtr, _in_devPtr, _len_devPtr);
@@ -1660,6 +1689,7 @@ static TEE_Result tee_cudaMalloc(char *buffer)
 
 	ms->ms_retval = cudaMalloc(_in_devPtr, ms->ms_size);
 	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _in_devPtr, ms->ms_size, ms->ms_retval);
+
 err:
 	if (_in_devPtr) {
 		memcpy(_tmp_devPtr, _in_devPtr, _len_devPtr);
@@ -1690,6 +1720,7 @@ static TEE_Result tee_cudaMallocHost(char *buffer)
 
 	ms->ms_retval = cudaMallocHost(_in_ptr, ms->ms_size);
 	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _in_ptr, ms->ms_size, ms->ms_retval);
+
 err:
 	if (_in_ptr) {
 		memcpy(_tmp_ptr, _in_ptr, _len_ptr);
@@ -1731,6 +1762,7 @@ static TEE_Result tee_cudaMallocPitch(char *buffer)
 
 	ms->ms_retval = cudaMallocPitch(_in_devPtr, _in_pitch, ms->ms_width, ms->ms_height);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", _in_devPtr, _in_pitch, ms->ms_width, ms->ms_height, ms->ms_retval);
+
 err:
 	if (_in_devPtr) {
 		memcpy(_tmp_devPtr, _in_devPtr, _len_devPtr);
@@ -1777,6 +1809,7 @@ static TEE_Result tee_cudaMallocArray(char *buffer)
 
 	ms->ms_retval = cudaMallocArray(_in_array, (const struct cudaChannelFormatDesc*)_in_desc, ms->ms_width, ms->ms_height, ms->ms_flags);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx) => %lx", _in_array, (const struct cudaChannelFormatDesc*)_in_desc, ms->ms_width, ms->ms_height, ms->ms_flags, ms->ms_retval);
+
 err:
 	if (_in_array) {
 		memcpy(_tmp_array, _in_array, _len_array);
@@ -1795,10 +1828,13 @@ static TEE_Result tee_cudaFree(char *buffer)
 	TEE_Result status = TEE_SUCCESS;
 	void* _tmp_devPtr = ms->ms_devPtr;
 
-	ca_get_offset((void *)_tmp_devPtr);
+	auto _tmp_devPtr_off_src = _tmp_devPtr; 
+	_tmp_devPtr = ca_get_offset((void *)_tmp_devPtr);
 
 	ms->ms_retval = cudaFree(_tmp_devPtr);
 	RPC_SERVER_DEBUG("(%lx) => %lx", _tmp_devPtr, ms->ms_retval);
+	_tmp_devPtr = _tmp_devPtr_off_src;
+
 
 
 	return status;
@@ -1812,10 +1848,13 @@ static TEE_Result tee_cudaFreeHost(char *buffer)
 	TEE_Result status = TEE_SUCCESS;
 	void* _tmp_ptr = ms->ms_ptr;
 
-	ca_get_offset((void *)_tmp_ptr);
+	auto _tmp_ptr_off_src = _tmp_ptr; 
+	_tmp_ptr = ca_get_offset((void *)_tmp_ptr);
 
 	ms->ms_retval = cudaFreeHost(_tmp_ptr);
 	RPC_SERVER_DEBUG("(%lx) => %lx", _tmp_ptr, ms->ms_retval);
+	_tmp_ptr = _tmp_ptr_off_src;
+
 
 
 	return status;
@@ -1833,6 +1872,7 @@ static TEE_Result tee_cudaFreeArray(char *buffer)
 	RPC_SERVER_DEBUG("(%lx) => %lx", ms->ms_array, ms->ms_retval);
 
 
+
 	return status;
 }
 
@@ -1846,6 +1886,7 @@ static TEE_Result tee_cudaFreeMipmappedArray(char *buffer)
 
 	ms->ms_retval = cudaFreeMipmappedArray(ms->ms_mipmappedArray);
 	RPC_SERVER_DEBUG("(%lx) => %lx", ms->ms_mipmappedArray, ms->ms_retval);
+
 
 
 	return status;
@@ -1872,6 +1913,7 @@ static TEE_Result tee_cudaHostAlloc(char *buffer)
 
 	ms->ms_retval = cudaHostAlloc(_in_pHost, ms->ms_size, ms->ms_flags);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx) => %lx", _in_pHost, ms->ms_size, ms->ms_flags, ms->ms_retval);
+
 err:
 	if (_in_pHost) {
 		memcpy(_tmp_pHost, _in_pHost, _len_pHost);
@@ -1894,6 +1936,7 @@ static TEE_Result tee_cudaHostRegister(char *buffer)
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx) => %lx", _tmp_ptr, ms->ms_size, ms->ms_flags, ms->ms_retval);
 
 
+
 	return status;
 }
 
@@ -1908,6 +1951,7 @@ static TEE_Result tee_cudaHostUnregister(char *buffer)
 
 	ms->ms_retval = cudaHostUnregister(_tmp_ptr);
 	RPC_SERVER_DEBUG("(%lx) => %lx", _tmp_ptr, ms->ms_retval);
+
 
 
 	return status;
@@ -1935,6 +1979,7 @@ static TEE_Result tee_cudaHostGetDevicePointer(char *buffer)
 
 	ms->ms_retval = cudaHostGetDevicePointer(_in_pDevice, _tmp_pHost, ms->ms_flags);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx) => %lx", _in_pDevice, _tmp_pHost, ms->ms_flags, ms->ms_retval);
+
 err:
 	if (_in_pDevice) {
 		memcpy(_tmp_pDevice, _in_pDevice, _len_pDevice);
@@ -1966,6 +2011,7 @@ static TEE_Result tee_cudaHostGetFlags(char *buffer)
 
 	ms->ms_retval = cudaHostGetFlags(_in_pFlags, _tmp_pHost);
 	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _in_pFlags, _tmp_pHost, ms->ms_retval);
+
 err:
 	if (_in_pFlags) {
 		memcpy(_tmp_pFlags, _in_pFlags, _len_pFlags);
@@ -1996,6 +2042,7 @@ static TEE_Result tee_cudaMalloc3D(char *buffer)
 
 	ms->ms_retval = cudaMalloc3D(_in_pitchedDevPtr, ms->ms_extent);
 	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _in_pitchedDevPtr, ms->ms_extent, ms->ms_retval);
+
 err:
 	if (_in_pitchedDevPtr) {
 		memcpy(_tmp_pitchedDevPtr, _in_pitchedDevPtr, _len_pitchedDevPtr);
@@ -2038,6 +2085,7 @@ static TEE_Result tee_cudaMalloc3DArray(char *buffer)
 
 	ms->ms_retval = cudaMalloc3DArray(_in_array, (const struct cudaChannelFormatDesc*)_in_desc, ms->ms_extent, ms->ms_flags);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", _in_array, (const struct cudaChannelFormatDesc*)_in_desc, ms->ms_extent, ms->ms_flags, ms->ms_retval);
+
 err:
 	if (_in_array) {
 		memcpy(_tmp_array, _in_array, _len_array);
@@ -2081,6 +2129,7 @@ static TEE_Result tee_cudaMallocMipmappedArray(char *buffer)
 
 	ms->ms_retval = cudaMallocMipmappedArray(_in_mipmappedArray, (const struct cudaChannelFormatDesc*)_in_desc, ms->ms_extent, ms->ms_numLevels, ms->ms_flags);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx) => %lx", _in_mipmappedArray, (const struct cudaChannelFormatDesc*)_in_desc, ms->ms_extent, ms->ms_numLevels, ms->ms_flags, ms->ms_retval);
+
 err:
 	if (_in_mipmappedArray) {
 		memcpy(_tmp_mipmappedArray, _in_mipmappedArray, _len_mipmappedArray);
@@ -2112,6 +2161,7 @@ static TEE_Result tee_cudaGetMipmappedArrayLevel(char *buffer)
 
 	ms->ms_retval = cudaGetMipmappedArrayLevel(_in_levelArray, ms->ms_mipmappedArray, ms->ms_level);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx) => %lx", _in_levelArray, ms->ms_mipmappedArray, ms->ms_level, ms->ms_retval);
+
 err:
 	if (_in_levelArray) {
 		memcpy(_tmp_levelArray, _in_levelArray, _len_levelArray);
@@ -2143,6 +2193,7 @@ static TEE_Result tee_cudaMemcpy3D(char *buffer)
 
 	ms->ms_retval = cudaMemcpy3D((const struct cudaMemcpy3DParms*)_in_p);
 	RPC_SERVER_DEBUG("(%lx) => %lx", (const struct cudaMemcpy3DParms*)_in_p, ms->ms_retval);
+
 err:
 	if (_in_p) free((void*)_in_p);
 
@@ -2171,6 +2222,7 @@ static TEE_Result tee_cudaMemcpy3DPeer(char *buffer)
 
 	ms->ms_retval = cudaMemcpy3DPeer((const struct cudaMemcpy3DPeerParms*)_in_p);
 	RPC_SERVER_DEBUG("(%lx) => %lx", (const struct cudaMemcpy3DPeerParms*)_in_p, ms->ms_retval);
+
 err:
 	if (_in_p) free((void*)_in_p);
 
@@ -2199,6 +2251,7 @@ static TEE_Result tee_cudaMemcpy3DAsync(char *buffer)
 
 	ms->ms_retval = cudaMemcpy3DAsync((const struct cudaMemcpy3DParms*)_in_p, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", (const struct cudaMemcpy3DParms*)_in_p, ms->ms_stream, ms->ms_retval);
+
 err:
 	if (_in_p) free((void*)_in_p);
 
@@ -2227,6 +2280,7 @@ static TEE_Result tee_cudaMemcpy3DPeerAsync(char *buffer)
 
 	ms->ms_retval = cudaMemcpy3DPeerAsync((const struct cudaMemcpy3DPeerParms*)_in_p, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", (const struct cudaMemcpy3DPeerParms*)_in_p, ms->ms_stream, ms->ms_retval);
+
 err:
 	if (_in_p) free((void*)_in_p);
 
@@ -2265,6 +2319,7 @@ static TEE_Result tee_cudaMemGetInfo(char *buffer)
 
 	ms->ms_retval = cudaMemGetInfo(_in_free, _in_total);
 	RPC_SERVER_DEBUG("(%lx, %lx) => %lx", _in_free, _in_total, ms->ms_retval);
+
 err:
 	if (_in_free) {
 		memcpy(_tmp_free, _in_free, _len_free);
@@ -2321,6 +2376,7 @@ static TEE_Result tee_cudaArrayGetInfo(char *buffer)
 
 	ms->ms_retval = cudaArrayGetInfo(_in_desc, _in_extent, _in_flags, ms->ms_array);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", _in_desc, _in_extent, _in_flags, ms->ms_array, ms->ms_retval);
+
 err:
 	if (_in_desc) {
 		memcpy(_tmp_desc, _in_desc, _len_desc);
@@ -2347,11 +2403,16 @@ static TEE_Result tee_cudaMemcpyNone(char *buffer)
 	void* _tmp_dst = ms->ms_dst;
 	void* _tmp_src = ms->ms_src;
 
-	ca_get_offset((void *)_tmp_dst);
-	ca_get_offset((void *)_tmp_src);
+	auto _tmp_dst_off_src = _tmp_dst; 
+	_tmp_dst = ca_get_offset((void *)_tmp_dst);
+	auto _tmp_src_off_src = _tmp_src; 
+	_tmp_src = ca_get_offset((void *)_tmp_src);
 
 	ms->ms_retval = cudaMemcpyNone(_tmp_dst, (const void*)_tmp_src, ms->ms_count, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", _tmp_dst, (const void*)_tmp_src, ms->ms_count, ms->ms_kind, ms->ms_retval);
+	_tmp_dst = _tmp_dst_off_src;
+	_tmp_src = _tmp_src_off_src;
+
 
 
 	return status;
@@ -2378,11 +2439,16 @@ static TEE_Result tee_cudaMemcpySrc(char *buffer)
 
 		memcpy((void*)_in_src, _tmp_src, _len_src);
 	}
-	ca_get_offset((void *)_tmp_dst);
-	ca_get_offset((void *)_in_src);
+	auto _tmp_dst_off_src = _tmp_dst; 
+	_tmp_dst = ca_get_offset((void *)_tmp_dst);
+	auto _in_src_off_src = _in_src; 
+	_in_src = ca_get_offset((void *)_in_src);
 
 	ms->ms_retval = cudaMemcpySrc(_tmp_dst, (const void*)_in_src, _tmp_count, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", _tmp_dst, (const void*)_in_src, _tmp_count, ms->ms_kind, ms->ms_retval);
+	_tmp_dst = _tmp_dst_off_src;
+	_in_src = _in_src_off_src;
+
 err:
 	if (_in_src) free((void*)_in_src);
 
@@ -2409,11 +2475,16 @@ static TEE_Result tee_cudaMemcpyDst(char *buffer)
 
 		memset((void*)_in_dst, 0, _len_dst);
 	}
-	ca_get_offset((void *)_in_dst);
-	ca_get_offset((void *)_tmp_src);
+	auto _in_dst_off_src = _in_dst; 
+	_in_dst = ca_get_offset((void *)_in_dst);
+	auto _tmp_src_off_src = _tmp_src; 
+	_tmp_src = ca_get_offset((void *)_tmp_src);
 
 	ms->ms_retval = cudaMemcpyDst(_in_dst, (const void*)_tmp_src, _tmp_count, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", _in_dst, (const void*)_tmp_src, _tmp_count, ms->ms_kind, ms->ms_retval);
+	_in_dst = _in_dst_off_src;
+	_tmp_src = _tmp_src_off_src;
+
 err:
 	if (_in_dst) {
 		memcpy(_tmp_dst, _in_dst, _len_dst);
@@ -2454,11 +2525,16 @@ static TEE_Result tee_cudaMemcpySrcDst(char *buffer)
 
 		memcpy((void*)_in_src, _tmp_src, _len_src);
 	}
-	ca_get_offset((void *)_in_dst);
-	ca_get_offset((void *)_in_src);
+	auto _in_dst_off_src = _in_dst; 
+	_in_dst = ca_get_offset((void *)_in_dst);
+	auto _in_src_off_src = _in_src; 
+	_in_src = ca_get_offset((void *)_in_src);
 
 	ms->ms_retval = cudaMemcpySrcDst(_in_dst, (const void*)_in_src, _tmp_count, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", _in_dst, (const void*)_in_src, _tmp_count, ms->ms_kind, ms->ms_retval);
+	_in_dst = _in_dst_off_src;
+	_in_src = _in_src_off_src;
+
 err:
 	if (_in_dst) {
 		memcpy(_tmp_dst, _in_dst, _len_dst);
@@ -2478,11 +2554,16 @@ static TEE_Result tee_cudaMemcpyPeer(char *buffer)
 	void* _tmp_dst = ms->ms_dst;
 	void* _tmp_src = ms->ms_src;
 
-	ca_get_offset((void *)_tmp_dst);
-	ca_get_offset((void *)_tmp_src);
+	auto _tmp_dst_off_src = _tmp_dst; 
+	_tmp_dst = ca_get_offset((void *)_tmp_dst);
+	auto _tmp_src_off_src = _tmp_src; 
+	_tmp_src = ca_get_offset((void *)_tmp_src);
 
 	ms->ms_retval = cudaMemcpyPeer(_tmp_dst, ms->ms_dstDevice, (const void*)_tmp_src, ms->ms_srcDevice, ms->ms_count);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx) => %lx", _tmp_dst, ms->ms_dstDevice, (const void*)_tmp_src, ms->ms_srcDevice, ms->ms_count, ms->ms_retval);
+	_tmp_dst = _tmp_dst_off_src;
+	_tmp_src = _tmp_src_off_src;
+
 
 
 	return status;
@@ -2497,11 +2578,16 @@ static TEE_Result tee_cudaMemcpy2DNone(char *buffer)
 	void* _tmp_dst = ms->ms_dst;
 	void* _tmp_src = ms->ms_src;
 
-	ca_get_offset((void *)_tmp_dst);
-	ca_get_offset((void *)_tmp_src);
+	auto _tmp_dst_off_src = _tmp_dst; 
+	_tmp_dst = ca_get_offset((void *)_tmp_dst);
+	auto _tmp_src_off_src = _tmp_src; 
+	_tmp_src = ca_get_offset((void *)_tmp_src);
 
 	ms->ms_retval = cudaMemcpy2DNone(_tmp_dst, ms->ms_dpitch, (const void*)_tmp_src, ms->ms_spitch, ms->ms_width, ms->ms_height, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", _tmp_dst, ms->ms_dpitch, (const void*)_tmp_src, ms->ms_spitch, ms->ms_width, ms->ms_height, ms->ms_kind, ms->ms_retval);
+	_tmp_dst = _tmp_dst_off_src;
+	_tmp_src = _tmp_src_off_src;
+
 
 
 	return status;
@@ -2529,11 +2615,16 @@ static TEE_Result tee_cudaMemcpy2DSrc(char *buffer)
 
 		memcpy((void*)_in_src, _tmp_src, _len_src);
 	}
-	ca_get_offset((void *)_tmp_dst);
-	ca_get_offset((void *)_in_src);
+	auto _tmp_dst_off_src = _tmp_dst; 
+	_tmp_dst = ca_get_offset((void *)_tmp_dst);
+	auto _in_src_off_src = _in_src; 
+	_in_src = ca_get_offset((void *)_in_src);
 
 	ms->ms_retval = cudaMemcpy2DSrc(_tmp_dst, ms->ms_dpitch, (const void*)_in_src, _tmp_spitch, ms->ms_width, _tmp_height, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", _tmp_dst, ms->ms_dpitch, (const void*)_in_src, _tmp_spitch, ms->ms_width, _tmp_height, ms->ms_kind, ms->ms_retval);
+	_tmp_dst = _tmp_dst_off_src;
+	_in_src = _in_src_off_src;
+
 err:
 	if (_in_src) free((void*)_in_src);
 
@@ -2561,11 +2652,16 @@ static TEE_Result tee_cudaMemcpy2DDst(char *buffer)
 
 		memset((void*)_in_dst, 0, _len_dst);
 	}
-	ca_get_offset((void *)_in_dst);
-	ca_get_offset((void *)_tmp_src);
+	auto _in_dst_off_src = _in_dst; 
+	_in_dst = ca_get_offset((void *)_in_dst);
+	auto _tmp_src_off_src = _tmp_src; 
+	_tmp_src = ca_get_offset((void *)_tmp_src);
 
 	ms->ms_retval = cudaMemcpy2DDst(_in_dst, _tmp_dpitch, (const void*)_tmp_src, ms->ms_spitch, ms->ms_width, _tmp_height, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", _in_dst, _tmp_dpitch, (const void*)_tmp_src, ms->ms_spitch, ms->ms_width, _tmp_height, ms->ms_kind, ms->ms_retval);
+	_in_dst = _in_dst_off_src;
+	_tmp_src = _tmp_src_off_src;
+
 err:
 	if (_in_dst) {
 		memcpy(_tmp_dst, _in_dst, _len_dst);
@@ -2608,11 +2704,16 @@ static TEE_Result tee_cudaMemcpy2DSrcDst(char *buffer)
 
 		memcpy((void*)_in_src, _tmp_src, _len_src);
 	}
-	ca_get_offset((void *)_in_dst);
-	ca_get_offset((void *)_in_src);
+	auto _in_dst_off_src = _in_dst; 
+	_in_dst = ca_get_offset((void *)_in_dst);
+	auto _in_src_off_src = _in_src; 
+	_in_src = ca_get_offset((void *)_in_src);
 
 	ms->ms_retval = cudaMemcpy2DSrcDst(_in_dst, _tmp_dpitch, (const void*)_in_src, _tmp_spitch, ms->ms_width, _tmp_height, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", _in_dst, _tmp_dpitch, (const void*)_in_src, _tmp_spitch, ms->ms_width, _tmp_height, ms->ms_kind, ms->ms_retval);
+	_in_dst = _in_dst_off_src;
+	_in_src = _in_src_off_src;
+
 err:
 	if (_in_dst) {
 		memcpy(_tmp_dst, _in_dst, _len_dst);
@@ -2634,6 +2735,7 @@ static TEE_Result tee_cudaMemcpy2DToArrayNone(char *buffer)
 
 	ms->ms_retval = cudaMemcpy2DToArrayNone(ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_tmp_src, ms->ms_spitch, ms->ms_width, ms->ms_height, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_tmp_src, ms->ms_spitch, ms->ms_width, ms->ms_height, ms->ms_kind, ms->ms_retval);
+
 
 
 	return status;
@@ -2663,6 +2765,7 @@ static TEE_Result tee_cudaMemcpy2DToArraySrc(char *buffer)
 
 	ms->ms_retval = cudaMemcpy2DToArraySrc(ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_in_src, _tmp_spitch, ms->ms_width, _tmp_height, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_in_src, _tmp_spitch, ms->ms_width, _tmp_height, ms->ms_kind, ms->ms_retval);
+
 err:
 	if (_in_src) free((void*)_in_src);
 
@@ -2677,10 +2780,13 @@ static TEE_Result tee_cudaMemcpy2DFromArrayNone(char *buffer)
 	TEE_Result status = TEE_SUCCESS;
 	void* _tmp_dst = ms->ms_dst;
 
-	ca_get_offset((void *)_tmp_dst);
+	auto _tmp_dst_off_src = _tmp_dst; 
+	_tmp_dst = ca_get_offset((void *)_tmp_dst);
 
 	ms->ms_retval = cudaMemcpy2DFromArrayNone(_tmp_dst, ms->ms_dpitch, ms->ms_src, ms->ms_wOffset, ms->ms_hOffset, ms->ms_width, ms->ms_height, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", _tmp_dst, ms->ms_dpitch, ms->ms_src, ms->ms_wOffset, ms->ms_hOffset, ms->ms_width, ms->ms_height, ms->ms_kind, ms->ms_retval);
+	_tmp_dst = _tmp_dst_off_src;
+
 
 
 	return status;
@@ -2706,10 +2812,13 @@ static TEE_Result tee_cudaMemcpy2DFromArrayDst(char *buffer)
 
 		memset((void*)_in_dst, 0, _len_dst);
 	}
-	ca_get_offset((void *)_in_dst);
+	auto _in_dst_off_src = _in_dst; 
+	_in_dst = ca_get_offset((void *)_in_dst);
 
 	ms->ms_retval = cudaMemcpy2DFromArrayDst(_in_dst, _tmp_dpitch, ms->ms_src, ms->ms_wOffset, ms->ms_hOffset, ms->ms_width, _tmp_height, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", _in_dst, _tmp_dpitch, ms->ms_src, ms->ms_wOffset, ms->ms_hOffset, ms->ms_width, _tmp_height, ms->ms_kind, ms->ms_retval);
+	_in_dst = _in_dst_off_src;
+
 err:
 	if (_in_dst) {
 		memcpy(_tmp_dst, _in_dst, _len_dst);
@@ -2729,6 +2838,7 @@ static TEE_Result tee_cudaMemcpy2DArrayToArray(char *buffer)
 
 	ms->ms_retval = cudaMemcpy2DArrayToArray(ms->ms_dst, ms->ms_wOffsetDst, ms->ms_hOffsetDst, ms->ms_src, ms->ms_wOffsetSrc, ms->ms_hOffsetSrc, ms->ms_width, ms->ms_height, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", ms->ms_dst, ms->ms_wOffsetDst, ms->ms_hOffsetDst, ms->ms_src, ms->ms_wOffsetSrc, ms->ms_hOffsetSrc, ms->ms_width, ms->ms_height, ms->ms_kind, ms->ms_retval);
+
 
 
 	return status;
@@ -2758,6 +2868,7 @@ static TEE_Result tee_cudaMemcpyToSymbolNone(char *buffer)
 
 	ms->ms_retval = cudaMemcpyToSymbolNone((const void*)_in_symbol, (const void*)_tmp_src, ms->ms_count, ms->ms_offset, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%s, %lx, %lx, %lx, %lx) => %lx", (const void*)_in_symbol, (const void*)_tmp_src, ms->ms_count, ms->ms_offset, ms->ms_kind, ms->ms_retval);
+
 err:
 	if (_in_symbol) free((void*)_in_symbol);
 
@@ -2800,6 +2911,7 @@ static TEE_Result tee_cudaMemcpyToSymbolSrc(char *buffer)
 
 	ms->ms_retval = cudaMemcpyToSymbolSrc((const void*)_in_symbol, (const void*)_in_src, _tmp_count, ms->ms_offset, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%s, %lx, %lx, %lx, %lx) => %lx", (const void*)_in_symbol, (const void*)_in_src, _tmp_count, ms->ms_offset, ms->ms_kind, ms->ms_retval);
+
 err:
 	if (_in_symbol) free((void*)_in_symbol);
 	if (_in_src) free((void*)_in_src);
@@ -2831,6 +2943,7 @@ static TEE_Result tee_cudaMemcpyFromSymbolNone(char *buffer)
 
 	ms->ms_retval = cudaMemcpyFromSymbolNone(_tmp_dst, (const void*)_in_symbol, ms->ms_count, ms->ms_offset, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %s, %lx, %lx, %lx) => %lx", _tmp_dst, (const void*)_in_symbol, ms->ms_count, ms->ms_offset, ms->ms_kind, ms->ms_retval);
+
 err:
 	if (_in_symbol) free((void*)_in_symbol);
 
@@ -2872,6 +2985,7 @@ static TEE_Result tee_cudaMemcpyFromSymbolDst(char *buffer)
 
 	ms->ms_retval = cudaMemcpyFromSymbolDst(_in_dst, (const void*)_in_symbol, _tmp_count, ms->ms_offset, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %s, %lx, %lx, %lx) => %lx", _in_dst, (const void*)_in_symbol, _tmp_count, ms->ms_offset, ms->ms_kind, ms->ms_retval);
+
 err:
 	if (_in_dst) {
 		memcpy(_tmp_dst, _in_dst, _len_dst);
@@ -2891,11 +3005,16 @@ static TEE_Result tee_cudaMemcpyAsyncNone(char *buffer)
 	void* _tmp_dst = ms->ms_dst;
 	void* _tmp_src = ms->ms_src;
 
-	ca_get_offset((void *)_tmp_dst);
-	ca_get_offset((void *)_tmp_src);
+	auto _tmp_dst_off_src = _tmp_dst; 
+	_tmp_dst = ca_get_offset((void *)_tmp_dst);
+	auto _tmp_src_off_src = _tmp_src; 
+	_tmp_src = ca_get_offset((void *)_tmp_src);
 
 	ms->ms_retval = cudaMemcpyAsyncNone(_tmp_dst, (const void*)_tmp_src, ms->ms_count, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx) => %lx", _tmp_dst, (const void*)_tmp_src, ms->ms_count, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+	_tmp_dst = _tmp_dst_off_src;
+	_tmp_src = _tmp_src_off_src;
+
 
 
 	return status;
@@ -2922,11 +3041,16 @@ static TEE_Result tee_cudaMemcpyAsyncSrc(char *buffer)
 
 		memcpy((void*)_in_src, _tmp_src, _len_src);
 	}
-	ca_get_offset((void *)_tmp_dst);
-	ca_get_offset((void *)_in_src);
+	auto _tmp_dst_off_src = _tmp_dst; 
+	_tmp_dst = ca_get_offset((void *)_tmp_dst);
+	auto _in_src_off_src = _in_src; 
+	_in_src = ca_get_offset((void *)_in_src);
 
 	ms->ms_retval = cudaMemcpyAsyncSrc(_tmp_dst, (const void*)_in_src, _tmp_count, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx) => %lx", _tmp_dst, (const void*)_in_src, _tmp_count, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+	_tmp_dst = _tmp_dst_off_src;
+	_in_src = _in_src_off_src;
+
 err:
 	if (_in_src) free((void*)_in_src);
 
@@ -2953,11 +3077,16 @@ static TEE_Result tee_cudaMemcpyAsyncDst(char *buffer)
 
 		memset((void*)_in_dst, 0, _len_dst);
 	}
-	ca_get_offset((void *)_in_dst);
-	ca_get_offset((void *)_tmp_src);
+	auto _in_dst_off_src = _in_dst; 
+	_in_dst = ca_get_offset((void *)_in_dst);
+	auto _tmp_src_off_src = _tmp_src; 
+	_tmp_src = ca_get_offset((void *)_tmp_src);
 
 	ms->ms_retval = cudaMemcpyAsyncDst(_in_dst, (const void*)_tmp_src, _tmp_count, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx) => %lx", _in_dst, (const void*)_tmp_src, _tmp_count, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+	_in_dst = _in_dst_off_src;
+	_tmp_src = _tmp_src_off_src;
+
 err:
 	if (_in_dst) {
 		memcpy(_tmp_dst, _in_dst, _len_dst);
@@ -2998,11 +3127,16 @@ static TEE_Result tee_cudaMemcpyAsyncSrcDst(char *buffer)
 
 		memcpy((void*)_in_src, _tmp_src, _len_src);
 	}
-	ca_get_offset((void *)_in_dst);
-	ca_get_offset((void *)_in_src);
+	auto _in_dst_off_src = _in_dst; 
+	_in_dst = ca_get_offset((void *)_in_dst);
+	auto _in_src_off_src = _in_src; 
+	_in_src = ca_get_offset((void *)_in_src);
 
 	ms->ms_retval = cudaMemcpyAsyncSrcDst(_in_dst, (const void*)_in_src, _tmp_count, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx) => %lx", _in_dst, (const void*)_in_src, _tmp_count, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+	_in_dst = _in_dst_off_src;
+	_in_src = _in_src_off_src;
+
 err:
 	if (_in_dst) {
 		memcpy(_tmp_dst, _in_dst, _len_dst);
@@ -3027,6 +3161,7 @@ static TEE_Result tee_cudaMemcpyPeerAsync(char *buffer)
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx) => %lx", _tmp_dst, ms->ms_dstDevice, (const void*)_tmp_src, ms->ms_srcDevice, ms->ms_count, ms->ms_stream, ms->ms_retval);
 
 
+
 	return status;
 }
 
@@ -3039,11 +3174,16 @@ static TEE_Result tee_cudaMemcpy2DAsyncNone(char *buffer)
 	void* _tmp_dst = ms->ms_dst;
 	void* _tmp_src = ms->ms_src;
 
-	ca_get_offset((void *)_tmp_dst);
-	ca_get_offset((void *)_tmp_src);
+	auto _tmp_dst_off_src = _tmp_dst; 
+	_tmp_dst = ca_get_offset((void *)_tmp_dst);
+	auto _tmp_src_off_src = _tmp_src; 
+	_tmp_src = ca_get_offset((void *)_tmp_src);
 
 	ms->ms_retval = cudaMemcpy2DAsyncNone(_tmp_dst, ms->ms_dpitch, (const void*)_tmp_src, ms->ms_spitch, ms->ms_width, ms->ms_height, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", _tmp_dst, ms->ms_dpitch, (const void*)_tmp_src, ms->ms_spitch, ms->ms_width, ms->ms_height, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+	_tmp_dst = _tmp_dst_off_src;
+	_tmp_src = _tmp_src_off_src;
+
 
 
 	return status;
@@ -3071,11 +3211,16 @@ static TEE_Result tee_cudaMemcpy2DAsyncSrc(char *buffer)
 
 		memcpy((void*)_in_src, _tmp_src, _len_src);
 	}
-	ca_get_offset((void *)_tmp_dst);
-	ca_get_offset((void *)_in_src);
+	auto _tmp_dst_off_src = _tmp_dst; 
+	_tmp_dst = ca_get_offset((void *)_tmp_dst);
+	auto _in_src_off_src = _in_src; 
+	_in_src = ca_get_offset((void *)_in_src);
 
 	ms->ms_retval = cudaMemcpy2DAsyncSrc(_tmp_dst, ms->ms_dpitch, (const void*)_in_src, _tmp_spitch, ms->ms_width, _tmp_height, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", _tmp_dst, ms->ms_dpitch, (const void*)_in_src, _tmp_spitch, ms->ms_width, _tmp_height, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+	_tmp_dst = _tmp_dst_off_src;
+	_in_src = _in_src_off_src;
+
 err:
 	if (_in_src) free((void*)_in_src);
 
@@ -3103,11 +3248,16 @@ static TEE_Result tee_cudaMemcpy2DAsyncDst(char *buffer)
 
 		memset((void*)_in_dst, 0, _len_dst);
 	}
-	ca_get_offset((void *)_in_dst);
-	ca_get_offset((void *)_tmp_src);
+	auto _in_dst_off_src = _in_dst; 
+	_in_dst = ca_get_offset((void *)_in_dst);
+	auto _tmp_src_off_src = _tmp_src; 
+	_tmp_src = ca_get_offset((void *)_tmp_src);
 
 	ms->ms_retval = cudaMemcpy2DAsyncDst(_in_dst, _tmp_dpitch, (const void*)_tmp_src, ms->ms_spitch, ms->ms_width, _tmp_height, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", _in_dst, _tmp_dpitch, (const void*)_tmp_src, ms->ms_spitch, ms->ms_width, _tmp_height, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+	_in_dst = _in_dst_off_src;
+	_tmp_src = _tmp_src_off_src;
+
 err:
 	if (_in_dst) {
 		memcpy(_tmp_dst, _in_dst, _len_dst);
@@ -3150,11 +3300,16 @@ static TEE_Result tee_cudaMemcpy2DAsyncSrcDst(char *buffer)
 
 		memcpy((void*)_in_src, _tmp_src, _len_src);
 	}
-	ca_get_offset((void *)_in_dst);
-	ca_get_offset((void *)_in_src);
+	auto _in_dst_off_src = _in_dst; 
+	_in_dst = ca_get_offset((void *)_in_dst);
+	auto _in_src_off_src = _in_src; 
+	_in_src = ca_get_offset((void *)_in_src);
 
 	ms->ms_retval = cudaMemcpy2DAsyncSrcDst(_in_dst, _tmp_dpitch, (const void*)_in_src, _tmp_spitch, ms->ms_width, _tmp_height, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", _in_dst, _tmp_dpitch, (const void*)_in_src, _tmp_spitch, ms->ms_width, _tmp_height, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+	_in_dst = _in_dst_off_src;
+	_in_src = _in_src_off_src;
+
 err:
 	if (_in_dst) {
 		memcpy(_tmp_dst, _in_dst, _len_dst);
@@ -3176,6 +3331,7 @@ static TEE_Result tee_cudaMemcpy2DToArrayAsyncNone(char *buffer)
 
 	ms->ms_retval = cudaMemcpy2DToArrayAsyncNone(ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_tmp_src, ms->ms_spitch, ms->ms_width, ms->ms_height, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_tmp_src, ms->ms_spitch, ms->ms_width, ms->ms_height, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+
 
 
 	return status;
@@ -3205,6 +3361,7 @@ static TEE_Result tee_cudaMemcpy2DToArrayAsyncSrc(char *buffer)
 
 	ms->ms_retval = cudaMemcpy2DToArrayAsyncSrc(ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_in_src, _tmp_spitch, ms->ms_width, _tmp_height, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_in_src, _tmp_spitch, ms->ms_width, _tmp_height, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+
 err:
 	if (_in_src) free((void*)_in_src);
 
@@ -3222,6 +3379,7 @@ static TEE_Result tee_cudaMemcpy2DFromArrayAsyncNone(char *buffer)
 
 	ms->ms_retval = cudaMemcpy2DFromArrayAsyncNone(_tmp_dst, ms->ms_dpitch, ms->ms_src, ms->ms_wOffset, ms->ms_hOffset, ms->ms_width, ms->ms_height, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", _tmp_dst, ms->ms_dpitch, ms->ms_src, ms->ms_wOffset, ms->ms_hOffset, ms->ms_width, ms->ms_height, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+
 
 
 	return status;
@@ -3250,6 +3408,7 @@ static TEE_Result tee_cudaMemcpy2DFromArrayAsyncDst(char *buffer)
 
 	ms->ms_retval = cudaMemcpy2DFromArrayAsyncDst(_in_dst, _tmp_dpitch, ms->ms_src, ms->ms_wOffset, ms->ms_hOffset, ms->ms_width, _tmp_height, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", _in_dst, _tmp_dpitch, ms->ms_src, ms->ms_wOffset, ms->ms_hOffset, ms->ms_width, _tmp_height, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+
 err:
 	if (_in_dst) {
 		memcpy(_tmp_dst, _in_dst, _len_dst);
@@ -3283,6 +3442,7 @@ static TEE_Result tee_cudaMemcpyToSymbolAsyncNone(char *buffer)
 
 	ms->ms_retval = cudaMemcpyToSymbolAsyncNone((const void*)_in_symbol, (const void*)_tmp_src, ms->ms_count, ms->ms_offset, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%s, %lx, %lx, %lx, %lx, %lx) => %lx", (const void*)_in_symbol, (const void*)_tmp_src, ms->ms_count, ms->ms_offset, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+
 err:
 	if (_in_symbol) free((void*)_in_symbol);
 
@@ -3325,6 +3485,7 @@ static TEE_Result tee_cudaMemcpyToSymbolAsyncSrc(char *buffer)
 
 	ms->ms_retval = cudaMemcpyToSymbolAsyncSrc((const void*)_in_symbol, (const void*)_in_src, _tmp_count, ms->ms_offset, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%s, %lx, %lx, %lx, %lx, %lx) => %lx", (const void*)_in_symbol, (const void*)_in_src, _tmp_count, ms->ms_offset, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+
 err:
 	if (_in_symbol) free((void*)_in_symbol);
 	if (_in_src) free((void*)_in_src);
@@ -3356,6 +3517,7 @@ static TEE_Result tee_cudaMemcpyFromSymbolAsyncNone(char *buffer)
 
 	ms->ms_retval = cudaMemcpyFromSymbolAsyncNone(_tmp_dst, (const void*)_in_symbol, ms->ms_count, ms->ms_offset, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %s, %lx, %lx, %lx, %lx) => %lx", _tmp_dst, (const void*)_in_symbol, ms->ms_count, ms->ms_offset, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+
 err:
 	if (_in_symbol) free((void*)_in_symbol);
 
@@ -3397,6 +3559,7 @@ static TEE_Result tee_cudaMemcpyFromSymbolAsyncDst(char *buffer)
 
 	ms->ms_retval = cudaMemcpyFromSymbolAsyncDst(_in_dst, (const void*)_in_symbol, _tmp_count, ms->ms_offset, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %s, %lx, %lx, %lx, %lx) => %lx", _in_dst, (const void*)_in_symbol, _tmp_count, ms->ms_offset, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+
 err:
 	if (_in_dst) {
 		memcpy(_tmp_dst, _in_dst, _len_dst);
@@ -3415,10 +3578,13 @@ static TEE_Result tee_cudaMemset(char *buffer)
 	TEE_Result status = TEE_SUCCESS;
 	void* _tmp_devPtr = ms->ms_devPtr;
 
-	ca_get_offset((void *)_tmp_devPtr);
+	auto _tmp_devPtr_off_src = _tmp_devPtr; 
+	_tmp_devPtr = ca_get_offset((void *)_tmp_devPtr);
 
 	ms->ms_retval = cudaMemset(_tmp_devPtr, ms->ms_value, ms->ms_count);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx) => %lx", _tmp_devPtr, ms->ms_value, ms->ms_count, ms->ms_retval);
+	_tmp_devPtr = _tmp_devPtr_off_src;
+
 
 
 	return status;
@@ -3432,10 +3598,13 @@ static TEE_Result tee_cudaMemset2D(char *buffer)
 	TEE_Result status = TEE_SUCCESS;
 	void* _tmp_devPtr = ms->ms_devPtr;
 
-	ca_get_offset((void *)_tmp_devPtr);
+	auto _tmp_devPtr_off_src = _tmp_devPtr; 
+	_tmp_devPtr = ca_get_offset((void *)_tmp_devPtr);
 
 	ms->ms_retval = cudaMemset2D(_tmp_devPtr, ms->ms_pitch, ms->ms_value, ms->ms_width, ms->ms_height);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx) => %lx", _tmp_devPtr, ms->ms_pitch, ms->ms_value, ms->ms_width, ms->ms_height, ms->ms_retval);
+	_tmp_devPtr = _tmp_devPtr_off_src;
+
 
 
 	return status;
@@ -3453,6 +3622,7 @@ static TEE_Result tee_cudaMemset3D(char *buffer)
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx) => %lx", ms->ms_pitchedDevPtr, ms->ms_value, ms->ms_extent, ms->ms_retval);
 
 
+
 	return status;
 }
 
@@ -3464,10 +3634,13 @@ static TEE_Result tee_cudaMemsetAsync(char *buffer)
 	TEE_Result status = TEE_SUCCESS;
 	void* _tmp_devPtr = ms->ms_devPtr;
 
-	ca_get_offset((void *)_tmp_devPtr);
+	auto _tmp_devPtr_off_src = _tmp_devPtr; 
+	_tmp_devPtr = ca_get_offset((void *)_tmp_devPtr);
 
 	ms->ms_retval = cudaMemsetAsync(_tmp_devPtr, ms->ms_value, ms->ms_count, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", _tmp_devPtr, ms->ms_value, ms->ms_count, ms->ms_stream, ms->ms_retval);
+	_tmp_devPtr = _tmp_devPtr_off_src;
+
 
 
 	return status;
@@ -3481,10 +3654,13 @@ static TEE_Result tee_cudaMemset2DAsync(char *buffer)
 	TEE_Result status = TEE_SUCCESS;
 	void* _tmp_devPtr = ms->ms_devPtr;
 
-	ca_get_offset((void *)_tmp_devPtr);
+	auto _tmp_devPtr_off_src = _tmp_devPtr; 
+	_tmp_devPtr = ca_get_offset((void *)_tmp_devPtr);
 
 	ms->ms_retval = cudaMemset2DAsync(_tmp_devPtr, ms->ms_pitch, ms->ms_value, ms->ms_width, ms->ms_height, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx) => %lx", _tmp_devPtr, ms->ms_pitch, ms->ms_value, ms->ms_width, ms->ms_height, ms->ms_stream, ms->ms_retval);
+	_tmp_devPtr = _tmp_devPtr_off_src;
+
 
 
 	return status;
@@ -3500,6 +3676,7 @@ static TEE_Result tee_cudaMemset3DAsync(char *buffer)
 
 	ms->ms_retval = cudaMemset3DAsync(ms->ms_pitchedDevPtr, ms->ms_value, ms->ms_extent, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", ms->ms_pitchedDevPtr, ms->ms_value, ms->ms_extent, ms->ms_stream, ms->ms_retval);
+
 
 
 	return status;
@@ -3536,10 +3713,13 @@ static TEE_Result tee_cudaGetSymbolAddress(char *buffer)
 		memcpy((void*)_in_symbol, _tmp_symbol, _len_symbol);
 		((char*)_in_symbol)[_len_symbol - 1] = '\0';
 	}
-	ca_get_offset((void *)_in_devPtr);
+	auto _in_devPtr_off_src = _in_devPtr; 
+	_in_devPtr = ca_get_offset((void *)_in_devPtr);
 
 	ms->ms_retval = cudaGetSymbolAddress(_in_devPtr, (const void*)_in_symbol);
 	RPC_SERVER_DEBUG("(%lx, %s) => %lx", _in_devPtr, (const void*)_in_symbol, ms->ms_retval);
+	_in_devPtr = _in_devPtr_off_src;
+
 err:
 	if (_in_devPtr) {
 		memcpy(_tmp_devPtr, _in_devPtr, _len_devPtr);
@@ -3581,10 +3761,13 @@ static TEE_Result tee_cudaGetSymbolSize(char *buffer)
 		memcpy((void*)_in_symbol, _tmp_symbol, _len_symbol);
 		((char*)_in_symbol)[_len_symbol - 1] = '\0';
 	}
-	ca_get_offset((void *)_in_size);
+	auto _in_size_off_src = _in_size; 
+	_in_size = ca_get_offset((void *)_in_size);
 
 	ms->ms_retval = cudaGetSymbolSize(_in_size, (const void*)_in_symbol);
 	RPC_SERVER_DEBUG("(%lx, %s) => %lx", _in_size, (const void*)_in_symbol, ms->ms_retval);
+	_in_size = _in_size_off_src;
+
 err:
 	if (_in_size) {
 		memcpy(_tmp_size, _in_size, _len_size);
@@ -3603,10 +3786,13 @@ static TEE_Result tee_cudaMemPrefetchAsync(char *buffer)
 	TEE_Result status = TEE_SUCCESS;
 	void* _tmp_devPtr = ms->ms_devPtr;
 
-	ca_get_offset((void *)_tmp_devPtr);
+	auto _tmp_devPtr_off_src = _tmp_devPtr; 
+	_tmp_devPtr = ca_get_offset((void *)_tmp_devPtr);
 
 	ms->ms_retval = cudaMemPrefetchAsync((const void*)_tmp_devPtr, ms->ms_count, ms->ms_dstDevice, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", (const void*)_tmp_devPtr, ms->ms_count, ms->ms_dstDevice, ms->ms_stream, ms->ms_retval);
+	_tmp_devPtr = _tmp_devPtr_off_src;
+
 
 
 	return status;
@@ -3620,10 +3806,13 @@ static TEE_Result tee_cudaMemAdvise(char *buffer)
 	TEE_Result status = TEE_SUCCESS;
 	void* _tmp_devPtr = ms->ms_devPtr;
 
-	ca_get_offset((void *)_tmp_devPtr);
+	auto _tmp_devPtr_off_src = _tmp_devPtr; 
+	_tmp_devPtr = ca_get_offset((void *)_tmp_devPtr);
 
 	ms->ms_retval = cudaMemAdvise((const void*)_tmp_devPtr, ms->ms_count, ms->ms_advice, ms->ms_device);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", (const void*)_tmp_devPtr, ms->ms_count, ms->ms_advice, ms->ms_device, ms->ms_retval);
+	_tmp_devPtr = _tmp_devPtr_off_src;
+
 
 
 	return status;
@@ -3649,10 +3838,13 @@ static TEE_Result tee_cudaMemRangeGetAttribute(char *buffer)
 
 		memset((void*)_in_data, 0, _len_data);
 	}
-	ca_get_offset((void *)_in_data);
+	auto _in_data_off_src = _in_data; 
+	_in_data = ca_get_offset((void *)_in_data);
 
 	ms->ms_retval = cudaMemRangeGetAttribute(_in_data, _tmp_dataSize, ms->ms_attribute, (const void*)_tmp_devPtr, ms->ms_count);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx) => %lx", _in_data, _tmp_dataSize, ms->ms_attribute, (const void*)_tmp_devPtr, ms->ms_count, ms->ms_retval);
+	_in_data = _in_data_off_src;
+
 err:
 	if (_in_data) {
 		memcpy(_tmp_data, _in_data, _len_data);
@@ -3673,6 +3865,7 @@ static TEE_Result tee_cudaMemcpyToArrayNone(char *buffer)
 
 	ms->ms_retval = cudaMemcpyToArrayNone(ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_tmp_src, ms->ms_count, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx) => %lx", ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_tmp_src, ms->ms_count, ms->ms_kind, ms->ms_retval);
+
 
 
 	return status;
@@ -3701,6 +3894,7 @@ static TEE_Result tee_cudaMemcpyToArraySrc(char *buffer)
 
 	ms->ms_retval = cudaMemcpyToArraySrc(ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_in_src, _tmp_count, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx) => %lx", ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_in_src, _tmp_count, ms->ms_kind, ms->ms_retval);
+
 err:
 	if (_in_src) free((void*)_in_src);
 
@@ -3718,6 +3912,7 @@ static TEE_Result tee_cudaMemcpyFromArrayNone(char *buffer)
 
 	ms->ms_retval = cudaMemcpyFromArrayNone(_tmp_dst, ms->ms_src, ms->ms_wOffset, ms->ms_hOffset, ms->ms_count, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx) => %lx", _tmp_dst, ms->ms_src, ms->ms_wOffset, ms->ms_hOffset, ms->ms_count, ms->ms_kind, ms->ms_retval);
+
 
 
 	return status;
@@ -3745,6 +3940,7 @@ static TEE_Result tee_cudaMemcpyFromArrayDst(char *buffer)
 
 	ms->ms_retval = cudaMemcpyFromArrayDst(_in_dst, ms->ms_src, ms->ms_wOffset, ms->ms_hOffset, _tmp_count, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx) => %lx", _in_dst, ms->ms_src, ms->ms_wOffset, ms->ms_hOffset, _tmp_count, ms->ms_kind, ms->ms_retval);
+
 err:
 	if (_in_dst) {
 		memcpy(_tmp_dst, _in_dst, _len_dst);
@@ -3766,6 +3962,7 @@ static TEE_Result tee_cudaMemcpyArrayToArray(char *buffer)
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", ms->ms_dst, ms->ms_wOffsetDst, ms->ms_hOffsetDst, ms->ms_src, ms->ms_wOffsetSrc, ms->ms_hOffsetSrc, ms->ms_count, ms->ms_kind, ms->ms_retval);
 
 
+
 	return status;
 }
 
@@ -3780,6 +3977,7 @@ static TEE_Result tee_cudaMemcpyToArrayAsyncNone(char *buffer)
 
 	ms->ms_retval = cudaMemcpyToArrayAsyncNone(ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_tmp_src, ms->ms_count, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_tmp_src, ms->ms_count, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+
 
 
 	return status;
@@ -3808,6 +4006,7 @@ static TEE_Result tee_cudaMemcpyToArrayAsyncSrc(char *buffer)
 
 	ms->ms_retval = cudaMemcpyToArrayAsyncSrc(ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_in_src, _tmp_count, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", ms->ms_dst, ms->ms_wOffset, ms->ms_hOffset, (const void*)_in_src, _tmp_count, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+
 err:
 	if (_in_src) free((void*)_in_src);
 
@@ -3825,6 +4024,7 @@ static TEE_Result tee_cudaMemcpyFromArrayAsyncNone(char *buffer)
 
 	ms->ms_retval = cudaMemcpyFromArrayAsyncNone(_tmp_dst, ms->ms_src, ms->ms_wOffset, ms->ms_hOffset, ms->ms_count, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", _tmp_dst, ms->ms_src, ms->ms_wOffset, ms->ms_hOffset, ms->ms_count, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+
 
 
 	return status;
@@ -3852,6 +4052,7 @@ static TEE_Result tee_cudaMemcpyFromArrayAsyncDst(char *buffer)
 
 	ms->ms_retval = cudaMemcpyFromArrayAsyncDst(_in_dst, ms->ms_src, ms->ms_wOffset, ms->ms_hOffset, _tmp_count, ms->ms_kind, ms->ms_stream);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx, %lx, %lx, %lx) => %lx", _in_dst, ms->ms_src, ms->ms_wOffset, ms->ms_hOffset, _tmp_count, ms->ms_kind, ms->ms_stream, ms->ms_retval);
+
 err:
 	if (_in_dst) {
 		memcpy(_tmp_dst, _in_dst, _len_dst);
