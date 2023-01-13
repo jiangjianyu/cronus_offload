@@ -73,9 +73,9 @@ enclave {
 
         // public cudaError_t cudaMemcpy(void *dst, const void *src, size_t count, enum cudaMemcpyKind kind);
         public cudaError_t cudaMemcpyNone([user_check,offset]void *dst, [user_check,offset]const void *src, size_t count, enum cudaMemcpyKind kind);
-        public cudaError_t cudaMemcpySrc([user_check,offset]void *dst, [in,size=count,offset]const void *src, size_t count, enum cudaMemcpyKind kind);
-        public cudaError_t cudaMemcpyDst([out,size=count,offset]void *dst, [user_check,offset]const void *src, size_t count, enum cudaMemcpyKind kind);
-        public cudaError_t cudaMemcpySrcDst([out,size=count,offset]void *dst, [in,size=count,offset]const void *src, size_t count, enum cudaMemcpyKind kind);
+        public cudaError_t cudaMemcpySrc([user_check,offset]void *dst, [in,size=count]const void *src, size_t count, enum cudaMemcpyKind kind);
+        public cudaError_t cudaMemcpyDst([out,size=count]void *dst, [user_check,offset]const void *src, size_t count, enum cudaMemcpyKind kind);
+        public cudaError_t cudaMemcpySrcDst([out,size=count]void *dst, [in,size=count]const void *src, size_t count, enum cudaMemcpyKind kind);
 
         public cudaError_t cudaMemcpyPeer([user_check,offset]void *dst, int dstDevice, [user_check,offset]const void *src, int srcDevice, size_t count);
 

@@ -1539,7 +1539,9 @@ void* ca_get_offset(void * ptr);\n" in
   }\n" in
   let offset_func = "void* ca_get_offset(void * ptr)\n\
   {\n\
-  \tprintf(\"%lu\\n\", CA_get_ptr_offset());\n\
+  \tvoid * real_ptr = CA_get_ptr_offset(ptr); \n\
+  \tRPC_SERVER_DEBUG(\"Ca_get_offset (%lx) => %lx\", ptr, real_ptr); \n\
+  \treturn real_ptr; \n\
   }\n" in
   let trusted_fds = tf_list_to_fd_list ec.tfunc_decls in
   let tbridge_list =

@@ -2483,7 +2483,6 @@ static TEE_Result tee_cudaMemcpySrc(char *buffer)
 	size_t _len_src = _tmp_count;
 	void* _in_src = NULL;
 	void * _tmp_dst_off_src = NULL;
-	void * _in_src_off_src = NULL;
 
 
 	if (_tmp_src != NULL) {
@@ -2497,13 +2496,10 @@ static TEE_Result tee_cudaMemcpySrc(char *buffer)
 	}
 	_tmp_dst_off_src = _tmp_dst; 
 	_tmp_dst = ca_get_offset((void *)_tmp_dst);
-	_in_src_off_src = _in_src; 
-	_in_src = ca_get_offset((void *)_in_src);
 
 	ms->ms_retval = cudaMemcpySrc(_tmp_dst, (const void*)_in_src, _tmp_count, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", _tmp_dst, (const void*)_in_src, _tmp_count, ms->ms_kind, ms->ms_retval);
 	_tmp_dst = _tmp_dst_off_src;
-	_in_src = _in_src_off_src;
 
 err:
 	if (_in_src) free((void*)_in_src);
@@ -2522,7 +2518,6 @@ static TEE_Result tee_cudaMemcpyDst(char *buffer)
 	size_t _len_dst = _tmp_count;
 	void* _in_dst = NULL;
 	void* _tmp_src = ms->ms_src;
-	void * _in_dst_off_src = NULL;
 	void * _tmp_src_off_src = NULL;
 
 
@@ -2534,14 +2529,11 @@ static TEE_Result tee_cudaMemcpyDst(char *buffer)
 
 		memset((void*)_in_dst, 0, _len_dst);
 	}
-	_in_dst_off_src = _in_dst; 
-	_in_dst = ca_get_offset((void *)_in_dst);
 	_tmp_src_off_src = _tmp_src; 
 	_tmp_src = ca_get_offset((void *)_tmp_src);
 
 	ms->ms_retval = cudaMemcpyDst(_in_dst, (const void*)_tmp_src, _tmp_count, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", _in_dst, (const void*)_tmp_src, _tmp_count, ms->ms_kind, ms->ms_retval);
-	_in_dst = _in_dst_off_src;
 	_tmp_src = _tmp_src_off_src;
 
 err:
@@ -2566,8 +2558,6 @@ static TEE_Result tee_cudaMemcpySrcDst(char *buffer)
 	void* _tmp_src = TEE_CAST(void*, buffer_start + 0 + _tmp_count);
 	size_t _len_src = _tmp_count;
 	void* _in_src = NULL;
-	void * _in_dst_off_src = NULL;
-	void * _in_src_off_src = NULL;
 
 
 	if (_tmp_dst != NULL) {
@@ -2587,15 +2577,9 @@ static TEE_Result tee_cudaMemcpySrcDst(char *buffer)
 
 		memcpy((void*)_in_src, _tmp_src, _len_src);
 	}
-	_in_dst_off_src = _in_dst; 
-	_in_dst = ca_get_offset((void *)_in_dst);
-	_in_src_off_src = _in_src; 
-	_in_src = ca_get_offset((void *)_in_src);
 
 	ms->ms_retval = cudaMemcpySrcDst(_in_dst, (const void*)_in_src, _tmp_count, ms->ms_kind);
 	RPC_SERVER_DEBUG("(%lx, %lx, %lx, %lx) => %lx", _in_dst, (const void*)_in_src, _tmp_count, ms->ms_kind, ms->ms_retval);
-	_in_dst = _in_dst_off_src;
-	_in_src = _in_src_off_src;
 
 err:
 	if (_in_dst) {
@@ -4336,5 +4320,7 @@ int rpc_dispatch(char* buffer)
 }
 void* ca_get_offset(void * ptr)
 {
-	printf("%lu\n", CA_get_ptr_offset());
+	void * real_ptr = CA_get_ptr_offset(ptr); 
+	RPC_SERVER_DEBUG("Ca_get_offset (%lx) => %lx", ptr, real_ptr); 
+	return real_ptr; 
 }
