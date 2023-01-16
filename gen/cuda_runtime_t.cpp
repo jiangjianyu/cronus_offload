@@ -34,6 +34,16 @@ typedef struct ms_cudaGetLastError_t {
 	cudaError_t ms_retval;
 } ms_cudaGetLastError_t;
 
+typedef struct ms_cudaCheckpointDump_t {
+	cudaError_t ms_retval;
+	char* ms_dump_file_name;
+} ms_cudaCheckpointDump_t;
+
+typedef struct ms_cudaCheckpointRestore_t {
+	cudaError_t ms_retval;
+	char* ms_dump_file_name;
+} ms_cudaCheckpointRestore_t;
+
 typedef struct ms_cudaGetDeviceCount_t {
 	cudaError_t ms_retval;
 	int* ms_count;
@@ -984,6 +994,68 @@ static TEE_Result tee_cudaGetLastError(char *buffer)
 	RPC_SERVER_DEBUG("() => %lx" , ms->ms_retval);
 
 
+
+	return status;
+}
+
+static TEE_Result tee_cudaCheckpointDump(char *buffer)
+{
+	ms_cudaCheckpointDump_t* ms = TEE_CAST(ms_cudaCheckpointDump_t*, buffer);
+	char* buffer_start = buffer + sizeof(ms_cudaCheckpointDump_t);
+
+	TEE_Result status = TEE_SUCCESS;
+	char* _tmp_dump_file_name = TEE_CAST(char*, buffer_start + 0);
+	size_t _len_dump_file_name = _tmp_dump_file_name ? strlen((const char*)(_tmp_dump_file_name)) + 1 : 0;
+	char* _in_dump_file_name = NULL;
+
+
+	if (_tmp_dump_file_name != NULL) {
+		_in_dump_file_name = (char*)malloc(_len_dump_file_name);
+		if (_in_dump_file_name == NULL) {
+			status = TEE_ERROR_OUT_OF_MEMORY;
+			goto err;
+		}
+
+		memcpy(_in_dump_file_name, _tmp_dump_file_name, _len_dump_file_name);
+		((char*)_in_dump_file_name)[_len_dump_file_name - 1] = '\0';
+	}
+
+	ms->ms_retval = cudaCheckpointDump(_in_dump_file_name);
+	RPC_SERVER_DEBUG("(%s) => %lx", _in_dump_file_name, ms->ms_retval);
+
+err:
+	if (_in_dump_file_name) free(_in_dump_file_name);
+
+	return status;
+}
+
+static TEE_Result tee_cudaCheckpointRestore(char *buffer)
+{
+	ms_cudaCheckpointRestore_t* ms = TEE_CAST(ms_cudaCheckpointRestore_t*, buffer);
+	char* buffer_start = buffer + sizeof(ms_cudaCheckpointRestore_t);
+
+	TEE_Result status = TEE_SUCCESS;
+	char* _tmp_dump_file_name = TEE_CAST(char*, buffer_start + 0);
+	size_t _len_dump_file_name = _tmp_dump_file_name ? strlen((const char*)(_tmp_dump_file_name)) + 1 : 0;
+	char* _in_dump_file_name = NULL;
+
+
+	if (_tmp_dump_file_name != NULL) {
+		_in_dump_file_name = (char*)malloc(_len_dump_file_name);
+		if (_in_dump_file_name == NULL) {
+			status = TEE_ERROR_OUT_OF_MEMORY;
+			goto err;
+		}
+
+		memcpy(_in_dump_file_name, _tmp_dump_file_name, _len_dump_file_name);
+		((char*)_in_dump_file_name)[_len_dump_file_name - 1] = '\0';
+	}
+
+	ms->ms_retval = cudaCheckpointRestore(_in_dump_file_name);
+	RPC_SERVER_DEBUG("(%s) => %lx", _in_dump_file_name, ms->ms_retval);
+
+err:
+	if (_in_dump_file_name) free(_in_dump_file_name);
 
 	return status;
 }
@@ -4198,14 +4270,16 @@ err:
 
 const struct {
 	size_t nr_ecall;
-	struct {void* ecall_addr; uint8_t is_priv;} ecall_table[107];
+	struct {void* ecall_addr; uint8_t is_priv;} ecall_table[109];
 } g_ecall_table = {
-	107,
+	109,
 	{
 		{(void*)(uintptr_t)tee_cudaLaunchKernelByName, 0},
 		{(void*)(uintptr_t)tee_cudaThreadSynchronize, 0},
 		{(void*)(uintptr_t)tee_cudaDeviceSynchronize, 0},
 		{(void*)(uintptr_t)tee_cudaGetLastError, 0},
+		{(void*)(uintptr_t)tee_cudaCheckpointDump, 0},
+		{(void*)(uintptr_t)tee_cudaCheckpointRestore, 0},
 		{(void*)(uintptr_t)tee_cudaGetDeviceCount, 0},
 		{(void*)(uintptr_t)tee_cudaGetDeviceProperties, 0},
 		{(void*)(uintptr_t)tee_cudaDeviceGetAttribute, 0},

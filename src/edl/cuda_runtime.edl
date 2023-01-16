@@ -19,5 +19,8 @@ enclave {
         public cudaError_t  cudaThreadSynchronize(void);
         public cudaError_t  cudaDeviceSynchronize(void);
         public cudaError_t  cudaGetLastError(void);
+        // for cuda checkpoint
+        public cudaError_t cudaCheckpointDump([in, string] char *dump_file_name);
+        public cudaError_t cudaCheckpointRestore([in, string] char *dump_file_name);
     };
 };

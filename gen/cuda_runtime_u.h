@@ -23,6 +23,8 @@ cudaError_t cudaLaunchKernelByName(char* funcname, dim3 gridDim, dim3 blockDim, 
 cudaError_t cudaThreadSynchronize();
 cudaError_t cudaDeviceSynchronize();
 cudaError_t cudaGetLastError();
+cudaError_t cudaCheckpointDump(char* dump_file_name);
+cudaError_t cudaCheckpointRestore(char* dump_file_name);
 cudaError_t cudaGetDeviceCount(int* count);
 cudaError_t cudaGetDeviceProperties(struct cudaDeviceProp* prop, int device);
 cudaError_t cudaDeviceGetAttribute(int* value, enum cudaDeviceAttr attr, int device);
