@@ -29,6 +29,7 @@
  *
  *)
 
+open Str
 open Printf
 open Util                               (* for failwithf *)
 
@@ -1300,9 +1301,11 @@ let init_offset_cudastrm (fd: Ast.func_decl) (plist: Ast.pdecl list)
                       (mk_parm_name: Ast.parameter_type -> Ast.declarator -> string) =
   let check_para_cudastrm (pt: Ast.parameter_type) (declr: Ast.declarator) (ty: Ast.atype) =
     let p_name = mk_parm_name pt declr in
+    let reg = Str.regexp "->" in
+    let n_name = Str.replace_first reg "_" p_name in
     if is_cudastrm ty then sprintf "\
       \tcudastream_t %s_off_src = NULL;\n\
-      " p_name else "" in
+      " n_name else "" in
       
   let new_param_list = List.map conv_array_to_ptr plist in
   List.fold_left (fun acc (pty, declr) ->
@@ -1315,10 +1318,12 @@ let get_offset_cudastrm (fd: Ast.func_decl) (plist: Ast.pdecl list)
                       (mk_parm_name: Ast.parameter_type -> Ast.declarator -> string) =
   let check_para_cudastrm (pt: Ast.parameter_type) (declr: Ast.declarator) (ty: Ast.atype) =
     let p_name = mk_parm_name pt declr in
+    let reg = Str.regexp "->" in
+    let n_name = Str.replace_first reg "_" p_name in
     if is_cudastrm ty then sprintf "\
       \t%s_off_src = %s; \n\
       \t%s = (cudastream_t) ca_get_offset((void *)%s);\n\
-      " p_name p_name p_name p_name else "" in
+      " n_name p_name p_name p_name else "" in
 
   let new_param_list = List.map conv_array_to_ptr plist in
   List.fold_left (fun acc (pty, declr) ->
@@ -1331,9 +1336,11 @@ let recover_offset_cudastrm (fd: Ast.func_decl) (plist: Ast.pdecl list)
                       (mk_parm_name: Ast.parameter_type -> Ast.declarator -> string) =
   let check_para_cudastrm (pt: Ast.parameter_type) (declr: Ast.declarator) (ty: Ast.atype) =
     let p_name = mk_parm_name pt declr in
+    let reg = Str.regexp "->" in
+    let n_name = Str.replace_first reg "_" p_name in
     if is_cudastrm ty then sprintf "\
       \t%s = %s_off_src;\n\
-      " p_name p_name else "" in
+      " p_name n_name else "" in
 
   let new_param_list = List.map conv_array_to_ptr plist in
   List.fold_left (fun acc (pty, declr) ->
