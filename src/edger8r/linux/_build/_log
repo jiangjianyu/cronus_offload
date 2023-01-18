@@ -76,24 +76,24 @@ File "CodeGen.ml", line 991, characters 10-18:
 991 |       let size_str =
                 ^^^^^^^^
 Warning 26 [unused-var]: unused variable size_str.
-File "CodeGen.ml", line 1357, characters 16-31:
-1357 |             let in_ptr_dst_name = mk_in_ptr_dst_name attr.Ast.pa_rdonly parm_accessor in
+File "CodeGen.ml", line 1418, characters 16-31:
+1418 |             let in_ptr_dst_name = mk_in_ptr_dst_name attr.Ast.pa_rdonly parm_accessor in
                        ^^^^^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable in_ptr_dst_name.
-File "CodeGen.ml", line 1505, characters 6-18:
-1505 |   let include_uuid = "TEEC_UUID uuid = { 0x8aaaf200, 0x2450, 0x11e4, { 0xab, 0xe2, 0x00, 0x02, 0xa5, 0xd5, 0xc5, 0x1b} };\n" in
+File "CodeGen.ml", line 1566, characters 6-18:
+1566 |   let include_uuid = "TEEC_UUID uuid = { 0x8aaaf200, 0x2450, 0x11e4, { 0xab, 0xe2, 0x00, 0x02, 0xa5, 0xd5, 0xc5, 0x1b} };\n" in
              ^^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable include_uuid.
-File "CodeGen.ml", line 1506, characters 6-20:
-1506 |   let include_buffer = "char *enclave_buffer;\n" in
+File "CodeGen.ml", line 1567, characters 6-20:
+1567 |   let include_buffer = "char *enclave_buffer;\n" in
              ^^^^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable include_buffer.
-File "CodeGen.ml", line 1507, characters 6-25:
-1507 |   let include_buffer_init = "sgx_status_t init_sgx_buffer() {\n\tsgx_status_t status;\n\tinput_sm.size = 10240;\n\tinput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\toutput_sm.size = 10240;\n\toutput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &input_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n\t}\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &output_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n}\n\tocall_add(output_sm.buffer, ocall_table_securecompiler.table);\n}\n" in
+File "CodeGen.ml", line 1568, characters 6-25:
+1568 |   let include_buffer_init = "sgx_status_t init_sgx_buffer() {\n\tsgx_status_t status;\n\tinput_sm.size = 10240;\n\tinput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\toutput_sm.size = 10240;\n\toutput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &input_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n\t}\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &output_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n}\n\tocall_add(output_sm.buffer, ocall_table_securecompiler.table);\n}\n" in
              ^^^^^^^^^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable include_buffer_init.
-File "CodeGen.ml", line 1551, characters 6-17:
-1551 |   let entry_table = gen_entry_table ec in
+File "CodeGen.ml", line 1612, characters 6-17:
+1612 |   let entry_table = gen_entry_table ec in
              ^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable entry_table.
 # Target: Edger8r.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Edger8r.cmo, file:Edger8r.ml, implem, ocaml, quiet }
@@ -157,24 +157,24 @@ File "CodeGen.ml", line 991, characters 10-18:
 991 |       let size_str =
                 ^^^^^^^^
 Warning 26 [unused-var]: unused variable size_str.
-File "CodeGen.ml", line 1357, characters 16-31:
-1357 |             let in_ptr_dst_name = mk_in_ptr_dst_name attr.Ast.pa_rdonly parm_accessor in
+File "CodeGen.ml", line 1418, characters 16-31:
+1418 |             let in_ptr_dst_name = mk_in_ptr_dst_name attr.Ast.pa_rdonly parm_accessor in
                        ^^^^^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable in_ptr_dst_name.
-File "CodeGen.ml", line 1505, characters 6-18:
-1505 |   let include_uuid = "TEEC_UUID uuid = { 0x8aaaf200, 0x2450, 0x11e4, { 0xab, 0xe2, 0x00, 0x02, 0xa5, 0xd5, 0xc5, 0x1b} };\n" in
+File "CodeGen.ml", line 1566, characters 6-18:
+1566 |   let include_uuid = "TEEC_UUID uuid = { 0x8aaaf200, 0x2450, 0x11e4, { 0xab, 0xe2, 0x00, 0x02, 0xa5, 0xd5, 0xc5, 0x1b} };\n" in
              ^^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable include_uuid.
-File "CodeGen.ml", line 1506, characters 6-20:
-1506 |   let include_buffer = "char *enclave_buffer;\n" in
+File "CodeGen.ml", line 1567, characters 6-20:
+1567 |   let include_buffer = "char *enclave_buffer;\n" in
              ^^^^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable include_buffer.
-File "CodeGen.ml", line 1507, characters 6-25:
-1507 |   let include_buffer_init = "sgx_status_t init_sgx_buffer() {\n\tsgx_status_t status;\n\tinput_sm.size = 10240;\n\tinput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\toutput_sm.size = 10240;\n\toutput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &input_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n\t}\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &output_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n}\n\tocall_add(output_sm.buffer, ocall_table_securecompiler.table);\n}\n" in
+File "CodeGen.ml", line 1568, characters 6-25:
+1568 |   let include_buffer_init = "sgx_status_t init_sgx_buffer() {\n\tsgx_status_t status;\n\tinput_sm.size = 10240;\n\tinput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\toutput_sm.size = 10240;\n\toutput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &input_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n\t}\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &output_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n}\n\tocall_add(output_sm.buffer, ocall_table_securecompiler.table);\n}\n" in
              ^^^^^^^^^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable include_buffer_init.
-File "CodeGen.ml", line 1551, characters 6-17:
-1551 |   let entry_table = gen_entry_table ec in
+File "CodeGen.ml", line 1612, characters 6-17:
+1612 |   let entry_table = gen_entry_table ec in
              ^^^^^^^^^^^
 Warning 26 [unused-var]: unused variable entry_table.
 # Target: Edger8r.cmx, tags: { compile, extension:cmx, extension:ml, file:Edger8r.cmx, file:Edger8r.ml, implem, native, ocaml, quiet }

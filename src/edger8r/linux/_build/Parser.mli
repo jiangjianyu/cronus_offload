@@ -38,6 +38,7 @@ type token =
   | Tstruct
   | Tunion
   | Tenum
+  | TCudaStream
   | Tenclave
   | Tfrom
   | Timport

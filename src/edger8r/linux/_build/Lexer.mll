@@ -80,6 +80,8 @@ rule tokenize = parse
   | "union"      { Tunion }
   | "enum"       { Tenum }
 
+  | "cudaStream_t"  { TCudaStream }
+
   (* specifier *)
   | "enclave"    { Tenclave }
   | "trusted"    { Ttrusted }

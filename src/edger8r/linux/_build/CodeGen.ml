@@ -1171,6 +1171,11 @@ let is_ptr (pt: Ast.parameter_type) =
       Ast.PTVal _ -> false
     | Ast.PTPtr _ -> true
 
+let is_cudastrm (pt: Ast.atype) =
+  match pt with
+      Ast.CudaStrm  -> true
+    | _             -> false
+
 let is_ptr_type (aty: Ast.atype) =
   match aty with
     Ast.Ptr _ -> true
@@ -1246,19 +1251,20 @@ let gen_tbridge_local_vars (plist: Ast.pdecl list) =
 
 (* alex modified on 12 Jan 2023 *)
 (* It generates trusted bridge code for a trusted function. *)
+(* For ptr translation *)
 let init_offset_ptrs (fd: Ast.func_decl) (plist: Ast.pdecl list) 
                       (mk_parm_name: Ast.parameter_type -> Ast.declarator -> string) =
   let check_ptr_offset (pt: Ast.parameter_type) (declr: Ast.declarator) (attr: Ast.ptr_attr) =
     let p_name = mk_parm_name pt declr in
     if attr.pa_offset then sprintf "\
       \tvoid * %s_off_src = NULL;\n\
-    " p_name else "" in
-    let new_param_list = List.map conv_array_to_ptr plist in
-    List.fold_left (fun acc (pty, declr) ->
-      match pty with
+      " p_name else "" in
+  let new_param_list = List.map conv_array_to_ptr plist in
+  List.fold_left (fun acc (pty, declr) ->
+    match pty with
         Ast.PTVal (ty)      -> acc
       | Ast.PTPtr(ty, attr) -> acc ^ check_ptr_offset pty declr attr
-      ) "" new_param_list
+  ) "" new_param_list
 
 let get_offset_ptrs (fd: Ast.func_decl) (plist: Ast.pdecl list) 
                       (mk_parm_name: Ast.parameter_type -> Ast.declarator -> string) =
@@ -1267,13 +1273,13 @@ let get_offset_ptrs (fd: Ast.func_decl) (plist: Ast.pdecl list)
     if attr.pa_offset then sprintf "\
       \t%s_off_src = %s; \n\
       \t%s = ca_get_offset((void *)%s);\n\
-    " p_name p_name p_name p_name else "" in
-    let new_param_list = List.map conv_array_to_ptr plist in
-    List.fold_left (fun acc (pty, declr) ->
-      match pty with
+      " p_name p_name p_name p_name else "" in
+  let new_param_list = List.map conv_array_to_ptr plist in
+  List.fold_left (fun acc (pty, declr) ->
+    match pty with
         Ast.PTVal (ty)      -> acc
       | Ast.PTPtr(ty, attr) -> acc ^ check_ptr_offset pty declr attr
-      ) "" new_param_list
+  ) "" new_param_list
 
 let recover_offset_ptrs (fd: Ast.func_decl) (plist: Ast.pdecl list) 
                       (mk_parm_name: Ast.parameter_type -> Ast.declarator -> string) =
@@ -1281,13 +1287,61 @@ let recover_offset_ptrs (fd: Ast.func_decl) (plist: Ast.pdecl list)
     let p_name = mk_parm_name pt declr in
     if attr.pa_offset then sprintf "\
       \t%s = %s_off_src;\n\
-    " p_name p_name else "" in
-    let new_param_list = List.map conv_array_to_ptr plist in
-    List.fold_left (fun acc (pty, declr) ->
-      match pty with
+      " p_name p_name else "" in
+  let new_param_list = List.map conv_array_to_ptr plist in
+  List.fold_left (fun acc (pty, declr) ->
+    match pty with
         Ast.PTVal (ty)      -> acc
       | Ast.PTPtr(ty, attr) -> acc ^ check_ptr_offset pty declr attr
-      ) "" new_param_list
+  ) "" new_param_list
+
+(* For cudastream translation *)
+let init_offset_cudastrm (fd: Ast.func_decl) (plist: Ast.pdecl list) 
+                      (mk_parm_name: Ast.parameter_type -> Ast.declarator -> string) =
+  let check_para_cudastrm (pt: Ast.parameter_type) (declr: Ast.declarator) (ty: Ast.atype) =
+    let p_name = mk_parm_name pt declr in
+    if is_cudastrm ty then sprintf "\
+      \tcudastream_t %s_off_src = NULL;\n\
+      " p_name else "" in
+      
+  let new_param_list = List.map conv_array_to_ptr plist in
+  List.fold_left (fun acc (pty, declr) ->
+    match pty with
+        Ast.PTVal (ty)      -> acc ^ check_para_cudastrm pty declr ty
+      | Ast.PTPtr(ty, attr) -> acc
+  ) "" new_param_list
+
+let get_offset_cudastrm (fd: Ast.func_decl) (plist: Ast.pdecl list) 
+                      (mk_parm_name: Ast.parameter_type -> Ast.declarator -> string) =
+  let check_para_cudastrm (pt: Ast.parameter_type) (declr: Ast.declarator) (ty: Ast.atype) =
+    let p_name = mk_parm_name pt declr in
+    if is_cudastrm ty then sprintf "\
+      \t%s_off_src = %s; \n\
+      \t%s = (cudastream_t) ca_get_offset((void *)%s);\n\
+      " p_name p_name p_name p_name else "" in
+
+  let new_param_list = List.map conv_array_to_ptr plist in
+  List.fold_left (fun acc (pty, declr) ->
+    match pty with
+        Ast.PTVal (ty)      -> acc ^ check_para_cudastrm pty declr ty
+      | Ast.PTPtr(ty, attr) -> acc
+  ) "" new_param_list
+
+let recover_offset_cudastrm (fd: Ast.func_decl) (plist: Ast.pdecl list) 
+                      (mk_parm_name: Ast.parameter_type -> Ast.declarator -> string) =
+  let check_para_cudastrm (pt: Ast.parameter_type) (declr: Ast.declarator) (ty: Ast.atype) =
+    let p_name = mk_parm_name pt declr in
+    if is_cudastrm ty then sprintf "\
+      \t%s = %s_off_src;\n\
+      " p_name p_name else "" in
+
+  let new_param_list = List.map conv_array_to_ptr plist in
+  List.fold_left (fun acc (pty, declr) ->
+    match pty with
+        Ast.PTVal (ty)      -> acc ^ check_para_cudastrm pty declr ty
+      | Ast.PTPtr(ty, attr) -> acc
+  ) "" new_param_list
+  (* done modification *)
 
 let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
   let func_open = sprintf "static TEE_Result %s(char *buffer)\n{\n"
@@ -1300,6 +1354,10 @@ let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
   let ptr_with_offset_init = init_offset_ptrs fd fd.Ast.plist mk_parm_name_tbridge in
   let ptr_with_offset = get_offset_ptrs fd fd.Ast.plist mk_parm_name_tbridge in
   let ptr_with_offset_recover = recover_offset_ptrs fd fd.Ast.plist mk_parm_name_tbridge in
+
+  let cudastrm_offset_init = init_offset_cudastrm fd fd.Ast.plist mk_parm_name_tbridge in
+  let cudastrm_offset = get_offset_cudastrm fd fd.Ast.plist mk_parm_name_tbridge in
+  let cudastrm_offset_recover = recover_offset_cudastrm fd fd.Ast.plist mk_parm_name_tbridge in
   (*  *)
   (* let debug_str = sprintf "\tRPC_SERVER_DEBUG(\"%s\");" in *)
   let debug_str = gen_func_logging fd "\tRPC_SERVER_DEBUG" mk_parm_name_tbridge in
@@ -1321,21 +1379,24 @@ let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
       in
         sprintf "%s%s%s\t%s\n\t%s\n%s" func_open local_vars dummy_var check_pms invoke_func func_close
     else
-      sprintf "%s\t%s\n%s\n%s%s\n%s%s\n%s%s\n\t%s\n%s\n%s\n%s\n%s\n%s"
+      sprintf "%s\t%s\n%s\n%s%s\n%s\n%s%s\n%s%s\n%s\n\t%s\n%s\n%s\n%s\n%s\n%s\n%s"
         func_open
         declare_ms_ptr
         buffer_var_decl
         local_vars
         ptr_with_offset_init
+        cudastrm_offset_init
         (* debug_str *)
         (gen_check_tbridge_length_overflow fd.Ast.plist)
         (mk_check_pms fd.Ast.fname)
 (*        (gen_check_tbridge_ptr_parms fd.Ast.plist)*)
         (gen_parm_ptr_direction_pre fd.Ast.plist)
         ptr_with_offset
+        cudastrm_offset
         (if fd.Ast.rtype <> Ast.Void then update_retval else invoke_func)
         debug_str
         ptr_with_offset_recover
+        cudastrm_offset_recover
         (gen_err_mark fd.Ast.plist)
         (gen_parm_ptr_direction_post fd.Ast.plist)
         func_close

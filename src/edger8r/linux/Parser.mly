@@ -268,6 +268,7 @@ let check_ptr_attr (fd: Ast.func_decl) range =
        Tint8 Tint16 Tint32 Tint64
        Tuint8 Tuint16 Tuint32 Tuint64
        Tsizet Twchar Tvoid Tlong Tstruct Tunion Tenum
+       TCudaStream
 %token Tenclave Tfrom Timport Ttrusted Tuntrusted Tallow Tpropagate_errno
 
 %start start_parsing
@@ -329,6 +330,8 @@ type_spec:
   | Tsizet   { Ast.SizeT }
   | Twchar   { Ast.WChar }
   | Tvoid    { Ast.Void }
+  // alex modified at Jan 18 2023
+  | TCudaStream   { Ast.CudaStrm }
 
   | struct_specifier { $1 }
   | union_specifier  { $1 }

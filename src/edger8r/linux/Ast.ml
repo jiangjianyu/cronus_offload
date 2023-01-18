@@ -47,6 +47,7 @@ type atype =
   | Int8  | Int16  | Int32  | Int64
   | UInt8 | UInt16 | UInt32 | UInt64
   | Void  | WChar  | SizeT
+  | CudaStrm
   | Struct  of string
   | Union   of string
   | Enum    of string
@@ -231,6 +232,9 @@ let rec get_tystr (ty: atype) =
     | UInt32    -> "uint32_t"
     | UInt64    -> "uint64_t"
     | Void      -> "void"
+
+    | CudaStrm  -> "cudaStream_t"
+    
     | SizeT     -> "size_t"
     | WChar     -> "wchar_t"
     | Struct id -> "struct " ^ id
