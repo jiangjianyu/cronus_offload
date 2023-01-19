@@ -32,6 +32,8 @@ extern "C" {
 #define CUBLASAPI __attribute__((weak))
 #endif
 
+#define WEAKAPI __attribute__((weak))
+
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasCreate_v2(cublasHandle_t* handle) CUBLAS_NOT_IMPLEMENTED;
 CUBLASAPI cublasStatus_t CUBLASWINAPI cublasDestroy_v2(cublasHandle_t handle) CUBLAS_NOT_IMPLEMENTED;
 
@@ -89,20 +91,20 @@ CUBLASAPI cublasStatus_t CUBLASWINAPI cublasGetLoggerCallback(cublasLogCallback*
 
 /* Cublas vector/matrix */
 
-cublasStatus_t CUBLASWINAPI cublasSetVector(int n, int elemSize, const void* x, int incx, void* devicePtr, int incy) CUBLAS_NOT_IMPLEMENTED;
-cublasStatus_t CUBLASWINAPI cublasGetVector(int n, int elemSize, const void* x, int incx, void* y, int incy) CUBLAS_NOT_IMPLEMENTED;
+WEAKAPI cublasStatus_t CUBLASWINAPI cublasSetVector(int n, int elemSize, const void* x, int incx, void* devicePtr, int incy) CUBLAS_NOT_IMPLEMENTED;
+WEAKAPI cublasStatus_t CUBLASWINAPI cublasGetVector(int n, int elemSize, const void* x, int incx, void* y, int incy) CUBLAS_NOT_IMPLEMENTED;
 
-cublasStatus_t CUBLASWINAPI cublasSetMatrix(int rows, int cols, int elemSize, const void* A, int lda, void* B, int ldb) CUBLAS_NOT_IMPLEMENTED;
-cublasStatus_t CUBLASWINAPI cublasGetMatrix(int rows, int cols, int elemSize, const void* A, int lda, void* B, int ldb) CUBLAS_NOT_IMPLEMENTED;
+WEAKAPI cublasStatus_t CUBLASWINAPI cublasSetMatrix(int rows, int cols, int elemSize, const void* A, int lda, void* B, int ldb) CUBLAS_NOT_IMPLEMENTED;
+WEAKAPI cublasStatus_t CUBLASWINAPI cublasGetMatrix(int rows, int cols, int elemSize, const void* A, int lda, void* B, int ldb) CUBLAS_NOT_IMPLEMENTED;
 
-cublasStatus_t CUBLASWINAPI cublasSetVectorAsync(
+WEAKAPI cublasStatus_t CUBLASWINAPI cublasSetVectorAsync(
     int n, int elemSize, const void* hostPtr, int incx, void* devicePtr, int incy, cudaStream_t stream) CUBLAS_NOT_IMPLEMENTED;
-cublasStatus_t CUBLASWINAPI cublasGetVectorAsync(
+WEAKAPI cublasStatus_t CUBLASWINAPI cublasGetVectorAsync(
     int n, int elemSize, const void* devicePtr, int incx, void* hostPtr, int incy, cudaStream_t stream) CUBLAS_NOT_IMPLEMENTED;
 
-cublasStatus_t CUBLASWINAPI
+WEAKAPI cublasStatus_t CUBLASWINAPI
 cublasSetMatrixAsync(int rows, int cols, int elemSize, const void* A, int lda, void* B, int ldb, cudaStream_t stream) CUBLAS_NOT_IMPLEMENTED;
-cublasStatus_t CUBLASWINAPI
+WEAKAPI cublasStatus_t CUBLASWINAPI
 cublasGetMatrixAsync(int rows, int cols, int elemSize, const void* A, int lda, void* B, int ldb, cudaStream_t stream) CUBLAS_NOT_IMPLEMENTED;
 
 CUBLASAPI void CUBLASWINAPI cublasXerbla(const char* srName, int info) { cublas_not_implemented_noreturn; };

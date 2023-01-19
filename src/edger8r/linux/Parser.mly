@@ -91,6 +91,8 @@ let get_ptr_attr (attr_list: (string * Ast.attr_value) list) =
         { res with Ast.pa_size = { res.Ast.pa_size with Ast.ps_size  = Some value }}
       | "count"    ->
         { res with Ast.pa_size = { res.Ast.pa_size with Ast.ps_count = Some value }}
+      | "length"   ->
+        { res with Ast.pa_size = { res.Ast.pa_size with Ast.ps_length = Some value }}
       | "sizefunc" ->
         let efn n = failwithf "invalid function name (%d) for `sizefunc'" n in
         let funcname = get_string_from_attr value efn

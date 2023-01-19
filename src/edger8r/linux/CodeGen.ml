@@ -227,7 +227,10 @@ let get_ptr_length (ty: Ast.atype) (attr: Ast.ptr_attr) (declr: Ast.declarator) 
   in
     match attr.Ast.pa_size.Ast.ps_count with
       None   -> size_str true
-    | Some a -> sprintf "%s" (mk_len_size a ^ " * " ^ (size_str false))
+    | Some a -> 
+      match attr.Ast.pa_size.Ast.ps_length with
+        None   -> sprintf "%s * %s" (mk_len_size a) (size_str false)
+      | Some b -> sprintf "%s * %s * %s" (mk_len_size b) (mk_len_size a) (size_str false)
 
 let get_first = fun (a, b) -> b
 
@@ -930,6 +933,18 @@ let gen_ptr_size (ty: Ast.atype) (pattr: Ast.ptr_attr) (name: string) (get_parm:
         Ast.AString s -> sprintf "%s * %s" (get_parm s) size_str
       | Ast.ANumber n -> sprintf "%d * %s" n size_str in
 
+  let mk_len_length l c size_str = 
+    let length_str = match l with
+      Ast.AString s -> get_parm s
+    | Ast.ANumber n -> sprintf "%d" n
+    in
+      let count_str = match c with
+        Ast.AString cs -> get_parm cs
+      | Ast.ANumber cn -> sprintf "%d" cn
+      in
+        sprintf "%s * %s * %s" length_str count_str size_str
+  in
+
   let mk_len_sizefunc s = sprintf "((%s) ? %s(%s) : 0)" parm_name s parm_name in
 
   (* Note, during the parsing stage, we already eliminated the case that
@@ -947,7 +962,10 @@ let gen_ptr_size (ty: Ast.atype) (pattr: Ast.ptr_attr) (name: string) (get_parm:
       in
         match sattr.Ast.ps_count with
           None   -> size_str
-        | Some a -> mk_len_count a size_str
+        | Some a -> 
+          match sattr.Ast.ps_length with
+            None   -> mk_len_count a size_str
+          | Some b -> mk_len_length a b size_str
     in
       if pattr.Ast.pa_isstr then
         sprintf "%s ? strlen((const char*)(%s)) + 1 : 0" parm_name parm_name
@@ -1169,7 +1187,12 @@ let gen_tmp_size (pattr: Ast.ptr_attr) (plist: Ast.pdecl list) =
         Some v -> gen_temp_var v
       | None   -> ""
   in
-    sprintf "%s%s" tmp_size_str tmp_count_str
+  let tmp_length_str =
+    match pattr.Ast.pa_size.Ast.ps_length with
+        Some v -> gen_temp_var v
+      | None   -> ""
+  in
+    sprintf "%s%s%s" tmp_size_str tmp_count_str tmp_length_str
 
 let is_ptr (pt: Ast.parameter_type) =
   match pt with
