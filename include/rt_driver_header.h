@@ -1,3 +1,8 @@
 
+#ifndef cudaErrorMemoryValueTooLarge
 #define cudaErrorMemoryValueTooLarge CUDA_ERROR_UNKNOWN
+#endif
+
+#ifndef cudaErrorInvalidValue
 #define cudaErrorInvalidValue CUDA_ERROR_INVALID_VALUE
+#endif

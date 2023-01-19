@@ -727,8 +727,11 @@ let gen_func_logging (fd: Ast.func_decl) (logfunc: string)
                       (mk_parm_name: Ast.parameter_type -> Ast.declarator -> string) =
   let gen_parm_str pt declr =
     let parm_name = mk_parm_name pt declr in
+    let cast_type pt =
+      if is_string pt then "char*" else "unsigned long int"
+    in
     let tystr = get_param_tystr pt in
-      if is_const_ptr pt then sprintf "(const %s)%s" tystr parm_name else parm_name
+      if is_string pt then sprintf "(const char*)%s" parm_name else sprintf "*((%s*)&%s)" (cast_type pt) parm_name
   in
   let gen_parm_format pt = 
       if is_string pt then "%s" else "%lx"
@@ -737,7 +740,7 @@ let gen_func_logging (fd: Ast.func_decl) (logfunc: string)
     if fd.Ast.rtype <> Ast.Void then " => %lx" else " => Void"
   in
   let gen_ret_name = 
-    if fd.Ast.rtype <> Ast.Void then sprintf ", %s" (mk_parm_accessor retval_name) else ""
+    if fd.Ast.rtype <> Ast.Void then sprintf ", *((unsigned long int*)&%s)" (mk_parm_accessor retval_name) else ""
   in
   let format_str = 
     match fd.Ast.plist with

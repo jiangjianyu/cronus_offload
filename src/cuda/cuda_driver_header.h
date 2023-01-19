@@ -15,3 +15,13 @@
 
 #define NOT_IMPLEMENTED cudadrv_log_warn("%s not implemented", __FUNCTION__)
 #define NOT_IMPLEMENTED_RET(x) cudadrv_log_warn("%s not implemented", __FUNCTION__); return x;
+
+typedef void (*ctx_dtor_ct_t)(CUcontext, void*, void*);
+
+typedef struct {
+    void* mgr;
+    void* ctx_state;
+    ctx_dtor_ct_t dtor_cb;
+} ctx_local_storage_t;
+
+extern ctx_local_storage_t local_storage;

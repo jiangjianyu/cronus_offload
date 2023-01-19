@@ -21,7 +21,7 @@ cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void
 
         auto func_name_itr = cuda_runtime_func->find((intptr_t)func);
         if (func_name_itr == cuda_runtime_func->end()) {
-                cudart_log_err("cannot find kernel's addr: %lx", func);
+                cudart_log_err("cannot find kernel's addr: %lx", (unsigned long int)func);
                 return cudaErrorLaunchFailure;
         }
         func_name = func_name_itr->second;
@@ -49,7 +49,7 @@ cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void
             }
 
             if (parameters == NULL) {
-                cudart_log_err("cannot found %s fatbins size %d", func_name, fatbins->size());
+                cudart_log_err("cannot found %s fatbins size %ld", func_name, fatbins->size());
                 return cudaErrorLaunchFailure;
             }
         }
@@ -60,8 +60,25 @@ cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void
         args_copy = malloc(total_parameter_sizes);
 
         for (int i = 0;i < n_par;i++) {
-                memcpy((char*)args_copy + args_copy_offset, args[i], parameters[i]);
-                args_copy_offset += parameters[i];
+            memcpy((char*)args_copy + args_copy_offset, args[i], parameters[i]);
+            /*
+            if (parameters[i] == sizeof(uint64_t)) {
+                uint64_t device_ptr = *(uint64_t*)(args[i]);
+                log_err("parameter %d %lx", i, device_ptr);
+            } else if (parameters[i] == sizeof(uint32_t)) {
+                uint32_t device_ptr = *(uint32_t*)(args[i]);
+                log_err("parameter %d %lx", i, device_ptr);
+			} else if (parameters[i] == sizeof(uint16_t)) {
+                uint16_t device_ptr = *(uint16_t*)(args[i]);
+                log_err("parameter %d %lx", i, device_ptr);
+			} else if (parameters[i] == sizeof(uint8_t)) {
+                uint8_t device_ptr = *(uint8_t*)(args[i]);
+                log_err("parameter %d %lx", i, device_ptr);
+			} else {
+				log_err("parameter %d size %d", i, parameters[i]);
+			}
+            */
+            args_copy_offset += parameters[i];
         }
 
         ret = cudaLaunchKernelByName(func_name, gridDim, blockDim, args_copy, total_parameter_sizes, parameters, sizeof(uint32_t) * n_par, sharedMem, stream);

@@ -1,0 +1,86 @@
+
+
+/**
+ * \defgroup CUDA_MEM Memory Management
+ *
+ * ___MANBRIEF___ memory management functions of the low-level CUDA driver API
+ * (___CURRENT_FILE___) ___ENDMANBRIEF___
+ *
+ * This section describes the memory management functions of the low-level CUDA
+ * driver application programming interface.
+ *
+ * @{
+ */
+
+enclave {
+    trusted {
+        public CUresult cuMemGetInfo([out,count=1]size_t *free, [out,count=1]size_t *total);
+        public CUresult cuMemAlloc([out,count=1]CUdeviceptr *dptr, size_t bytesize);
+        public CUresult cuMemAllocPitch([out,count=1]CUdeviceptr *dptr, [out,count=1]size_t *pPitch, size_t WidthInBytes, size_t Height, unsigned int ElementSizeBytes);
+        public CUresult cuMemFree(CUdeviceptr dptr);
+        public CUresult cuMemGetAddressRange([out,count=1]CUdeviceptr *pbase, [out,count=1]size_t *psize, CUdeviceptr dptr);
+        // public CUresult cuMemAllocHost(void **pp, size_t bytesize);
+        public CUresult cuMemFreeHost([user_check]void *p);
+        // public CUresult cuMemHostAlloc(void **pp, size_t bytesize, unsigned int Flags);
+        public CUresult cuMemHostGetDevicePointer([out,count=1]CUdeviceptr *pdptr, [user_check]void *p, unsigned int Flags);
+        public CUresult cuMemHostGetFlags([out,count=1]unsigned int *pFlags, [user_check]void *p);
+        public CUresult cuMemAllocManaged([out,count=1]CUdeviceptr *dptr, size_t bytesize, unsigned int flags);
+        public CUresult cuDeviceGetByPCIBusId([out,count=1]CUdevice *dev, [in,string]const char *pciBusId);
+        public CUresult cuDeviceGetPCIBusId([out,size=len]char *pciBusId, int len, CUdevice dev);
+        public CUresult cuIpcGetEventHandle([out,count=1]CUipcEventHandle *pHandle, CUevent event);
+        public CUresult cuIpcOpenEventHandle([out,count=1]CUevent *phEvent, CUipcEventHandle handle);
+        public CUresult cuIpcGetMemHandle([out,count=1]CUipcMemHandle *pHandle, CUdeviceptr dptr);
+        public CUresult cuIpcOpenMemHandle([out,count=1]CUdeviceptr *pdptr, CUipcMemHandle handle, unsigned int Flags);
+        public CUresult cuIpcCloseMemHandle(CUdeviceptr dptr);
+        // public CUresult cuMemHostRegister([user_check]void *p, size_t bytesize, unsigned int Flags);
+        public CUresult cuMemHostUnregister([user_check]void *p);
+        public CUresult cuMemcpy(CUdeviceptr dst, CUdeviceptr src, size_t ByteCount);
+        public CUresult cuMemcpyPeer(CUdeviceptr dstDevice, CUcontext dstContext, CUdeviceptr srcDevice, CUcontext srcContext, size_t ByteCount);
+        public CUresult cuMemcpyHtoD(CUdeviceptr dstDevice, [in,size=ByteCount]const void *srcHost, size_t ByteCount);
+        public CUresult cuMemcpyDtoH([out,size=ByteCount]void *dstHost, CUdeviceptr srcDevice, size_t ByteCount);
+        public CUresult cuMemcpyDtoD(CUdeviceptr dstDevice, CUdeviceptr srcDevice, size_t ByteCount);
+        public CUresult cuMemcpyDtoA(CUarray dstArray, size_t dstOffset, CUdeviceptr srcDevice, size_t ByteCount);
+        public CUresult cuMemcpyAtoD(CUdeviceptr dstDevice, CUarray srcArray, size_t srcOffset, size_t ByteCount);
+        public CUresult cuMemcpyHtoA(CUarray dstArray, size_t dstOffset, [in,size=ByteCount]const void *srcHost, size_t ByteCount);
+        public CUresult cuMemcpyAtoH([out,size=ByteCount]void *dstHost, CUarray srcArray, size_t srcOffset, size_t ByteCount);
+        public CUresult cuMemcpyAtoA(CUarray dstArray, size_t dstOffset, CUarray srcArray, size_t srcOffset, size_t ByteCount);
+        public CUresult cuMemcpy2D([in,count=1]const CUDA_MEMCPY2D *pCopy);
+        public CUresult cuMemcpy2DUnaligned([in,count=1]const CUDA_MEMCPY2D *pCopy);
+        public CUresult cuMemcpy3D([in,count=1]const CUDA_MEMCPY3D *pCopy);
+        public CUresult cuMemcpy3DPeer([in,count=1]const CUDA_MEMCPY3D_PEER *pCopy);
+        public CUresult cuMemcpyAsync(CUdeviceptr dst, CUdeviceptr src, size_t ByteCount, CUstream hStream);
+        public CUresult cuMemcpyPeerAsync(CUdeviceptr dstDevice, CUcontext dstContext, CUdeviceptr srcDevice, CUcontext srcContext, size_t ByteCount, CUstream hStream);
+        public CUresult cuMemcpyHtoDAsync(CUdeviceptr dstDevice, [in,size=ByteCount] const void *srcHost, size_t ByteCount, CUstream hStream);
+        public CUresult cuMemcpyDtoHAsync([out,size=ByteCount]void *dstHost, CUdeviceptr srcDevice, size_t ByteCount, CUstream hStream);
+        public CUresult cuMemcpyDtoDAsync(CUdeviceptr dstDevice, CUdeviceptr srcDevice, size_t ByteCount, CUstream hStream);
+        public CUresult cuMemcpyHtoAAsync(CUarray dstArray, size_t dstOffset, [in,size=ByteCount]const void *srcHost, size_t ByteCount, CUstream hStream);
+        public CUresult cuMemcpyAtoHAsync([out,size=ByteCount]void *dstHost, CUarray srcArray, size_t srcOffset, size_t ByteCount, CUstream hStream);
+        public CUresult cuMemcpy2DAsync([in,count=1]const CUDA_MEMCPY2D *pCopy, CUstream hStream);
+        public CUresult cuMemcpy3DAsync([in,count=1]const CUDA_MEMCPY3D *pCopy, CUstream hStream);
+        public CUresult cuMemcpy3DPeerAsync([in,count=1]const CUDA_MEMCPY3D_PEER *pCopy, CUstream hStream);
+        public CUresult cuMemsetD8(CUdeviceptr dstDevice, unsigned char uc, size_t N);
+        public CUresult cuMemsetD16(CUdeviceptr dstDevice, unsigned short us, size_t N);
+        public CUresult cuMemsetD32(CUdeviceptr dstDevice, unsigned int ui, size_t N);
+        public CUresult cuMemsetD2D8(CUdeviceptr dstDevice, size_t dstPitch, unsigned char uc, size_t Width, size_t Height);
+        public CUresult cuMemsetD2D16(CUdeviceptr dstDevice, size_t dstPitch, unsigned short us, size_t Width, size_t Height);
+        public CUresult cuMemsetD2D32(CUdeviceptr dstDevice, size_t dstPitch, unsigned int ui, size_t Width, size_t Height);
+        public CUresult cuMemsetD8Async(CUdeviceptr dstDevice, unsigned char uc, size_t N, CUstream hStream);
+        public CUresult cuMemsetD16Async(CUdeviceptr dstDevice, unsigned short us, size_t N, CUstream hStream);
+        public CUresult cuMemsetD32Async(CUdeviceptr dstDevice, unsigned int ui, size_t N, CUstream hStream);
+        public CUresult cuMemsetD2D8Async(CUdeviceptr dstDevice, size_t dstPitch, unsigned char uc, size_t Width, size_t Height, CUstream hStream);
+        public CUresult cuMemsetD2D16Async(CUdeviceptr dstDevice, size_t dstPitch, unsigned short us, size_t Width, size_t Height, CUstream hStream);
+        public CUresult cuMemsetD2D32Async(CUdeviceptr dstDevice, size_t dstPitch, unsigned int ui, size_t Width, size_t Height, CUstream hStream);
+        public CUresult cuArrayCreate([out,count=1]CUarray *pHandle, [in,count=1]const CUDA_ARRAY_DESCRIPTOR *pAllocateArray);
+        public CUresult cuArrayGetDescriptor([out,count=1]CUDA_ARRAY_DESCRIPTOR *pArrayDescriptor, CUarray hArray);
+        public CUresult cuArrayGetSparseProperties([out,count=1]CUDA_ARRAY_SPARSE_PROPERTIES *sparseProperties, CUarray array);
+        public CUresult cuMipmappedArrayGetSparseProperties([out,count=1]CUDA_ARRAY_SPARSE_PROPERTIES *sparseProperties, CUmipmappedArray mipmap);
+        public CUresult cuArrayGetPlane([out,count=1]CUarray *pPlaneArray, CUarray hArray, unsigned int planeIdx);
+        public CUresult cuArrayDestroy(CUarray hArray);
+        public CUresult cuArray3DCreate([out,count=1]CUarray *pHandle, [in,count=1]const CUDA_ARRAY3D_DESCRIPTOR *pAllocateArray);
+        public CUresult cuArray3DGetDescriptor([out,count=1]CUDA_ARRAY3D_DESCRIPTOR *pArrayDescriptor, CUarray hArray);
+        // public CUresult cuMipmappedArrayCreate([out,count=1]CUmipmappedArray *pHandle, const CUDA_ARRAY3D_DESCRIPTOR *pMipmappedArrayDesc, unsigned int numMipmapLevels);
+        public CUresult cuMipmappedArrayGetLevel([out,count=1]CUarray *pLevelArray, CUmipmappedArray hMipmappedArray, unsigned int level);
+        public CUresult cuMipmappedArrayDestroy(CUmipmappedArray hMipmappedArray);
+
+    };
+};

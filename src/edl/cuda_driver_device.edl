@@ -1,0 +1,39 @@
+
+
+/**
+ * \defgroup CUDA_DEVICE Device Management
+ *
+ * ___MANBRIEF___ device management functions of the low-level CUDA driver API
+ * (___CURRENT_FILE___) ___ENDMANBRIEF___
+ *
+ * This section describes the device management functions of the low-level
+ * CUDA driver application programming interface.
+ *
+ * @{
+ */
+
+enclave {
+    trusted {
+        public CUresult cuCtxCreate([out,count=1]CUcontext *pctx, unsigned int flags, CUdevice dev);
+        public CUresult cuCtxCreate_v3([out,count=1]CUcontext *pctx, [in,count=numParams]CUexecAffinityParam *paramsArray, int numParams, unsigned int flags, CUdevice dev);
+        public CUresult cuCtxDestroy(CUcontext ctx);
+        public CUresult cuCtxPushCurrent(CUcontext ctx);
+        public CUresult cuCtxPopCurrent([out,count=1]CUcontext *pctx);
+        public CUresult cuCtxSetCurrent(CUcontext ctx);
+        public CUresult cuCtxGetCurrent([out,count=1]CUcontext *pctx);
+        public CUresult cuCtxGetDevice([out,count=1]CUdevice *device);
+        public CUresult cuCtxGetFlags([out,count=1]unsigned int *flags);
+        public CUresult cuCtxSynchronize(void);
+        public CUresult cuCtxSetLimit(CUlimit limit, size_t value);
+        public CUresult cuCtxGetLimit([out,count=1]size_t *pvalue, CUlimit limit);
+        public CUresult cuCtxGetCacheConfig([out,count=1]CUfunc_cache *pconfig);
+        public CUresult cuCtxSetCacheConfig(CUfunc_cache config);
+        public CUresult cuCtxGetSharedMemConfig([out,count=1]CUsharedconfig *pConfig);
+        public CUresult cuCtxSetSharedMemConfig(CUsharedconfig config);
+        public CUresult cuCtxGetApiVersion(CUcontext ctx, [out,count=1]unsigned int *version);
+        public CUresult cuCtxGetStreamPriorityRange([out,count=1]int *leastPriority, [out,count=1]int *greatestPriority);
+        public CUresult cuCtxResetPersistingL2Cache(void);
+        public CUresult cuCtxGetExecAffinity([out,count=1]CUexecAffinityParam *pExecAffinity, CUexecAffinityType type);
+
+    };
+};

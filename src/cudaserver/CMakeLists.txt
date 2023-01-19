@@ -1,15 +1,13 @@
 cmake_minimum_required(VERSION 3.9)
 project(cudaserver LANGUAGES C CXX CUDA)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
-
 file(GLOB srcs
     "*.cpp"
     "hook.c"
     "dispatcher.c"
     "${CMAKE_SOURCE_DIR}/gen/cuda_runtime_t.cpp"
     "${CMAKE_SOURCE_DIR}/gen/cuda_driver_t.cpp"
+    "${CMAKE_SOURCE_DIR}/gen/cublas_t.cpp"
 )
 
 include_directories(./)

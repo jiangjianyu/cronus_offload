@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(cudaserver LANGUAGES C CXX CUDA)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --extended-lambda -g -O0")
 # set(CMAKE_CUDA_ARCHITECTURES "75")
 
 file(GLOB srcs

@@ -83,9 +83,11 @@ cudaError_t cudaLaunchKernelByName(char* funcname, dim3 gridDim, dim3 blockDim,
     void** args = (void**) malloc(parameter_len * sizeof(void*));
     int total_offset = 0;
     for (int i = 0;i < parameter_len;i++) {
-        args[i] = args_buf + total_offset;
+        args[i] = (void*)((char*)args_buf + total_offset);
         total_offset += parameters[i];
     }
 
-    return cudaLaunchKernel(func_ptr, gridDim, blockDim, args, sharedMem, stream);
+    auto status = cudaLaunchKernel(func_ptr, gridDim, blockDim, args, sharedMem, stream);
+    if (status != cudaSuccess) return status;
+    return cudaDeviceSynchronize();
 }

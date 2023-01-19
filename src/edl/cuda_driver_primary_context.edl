@@ -1,0 +1,29 @@
+
+
+/**
+ * \defgroup CUDA_PRIMARY_CTX Primary Context Management
+ *
+ * ___MANBRIEF___ primary context management functions of the low-level CUDA driver
+ * API (___CURRENT_FILE___) ___ENDMANBRIEF___
+ *
+ * This section describes the primary context management functions of the low-level
+ * CUDA driver application programming interface.
+ *
+ * The primary context is unique per device and shared with the CUDA runtime API.
+ * These functions allow integration with other libraries using CUDA.
+ *
+ * @{
+ */
+
+enclave {
+    trusted {
+        public CUresult cuDevicePrimaryCtxRetainRemote([out,count=1]CUcontext *pctx, CUdevice dev);
+        public CUresult cuDevicePrimaryCtxRelease(CUdevice dev);
+        public CUresult cuDevicePrimaryCtxSetFlags(CUdevice dev, unsigned int flags);
+        public CUresult cuDevicePrimaryCtxGetState(CUdevice dev, [out,count=1] unsigned int *flags, [out,count=1] int *active);
+        public CUresult cuDevicePrimaryCtxReset(CUdevice dev);
+
+        public CUresult cuDeviceGetExecAffinitySupport([out,count=1]int *pi, CUexecAffinityType type, CUdevice dev);
+
+    };
+};

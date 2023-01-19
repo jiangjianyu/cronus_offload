@@ -773,7 +773,7 @@ int FatBinary::parse() {
 
 	/* nv.rel... "__device__" symbols? */
 	for (sym_entry = (symbol_entry_t *)nvrel; 
-		 (void *)sym_entry < (void *)nvrel + sheads[nvrel_idx].sh_size;
+		 (char *)sym_entry < (char *)nvrel + sheads[nvrel_idx].sh_size;
 		 sym_entry++) {
 		/*
 		 char *sym_name, *sh_name;
@@ -787,7 +787,7 @@ int FatBinary::parse() {
 
 	/* symbols: __constant__ variable and built-in function names. */
 	for (sym = &symbols[0]; 
-		 (void *)sym < (void *)symbols + sheads[symbols_idx].sh_size; sym++) {
+		 (char *)sym < (char *)symbols + sheads[symbols_idx].sh_size; sym++) {
 		 char *sym_name = strings + sym->st_name;
 		 char *sh_name = shstrings + sheads[sym->st_shndx].sh_name;
 		 switch (sym->st_info) {

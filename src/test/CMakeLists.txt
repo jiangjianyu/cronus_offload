@@ -3,3 +3,4 @@ project(cronus_test)
 
 add_subdirectory(cukernel)
 add_subdirectory(mnist)
+add_subdirectory(nits)
