@@ -1,0 +1,88 @@
+/* ---------------- CUBLAS BLAS1 functions ---------------- */
+
+enclave {
+    include "cublas_size.h" 
+    trusted {
+        public cublasStatus_t cublasNrm2Ex(cublasHandle_t handle, int n, [user_check] const void* x, cudaDataType xType, int incx, [in,sizefunc=cublasResultSize,sizefuncpars=resultType]void* result, cudaDataType resultType, cudaDataType executionType);
+        public cublasStatus_t cublasSnrm2_v2(cublasHandle_t handle, int n, [user_check] const float* x, int incx, [out,count=1]float* result);
+        public cublasStatus_t cublasDnrm2_v2(cublasHandle_t handle, int n, [user_check] const double* x, int incx, [out,count=1]double* result);
+        public cublasStatus_t cublasScnrm2_v2(cublasHandle_t handle, int n, [user_check] const cuComplex* x, int incx, [out,count=1]float* result);
+        public cublasStatus_t cublasDznrm2_v2(cublasHandle_t handle, int n, [user_check] const cuDoubleComplex* x, int incx, [out,count=1]double* result);
+        public cublasStatus_t cublasDotEx(cublasHandle_t handle, int n, [user_check] const void* x, cudaDataType xType, int incx, [user_check] const void* y, cudaDataType yType, int incy, [out,sizefunc=cublasResultSize,sizefuncpars=resultType]void* result, cudaDataType resultType, cudaDataType executionType);
+        public cublasStatus_t cublasDotcEx(cublasHandle_t handle, int n, [user_check] const void* x, cudaDataType xType, int incx, [user_check] const void* y, cudaDataType yType, int incy, [out,sizefunc=cublasResultSize,sizefuncpars=resultType]void* result, cudaDataType resultType, cudaDataType executionType);
+        
+        public cublasStatus_t cublasSdot_v2(cublasHandle_t handle, int n, [user_check] const float* x, int incx, [user_check] const float* y, int incy, [out,count=1]float* result);
+        public cublasStatus_t cublasDdot_v2(cublasHandle_t handle, int n, [user_check] const double* x, int incx, [user_check] const double* y, int incy, [out,count=1]double* result);
+        public cublasStatus_t cublasCdotu_v2(cublasHandle_t handle, int n, [user_check] const cuComplex* x, int incx, [user_check] const cuComplex* y, int incy, [out,count=1]cuComplex* result);
+        public cublasStatus_t cublasCdotc_v2(cublasHandle_t handle, int n, [user_check] const cuComplex* x, int incx, [user_check] const cuComplex* y, int incy, [out,count=1]cuComplex* result);
+        public cublasStatus_t cublasZdotu_v2(cublasHandle_t handle, int n, [user_check] const cuDoubleComplex* x, int incx, [user_check] const cuDoubleComplex* y, int incy, [out,count=1]cuDoubleComplex* result);
+        public cublasStatus_t cublasZdotc_v2(cublasHandle_t handle, int n, [user_check] const cuDoubleComplex* x, int incx, [user_check] const cuDoubleComplex* y, int incy, [out,count=1]cuDoubleComplex* result);
+        
+        public cublasStatus_t cublasScalEx(cublasHandle_t handle, int n, [in,sizefunc=cublasResultSize,sizefuncpars=alphaType] const void* alpha, cudaDataType alphaType, [user_check] void* x, cudaDataType xType, int incx, cudaDataType executionType);
+        public cublasStatus_t cublasSscal_v2(cublasHandle_t handle, int n, [in,count=1]const float* alpha, [user_check] float* x, int incx);
+        public cublasStatus_t cublasDscal_v2(cublasHandle_t handle, int n, [in,count=1]const double* alpha, [user_check] double* x, int incx);
+        public cublasStatus_t cublasCscal_v2(cublasHandle_t handle, int n, [in,count=1]const cuComplex* alpha, [user_check] cuComplex* x, int incx);
+        public cublasStatus_t cublasCsscal_v2(cublasHandle_t handle, int n, [in,count=1]const float* alpha, [user_check] cuComplex* x, int incx);
+        public cublasStatus_t cublasZscal_v2(cublasHandle_t handle, int n, [in,count=1]const cuDoubleComplex* alpha, [user_check] cuDoubleComplex* x, int incx);
+        public cublasStatus_t cublasZdscal_v2(cublasHandle_t handle, int n, [in,count=1]const double* alpha, [user_check] cuDoubleComplex* x, int incx);
+
+        public cublasStatus_t cublasAxpyEx(cublasHandle_t handle, int n, [in,sizefunc=cublasResultSize,sizefuncpars=alphaType]const void* alpha, cudaDataType alphaType, [user_check] const void* x, cudaDataType xType, int incx, [user_check] void* y, cudaDataType yType, int incy, cudaDataType executiontype);
+        public cublasStatus_t cublasSaxpy_v2(cublasHandle_t handle, int n, [in,count=1]const float* alpha, [user_check] const float* x, int incx, [user_check] float* y, int incy);
+        public cublasStatus_t cublasDaxpy_v2(cublasHandle_t handle, int n, [in,count=1]const double* alpha, [user_check] const double* x, int incx, [user_check] double* y, int incy);
+        public cublasStatus_t cublasCaxpy_v2(cublasHandle_t handle, int n, [in,count=1]const cuComplex* alpha, [user_check] const cuComplex* x, int incx, [user_check] cuComplex* y, int incy);
+        public cublasStatus_t cublasZaxpy_v2(cublasHandle_t handle, int n, [in,count=1]const cuDoubleComplex* alpha, [user_check] const cuDoubleComplex* x, int incx, [user_check] cuDoubleComplex* y, int incy);
+        
+        public cublasStatus_t cublasCopyEx(cublasHandle_t handle, int n, [user_check] const void* x, cudaDataType xType, int incx, [user_check] void* y, cudaDataType yType, int incy);
+        public cublasStatus_t cublasScopy_v2(cublasHandle_t handle, int n, [user_check] const float* x, int incx, [user_check] float* y, int incy);
+        public cublasStatus_t cublasDcopy_v2(cublasHandle_t handle, int n, [user_check] const double* x, int incx, [user_check] double* y, int incy);
+        public cublasStatus_t cublasCcopy_v2(cublasHandle_t handle, int n, [user_check] const cuComplex* x, int incx, [user_check] cuComplex* y, int incy);
+        public cublasStatus_t cublasZcopy_v2(cublasHandle_t handle, int n, [user_check] const cuDoubleComplex* x, int incx, [user_check] cuDoubleComplex* y, int incy);
+        public cublasStatus_t cublasSswap_v2(cublasHandle_t handle, int n, [user_check] float* x, int incx, [user_check] float* y, int incy);
+        public cublasStatus_t cublasDswap_v2(cublasHandle_t handle, int n, [user_check] double* x, int incx, [user_check] double* y, int incy);
+        public cublasStatus_t cublasCswap_v2(cublasHandle_t handle, int n, [user_check] cuComplex* x, int incx, [user_check] cuComplex* y, int incy);
+        public cublasStatus_t cublasZswap_v2(cublasHandle_t handle, int n, [user_check] cuDoubleComplex* x, int incx, [user_check] cuDoubleComplex* y, int incy);
+        public cublasStatus_t cublasSwapEx(cublasHandle_t handle, int n, [user_check] void* x, cudaDataType xType, int incx, [user_check] void* y, cudaDataType yType, int incy);
+
+        public cublasStatus_t cublasIsamax_v2(cublasHandle_t handle, int n, [user_check] const float* x, int incx, [out,count=1]int* result);
+        public cublasStatus_t cublasIdamax_v2(cublasHandle_t handle, int n, [user_check] const double* x, int incx, [out,count=1]int* result);
+        public cublasStatus_t cublasIcamax_v2(cublasHandle_t handle, int n, [user_check] const cuComplex* x, int incx, [out,count=1]int* result);
+        public cublasStatus_t cublasIzamax_v2(cublasHandle_t handle, int n, [user_check] const cuDoubleComplex* x, int incx, [out,count=1]int* result);
+        public cublasStatus_t cublasIamaxEx(cublasHandle_t handle, int n, [user_check] const void* x, cudaDataType xType, int incx,[out,count=1] int* result);
+        public cublasStatus_t cublasIsamin_v2(cublasHandle_t handle, int n, [user_check] const float* x, int incx, [out,count=1]int* result);
+        public cublasStatus_t cublasIdamin_v2(cublasHandle_t handle, int n, [user_check] const double* x, int incx, [out,count=1]int* result);
+        public cublasStatus_t cublasIcamin_v2(cublasHandle_t handle, int n, [user_check] const cuComplex* x, int incx, [out,count=1]int* result);
+        public cublasStatus_t cublasIzamin_v2(cublasHandle_t handle, int n, [user_check] const cuDoubleComplex* x, int incx, [out,count=1]int* result);
+        public cublasStatus_t cublasIaminEx(cublasHandle_t handle, int n, [user_check] const void* x, cudaDataType xType, int incx, [out,count=1]int* result);
+        
+        public cublasStatus_t cublasAsumEx(cublasHandle_t handle, int n, [user_check] const void* x, cudaDataType xType, int incx, [in,sizefunc=cublasResultSize,sizefuncpars=resultType]void* result, cudaDataType resultType, cudaDataType executiontype);
+        public cublasStatus_t cublasSasum_v2(cublasHandle_t handle, int n, [user_check] const float* x, int incx, [out,count=1]float* result);
+        public cublasStatus_t cublasDasum_v2(cublasHandle_t handle, int n, [user_check] const double* x, int incx, [out,count=1]double* result);
+        public cublasStatus_t cublasScasum_v2(cublasHandle_t handle, int n, [user_check] const cuComplex* x, int incx, [out,count=1]float* result);
+        public cublasStatus_t cublasDzasum_v2(cublasHandle_t handle, int n, [user_check] const cuDoubleComplex* x, int incx, [out,count=1]double* result);
+
+        public cublasStatus_t cublasSrot_v2(cublasHandle_t handle, int n, [user_check] float* x, int incx, [user_check] float* y, int incy, [user_check] const float* c, [user_check] const float* s);
+        public cublasStatus_t cublasDrot_v2(cublasHandle_t handle, int n, [user_check] double* x, int incx, [user_check] double* y, int incy, [user_check] const double* c, [user_check] const double* s);
+        public cublasStatus_t cublasCrot_v2(cublasHandle_t handle, int n, [user_check] cuComplex* x, int incx, [user_check] cuComplex* y, int incy, [user_check] const float* c, [user_check] const cuComplex* s);
+        public cublasStatus_t cublasCsrot_v2(cublasHandle_t handle, int n, [user_check] cuComplex* x, int incx, [user_check] cuComplex* y, int incy, [user_check] const float* c, [user_check] const float* s);
+        public cublasStatus_t cublasZrot_v2(cublasHandle_t handle, int n, [user_check] cuDoubleComplex* x, int incx, [user_check] cuDoubleComplex* y, int incy, [user_check] const double* c, [user_check] const cuDoubleComplex* s);
+        public cublasStatus_t cublasZdrot_v2(cublasHandle_t handle, int n, [user_check] cuDoubleComplex* x, int incx, [user_check] cuDoubleComplex* y, int incy, [user_check] const double* c, [user_check] const double* s);
+        
+        public cublasStatus_t cublasRotEx(cublasHandle_t handle, int n, [user_check] void* x, cudaDataType xType, int incx, [user_check] void* y, cudaDataType yType, int incy, [in,sizefunc=cublasResultSize,sizefuncpars=csType]const void* c, [in,sizefunc=cublasResultSize,sizefuncpars=csType]const void* s, cudaDataType csType, cudaDataType executiontype);
+        public cublasStatus_t cublasSrotg_v2(cublasHandle_t handle, [user_check] float* a, [user_check] float* b, [user_check] float* c, [user_check] float* s);
+        public cublasStatus_t cublasDrotg_v2(cublasHandle_t handle, [user_check] double* a, [user_check] double* b, [user_check] double* c, [user_check] double* s);
+        public cublasStatus_t cublasCrotg_v2(cublasHandle_t handle, [user_check] cuComplex* a, [user_check] cuComplex* b, [user_check] float* c, [user_check] cuComplex* s);
+        public cublasStatus_t cublasZrotg_v2(cublasHandle_t handle, [user_check] cuDoubleComplex* a, [user_check] cuDoubleComplex* b, [user_check] double* c, [user_check] cuDoubleComplex* s);
+        
+        public cublasStatus_t cublasRotgEx(cublasHandle_t handle, [user_check] void* a, [user_check] void* b, cudaDataType abType, [in,sizefunc=cublasResultSize,sizefuncpars=csType]void* c, [in,sizefunc=cublasResultSize,sizefuncpars=csType]void* s, cudaDataType csType, cudaDataType executiontype);
+        
+        public cublasStatus_t cublasSrotm_v2(cublasHandle_t handle, int n, [user_check] float* x, int incx, [user_check] float* y, int incy, [user_check] const float* param);
+        public cublasStatus_t cublasDrotm_v2(cublasHandle_t handle, int n, [user_check] double* x, int incx, [user_check] double* y, int incy, [user_check] const double* param);
+        
+        public cublasStatus_t cublasRotmEx(cublasHandle_t handle, int n, [user_check] void* x, cudaDataType xType, int incx, [user_check] void* y, cudaDataType yType, int incy, [user_check] const void* param, cudaDataType paramType, cudaDataType executiontype);
+        
+        public cublasStatus_t cublasSrotmg_v2(cublasHandle_t handle, [user_check] float* d1, [user_check] float* d2, [user_check] float* x1, [user_check] const float* y1, [user_check] float* param);  
+        public cublasStatus_t cublasDrotmg_v2(cublasHandle_t handle, [user_check] double* d1, [user_check] double* d2, [user_check] double* x1, [user_check] const double* y1, [user_check] double* param);  
+        
+        public cublasStatus_t cublasRotmgEx(cublasHandle_t handle, [in,sizefunc=cublasResultSize,sizefuncpars=d1Type]void* d1, cudaDataType d1Type, [in,sizefunc=cublasResultSize,sizefuncpars=d2Type]void* d2, cudaDataType d2Type, [in,sizefunc=cublasResultSize,sizefuncpars=x1Type]void* x1, cudaDataType x1Type, [in,sizefunc=cublasResultSize,sizefuncpars=y1Type]const void* y1, cudaDataType y1Type, [in,sizefunc=cublasResultSize,sizefuncpars=paramType]void* param, cudaDataType paramType, cudaDataType executiontype);
+    };
+};

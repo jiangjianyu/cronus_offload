@@ -98,6 +98,11 @@ let get_ptr_attr (attr_list: (string * Ast.attr_value) list) =
         let funcname = get_string_from_attr value efn
         in { res with Ast.pa_size =
             { res.Ast.pa_size with Ast.ps_sizefunc = Some funcname }}
+      | "sizefuncpars" ->
+        let efn n = failwithf "invalid parameter name (%d) for `sizefuncpars'" n in
+        let pars = get_string_from_attr value efn
+        in { res with Ast.pa_size =
+            { res.Ast.pa_size with Ast.ps_sizefunc_pars = Some pars }}
       | "string"  -> { res with Ast.pa_isptr = true; Ast.pa_isstr = true; }
       | "wstring" -> { res with Ast.pa_isptr = true; Ast.pa_iswstr = true; }
       | "isptr"   -> { res with Ast.pa_isptr = true }
@@ -144,9 +149,7 @@ let get_ptr_attr (attr_list: (string * Ast.attr_value) list) =
       if pattr.Ast.pa_direction = Ast.PtrNoDirection && pattr.Ast.pa_chkptr
       then failwith "pointer/array should have direction attribute or `user_check'"
       else
-        if pattr.Ast.pa_direction = Ast.PtrOut && (has_str_attr pattr || pattr.Ast.pa_size.Ast.ps_sizefunc <> None)
-        then failwith "string/wstring/sizefunc should be used with an `in' attribute"
-        else pattr
+        pattr
   in
   let check_invalid_ary_attr (pattr: Ast.ptr_attr) =
     if pattr.Ast.pa_size <> Ast.empty_ptr_size

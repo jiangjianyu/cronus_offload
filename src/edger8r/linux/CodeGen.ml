@@ -207,6 +207,7 @@ let mk_ocall_table_name enclave_name = "ocall_table_" ^ enclave_name
 let get_ptr_length (ty: Ast.atype) (attr: Ast.ptr_attr) (declr: Ast.declarator) (is_tmp: bool) =
   let name        = declr.Ast.identifier in
   let mk_size_var = if is_tmp then (fun x -> mk_tmp_var x) else fun x -> x in
+  let mk_sizeof_var = mk_len_var name in
 
   let atype_name = Ast.get_tystr ty in
 
@@ -223,7 +224,7 @@ let get_ptr_length (ty: Ast.atype) (attr: Ast.ptr_attr) (declr: Ast.declarator) 
     | None   ->
       match attr.Ast.pa_size.Ast.ps_sizefunc with
         None   -> if attr.Ast.pa_isstr then sprintf "strlen((const char*)%s) + 1" mk_sizeof_name else (if is_none then "0" else sprintf "sizeof(*%s)" mk_sizeof_name)
-      | Some a -> a
+      | Some b -> mk_sizeof_var
   in
     match attr.Ast.pa_size.Ast.ps_count with
       None   -> size_str true
@@ -667,7 +668,7 @@ let gen_trusted_header (ec: enclave_content) =
     output_string out_chan (guard_code ^ "\n");
     output_string out_chan (sprintf "int %s_dispatch(char* buffer);\n" ec.file_shortnm);
     List.iter (fun s -> output_string out_chan (s ^ "\n")) comp_def_list;
-    gen_sizefunc_proto out_chan ec;
+    (* gen_sizefunc_proto out_chan ec; *)
     List.iter (fun s -> output_string out_chan (s ^ ";\n")) func_proto_list;
     output_string out_chan "\n";
     List.iter (fun s -> output_string out_chan (s ^ ";\n")) func_tproxy_list;
@@ -726,6 +727,12 @@ let gen_func_invoking (fd: Ast.func_decl)
           (let p0 = gen_parm_str pt declr in
              List.fold_left (fun acc (pty, dlr) ->
                                acc ^ ", " ^ gen_parm_str pty dlr) p0 ps)
+
+let ptr_has_sizefunc (pt: Ast.parameter_type) =
+  match pt with
+      Ast.PTVal _     -> false
+    | Ast.PTPtr(_, a) -> a.Ast.pa_size.Ast.ps_sizefunc <> None
+
 let gen_func_logging (fd: Ast.func_decl) (logfunc: string)
                       (mk_parm_name: Ast.parameter_type -> Ast.declarator -> string) =
   let gen_parm_str pt declr =
@@ -734,7 +741,8 @@ let gen_func_logging (fd: Ast.func_decl) (logfunc: string)
       if is_string pt then "char*" else "unsigned long int"
     in
     let tystr = get_param_tystr pt in
-      if is_string pt then sprintf "(const char*)%s" parm_name else sprintf "*((%s*)&%s)" (cast_type pt) parm_name
+      if is_string pt then sprintf "(const char*)%s" parm_name
+      else (if ptr_has_sizefunc pt then sprintf "*((%s*)&(%s))" (cast_type pt) parm_name else sprintf "*((%s*)&%s)" (cast_type pt) parm_name)
   in
   let gen_parm_format pt = 
       if is_string pt then "%s" else "%lx"
@@ -805,7 +813,7 @@ let gen_func_ubridge (file_shortnm: string) (ufunc: Ast.untrusted_func) =
   in
     if (is_naked_func fd) && (propagate_errno = false) then
       let check_pms =
-        sprintf "if (%s != NULL) return SGX_ERROR_INVALID_PARAMETER;" ms_ptr_name
+        sprintf "if (%s != NULL) return cudaErrorInvalidValue;" ms_ptr_name
       in
         sprintf "%s\t%s\n%s%s\n\t%s\n%s" func_open check_pms local_vars (get_first rewrite_buffer) call_with_pms func_close
       else
@@ -839,6 +847,104 @@ let fill_ms_field (isptr: bool) (pd: Ast.pdecl) =
       let tystr = Ast.get_tystr (Ast.Ptr (Ast.get_param_atype pt)) in
       sprintf "%s%s%s = (%s)%s;" ms_struct_val accessor ms_member_name tystr param_name
 
+(* Generate code to get the size of the pointer. *)
+let gen_ptr_size (ty: Ast.atype) (pattr: Ast.ptr_attr) (name: string) (get_parm: string -> string) =
+  let len_var = mk_len_var name in
+  let parm_name = get_parm name in
+
+  let mk_len_size v =
+    match v with
+        Ast.AString s -> get_parm s
+      | Ast.ANumber n -> sprintf "%d" n in
+
+  let mk_len_count v size_str =
+    match v with
+        Ast.AString s -> sprintf "%s * %s" (get_parm s) size_str
+      | Ast.ANumber n -> sprintf "%d * %s" n size_str in
+
+  let mk_len_length l c size_str = 
+    let length_str = match l with
+      Ast.AString s -> get_parm s
+    | Ast.ANumber n -> sprintf "%d" n
+    in
+      let count_str = match c with
+        Ast.AString cs -> get_parm cs
+      | Ast.ANumber cn -> sprintf "%d" cn
+      in
+        sprintf "%s * %s * %s" length_str count_str size_str
+  in
+
+  let ptr_base_type = 
+    match ty with
+    Ast.Ptr ty -> Ast.get_tystr(ty)
+    | _ -> "unsigned char*"
+  in
+  let ptr_base_type_fix = if ptr_base_type = "void" then "unsigned char" else ptr_base_type in
+
+  let mk_len_sizefunc s extra_pars = sprintf "((%s) ? %s(%s%s) : 0)" parm_name s parm_name extra_pars in
+  let mk_par_sizefunc s = List.fold_left(fun acc p -> if get_parm "test" = "test" then acc ^ ", " ^ get_parm p else acc ^ ", " ^ "ms->ms_" ^ p) (sprintf ", sizeof(%s)" ptr_base_type_fix) (String.split_on_char '_' s) in
+
+  (* Note, during the parsing stage, we already eliminated the case that
+   * user specified both 'size' and 'sizefunc' attribute.
+   *)
+  let do_attribute (pattr: Ast.ptr_attr) =
+    let do_ps_attribute (sattr: Ast.ptr_size) =
+      let size_str =
+        match sattr.Ast.ps_size with
+          Some a -> mk_len_size a
+        | None   ->
+          match sattr.Ast.ps_sizefunc with
+            None   -> sprintf "sizeof(*%s)" parm_name
+          | Some a -> 
+            match sattr.Ast.ps_sizefunc_pars with
+              None -> mk_len_sizefunc a ""
+            | Some b -> mk_len_sizefunc a (mk_par_sizefunc b)
+      in
+        match sattr.Ast.ps_count with
+          None   -> size_str
+        | Some a -> 
+          match sattr.Ast.ps_length with
+            None   -> mk_len_count a size_str
+          | Some b -> mk_len_length a b size_str
+    in
+      if pattr.Ast.pa_isstr then
+        sprintf "%s ? strlen((const char*)(%s)) + 1 : 0" parm_name parm_name
+      else if pattr.Ast.pa_iswstr then
+        sprintf "%s ? (wcslen(%s) + 1) * sizeof(wchar_t) : 0" parm_name parm_name
+      else
+        do_ps_attribute pattr.Ast.pa_size
+  in
+    sprintf "size_t %s = %s;\n"
+      len_var
+      (if pattr.Ast.pa_isary
+       then sprintf "sizeof(%s)" (Ast.get_tystr ty)
+       else do_attribute pattr)
+
+
+let gen_uproxy_local_vars (plist: Ast.pdecl list) =
+  let status_var = "\tTEE_Result status = TEE_SUCCESS;\n" in
+  let do_gen_local_var (ty: Ast.atype) (attr: Ast.ptr_attr) (name: string) =
+    let len_var =
+      match attr.Ast.pa_size.Ast.ps_sizefunc with
+        None -> ""
+      | Some s -> gen_ptr_size ty attr name (fun x -> x)
+    in
+      len_var
+  in
+  let gen_local_var (pd: Ast.pdecl) =
+    let (pty, declr) = pd in
+      match pty with
+      Ast.PTVal _          -> ""
+    | Ast.PTPtr (ty, attr) ->
+      match attr.Ast.pa_direction with
+      Ast.PtrOut | Ast.PtrIn | Ast.PtrInOut ->
+            do_gen_local_var ty attr declr.Ast.identifier
+      | _ -> ""
+  in
+  let new_param_list = List.map conv_array_to_ptr plist
+  in
+    List.fold_left (fun acc (pty, declr) -> acc ^ gen_local_var (pty, declr)) "" new_param_list
+
 (* Generate untrusted proxy code for a given trusted function. *)
 let gen_func_uproxy (fd: Ast.func_decl) (idx: int) (ec: enclave_content) =
   let func_open  =
@@ -846,6 +952,7 @@ let gen_func_uproxy (fd: Ast.func_decl) (idx: int) (ec: enclave_content) =
       "\n{\n\tTEE_Result status;\n\tint bufsize;\n" ^ "\tchar *enclave_buffer = rpc_buffer();\n" ^ "\t" ^ gen_local_retval fd.Ast.rtype ^ "\n"
   in
   let func_close = "\treturn cudaErrorInvalidValue;\n}\n" in
+  let local_vars = gen_uproxy_local_vars fd.Ast.plist in
   let ocall_table_name  = mk_ocall_table_name ec.enclave_name in
   let ms_struct_name  = mk_ms_struct_name fd.Ast.fname in
   let input_size_base = sprintf "sizeof(%s)" ms_struct_name in
@@ -861,7 +968,9 @@ let gen_func_uproxy (fd: Ast.func_decl) (idx: int) (ec: enclave_content) =
     let total_len = get_ptr_length ty attr declr false in
     match attr.pa_direction with
       Ast.PtrInOut | Ast.PtrIn ->
-    (acc ^ " + " ^ total_len, copy_buf ^ sprintf "\tmemcpy(enclave_buffer + %s, %s, %s);\n" acc declr.Ast.identifier total_len)
+    let condition_start = if attr.Ast.pa_size.Ast.ps_sizefunc <> None then sprintf "\tif(%s) {\n\t" total_len else "" in
+    let condition_end = if attr.Ast.pa_size.Ast.ps_sizefunc <> None then "\t}\n" else "" in
+    (acc ^ " + " ^ total_len, copy_buf ^ sprintf "%s\tmemcpy(enclave_buffer + %s, %s, %s);\n%s" condition_start acc declr.Ast.identifier total_len condition_end)
     | _ -> (acc ^ " + " ^ total_len, copy_buf)) (input_size_base, "") fd.Ast.plist
   in
   let copy_buffer_out_struct = List.fold_left (fun (acc, copy_buf) (pty, declr) ->
@@ -903,7 +1012,7 @@ let gen_func_uproxy (fd: Ast.func_decl) (idx: int) (ec: enclave_content) =
       sprintf "%s\t%s\n%s" func_open ecall_null func_close
     else
       begin
-        func_body := copy_buffer_str :: declare_ms_expr :: !func_body;
+        func_body := copy_buffer_str :: declare_ms_expr :: local_vars :: !func_body;
         List.iter (fun pd -> func_body := fill_ms_field true pd :: !func_body) fd.Ast.plist;
         func_body := ecall_with_ms :: check_share_mem :: set_share_mem :: !func_body;
         if fd.Ast.rtype <> Ast.Void then func_body := update_retval :: !func_body else func_body := update_outval :: !func_body;
@@ -917,68 +1026,6 @@ let mk_check_ptr (name: string) (lenvar: string) =
 
 (* Pointer to marshaling structure should never be NULL. *)
 let mk_check_pms (fname: string) = ""
-
-(* Generate code to get the size of the pointer. *)
-let gen_ptr_size (ty: Ast.atype) (pattr: Ast.ptr_attr) (name: string) (get_parm: string -> string) =
-  let len_var = mk_len_var name in
-  let parm_name = get_parm name in
-
-  let mk_len_size v =
-    match v with
-        Ast.AString s -> get_parm s
-      | Ast.ANumber n -> sprintf "%d" n in
-
-  let mk_len_count v size_str =
-    match v with
-        Ast.AString s -> sprintf "%s * %s" (get_parm s) size_str
-      | Ast.ANumber n -> sprintf "%d * %s" n size_str in
-
-  let mk_len_length l c size_str = 
-    let length_str = match l with
-      Ast.AString s -> get_parm s
-    | Ast.ANumber n -> sprintf "%d" n
-    in
-      let count_str = match c with
-        Ast.AString cs -> get_parm cs
-      | Ast.ANumber cn -> sprintf "%d" cn
-      in
-        sprintf "%s * %s * %s" length_str count_str size_str
-  in
-
-  let mk_len_sizefunc s = sprintf "((%s) ? %s(%s) : 0)" parm_name s parm_name in
-
-  (* Note, during the parsing stage, we already eliminated the case that
-   * user specified both 'size' and 'sizefunc' attribute.
-   *)
-  let do_attribute (pattr: Ast.ptr_attr) =
-    let do_ps_attribute (sattr: Ast.ptr_size) =
-      let size_str =
-        match sattr.Ast.ps_size with
-          Some a -> mk_len_size a
-        | None   ->
-          match sattr.Ast.ps_sizefunc with
-            None   -> sprintf "sizeof(*%s)" parm_name
-          | Some a -> mk_len_sizefunc a
-      in
-        match sattr.Ast.ps_count with
-          None   -> size_str
-        | Some a -> 
-          match sattr.Ast.ps_length with
-            None   -> mk_len_count a size_str
-          | Some b -> mk_len_length a b size_str
-    in
-      if pattr.Ast.pa_isstr then
-        sprintf "%s ? strlen((const char*)(%s)) + 1 : 0" parm_name parm_name
-      else if pattr.Ast.pa_iswstr then
-        sprintf "%s ? (wcslen(%s) + 1) * sizeof(wchar_t) : 0" parm_name parm_name
-      else
-        do_ps_attribute pattr.Ast.pa_size
-  in
-    sprintf "size_t %s = %s;\n"
-      len_var
-      (if pattr.Ast.pa_isary
-       then sprintf "sizeof(%s)" (Ast.get_tystr ty)
-       else do_attribute pattr)
 
 (* Find the data type of a parameter. *)
 let find_param_type (name: string) (plist: Ast.pdecl list) =
@@ -1009,7 +1056,7 @@ let gen_check_tbridge_length_overflow (plist: Ast.pdecl list) =
             Ast.AString s -> sprintf "\tif ((size_t)%s > (SIZE_MAX / %s)) {\n" (mk_tmp_var s) size_str
           | Ast.ANumber n -> sprintf "\tif (%d > (SIZE_MAX / %s)) {\n" n size_str
       in
-        sprintf "%s\t\tstatus = SGX_ERROR_INVALID_PARAMETER;\n\t\tgoto err;\n\t}" if_statement
+        sprintf "%s\t\tstatus = cudaErrorInvalidValue;\n\t\tgoto err;\n\t}" if_statement
     in
       let size_str =
         match attr.Ast.pa_size.Ast.ps_size with
@@ -1068,17 +1115,13 @@ let gen_parm_ptr_direction_pre (plist: Ast.pdecl list) =
     let tmp_ptr_name= mk_tmp_var name in
 
     let check_sizefunc_ptr (fn: string) =
-      sprintf "\t\t/* check whether the pointer is modified. */\n\
-\t\tif (%s(%s) != %s) {\n\
-\t\t\tstatus = SGX_ERROR_INVALID_PARAMETER;\n\
-\t\t\tgoto err;\n\
-\t\t}" fn in_ptr_name len_var
+      ""
     in
     let malloc_and_copy pre_indent =
       match attr.Ast.pa_direction with
           Ast.PtrIn | Ast.PtrInOut ->
             let code_template = [
-              sprintf "if (%s != NULL) {" tmp_ptr_name;
+              sprintf "if (%s != NULL && %s != 0) {" tmp_ptr_name len_var;
               sprintf "\t%s = (%s)malloc(%s);" in_ptr_name in_ptr_type len_var;
               sprintf "\tif (%s == NULL) {" in_ptr_name;
               "\t\tstatus = TEE_ERROR_OUT_OF_MEMORY;";
@@ -1101,7 +1144,7 @@ let gen_parm_ptr_direction_pre (plist: Ast.pdecl list) =
             in sprintf "%s\t}\n" s3
         | Ast.PtrOut ->
             let code_template = [
-              sprintf "if (%s != NULL) {" tmp_ptr_name;
+              sprintf "if (%s != NULL && %s != 0) {" tmp_ptr_name len_var;
               sprintf "\tif ((%s = (%s)malloc(%s)) == NULL) {" in_ptr_name in_ptr_type len_var;
               "\t\tstatus = TEE_ERROR_OUT_OF_MEMORY;";
               "\t\tgoto err;";
@@ -1129,10 +1172,10 @@ let gen_parm_ptr_direction_post (plist: Ast.pdecl list) =
     let len_var     = mk_len_var name in
     let in_ptr_dst_name = mk_in_ptr_dst_name attr.Ast.pa_rdonly in_ptr_name in
       match attr.Ast.pa_direction with
-          Ast.PtrIn -> sprintf "\tif (%s) free(%s);\n" in_ptr_name in_ptr_dst_name
+          Ast.PtrIn -> sprintf "\tif (%s != NULL && %s != 0) free(%s);\n" in_ptr_name len_var in_ptr_dst_name
         | Ast.PtrInOut | Ast.PtrOut ->
-            sprintf "\tif (%s) {\n\t\tmemcpy(%s, %s, %s);\n\t\tfree(%s);\n\t}\n"
-                    in_ptr_name
+            sprintf "\tif (%s != NULL && %s != 0) {\n\t\tmemcpy(%s, %s, %s);\n\t\tfree(%s);\n\t}\n"
+                    in_ptr_name len_var
                     (mk_tmp_var name)
                     in_ptr_name
                     len_var
@@ -1210,10 +1253,16 @@ let ptr_has_direction (pt: Ast.parameter_type) =
     | Ast.PTPtr(_, a) -> a.Ast.pa_direction <> Ast.PtrNoDirection
 
 let tbridge_mk_parm_name_ext (pt: Ast.parameter_type) (declr: Ast.declarator) =
+  let in_par = mk_in_var declr.Ast.identifier in
+  let direction_par pt =
+    match pt with
+      Ast.PTPtr(ty, attr) -> (if attr.Ast.pa_size.Ast.ps_sizefunc <> None then sprintf "(%s)? %s:%s" (mk_len_var declr.Ast.identifier) in_par (mk_parm_name_raw pt declr) else in_par)
+    | _ -> ""
+  in
   if is_in_param_cache declr.Ast.identifier || (is_ptr pt && (not (is_foreign_array pt)))
   then
     if ptr_has_direction pt
-    then mk_in_var declr.Ast.identifier
+    then direction_par pt
     else mk_tmp_var declr.Ast.identifier
   else mk_parm_name_ext pt declr
 
@@ -1297,7 +1346,7 @@ let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
 
     if is_naked_func fd then
       let check_pms =
-        sprintf "if (%s != NULL) return SGX_ERROR_INVALID_PARAMETER;" ms_ptr_name
+        sprintf "if (%s != NULL) return cudaErrorInvalidValue;" ms_ptr_name
       in
         sprintf "%s%s%s\t%s\n\t%s\n%s" func_open local_vars dummy_var check_pms invoke_func func_close
     else

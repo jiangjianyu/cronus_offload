@@ -65,6 +65,7 @@ type attr_value =
 type ptr_size = {
   ps_size     : attr_value option;
   ps_sizefunc : string     option;
+  ps_sizefunc_pars : string option;
   ps_count    : attr_value option;
   ps_length    : attr_value option;
 }
@@ -73,6 +74,8 @@ let empty_ptr_size = {
   ps_size     = None;
   ps_sizefunc = None;
   ps_count    = None;
+  ps_length   = None;
+  ps_sizefunc_pars = None;
 }
 
 (* Pointers have several special attributes. *)
