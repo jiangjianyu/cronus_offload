@@ -6,6 +6,7 @@ enclave {
     include "rt_cublas_header.h"
     from "cublas_vector.edl" import *;
     from "cublas_api_v1.edl" import *;
+    from "cublas_api_v3.edl" import *;
     trusted {
         public cublasStatus_t cublasCreate_v2([out,count=1]cublasHandle_t* handle);
         public cublasStatus_t cublasDestroy_v2(cublasHandle_t handle);
