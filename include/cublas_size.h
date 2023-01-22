@@ -3,7 +3,24 @@
 
 #include <cublas_v2.h>
 
-static inline int cublasResultSize(const void* par, size_t base_size, cudaDataType resultType) {
+#ifndef __cplusplus
+#define true 1
+#define false 0
+#define bool int
+#endif
+
+static inline bool isDevPtr(const void* dev_ptr) {
+    if ((unsigned long)dev_ptr < 0xffffffff) {
+        return true;
+    }
+    return false;
+}
+
+static inline int cublasHostOrDeviceSize(const void* par, size_t base_size, const void* dev_ptr) {
+    return (isDevPtr(dev_ptr)) ? 0 : base_size;
+}
+
+static inline int cublasHostOrDeviceTypeSize(const void* par, size_t base_size, const void* dev_ptr, cudaDataType resultType) {
 	switch (resultType) {
          case CUDA_R_16F:
         case CUDA_C_16F:
