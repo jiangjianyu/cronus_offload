@@ -29,6 +29,20 @@ execute_process(COMMAND ${CMAKE_SOURCE_DIR}/src/edger8r/linux/out/cronus_edger8r
     --search-path ${CMAKE_SOURCE_DIR}/src/edl/
     )
 
+execute_process(COMMAND ${CMAKE_SOURCE_DIR}/src/edger8r/linux/out/cronus_edger8r
+    ${CMAKE_SOURCE_DIR}/src/edl/cublasLt.edl
+    --trusted-dir ${CMAKE_SOURCE_DIR}/gen/
+    --untrusted-dir ${CMAKE_SOURCE_DIR}/gen/
+    --search-path ${CMAKE_SOURCE_DIR}/src/edl/
+    )
+
+execute_process(COMMAND ${CMAKE_SOURCE_DIR}/src/edger8r/linux/out/cronus_edger8r
+    ${CMAKE_SOURCE_DIR}/src/edl/cublasXt.edl
+    --trusted-dir ${CMAKE_SOURCE_DIR}/gen/
+    --untrusted-dir ${CMAKE_SOURCE_DIR}/gen/
+    --search-path ${CMAKE_SOURCE_DIR}/src/edl/
+    )
+
 add_subdirectory(src/cuda)
 add_subdirectory(src/cudart)
 add_subdirectory(src/cublas)

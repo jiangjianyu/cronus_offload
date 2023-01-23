@@ -8,6 +8,7 @@ file(GLOB srcs
     "${CMAKE_SOURCE_DIR}/gen/cuda_runtime_t.cpp"
     "${CMAKE_SOURCE_DIR}/gen/cuda_driver_t.cpp"
     "${CMAKE_SOURCE_DIR}/gen/cublas_t.cpp"
+    "${CMAKE_SOURCE_DIR}/gen/cublasLt_t.cpp"
 )
 
 include_directories(./)
