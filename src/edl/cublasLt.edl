@@ -1,0 +1,11 @@
+/* Enclave.edl - Top EDL file. */
+
+enclave {
+    include "cublas_v2.h"
+    include "cublas_api.h"
+    include "cublasLt.h"
+    include "rt_cublas_header.h"
+    trusted {
+
+    };
+};

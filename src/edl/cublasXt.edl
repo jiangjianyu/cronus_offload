@@ -1,0 +1,26 @@
+/* Enclave.edl - Top EDL file. */
+
+enclave {
+    include "cublas_v2.h"
+    include "cublas_api.h"
+    include "cublasXt.h"
+    include "rt_cublas_header.h"
+    trusted {
+        public cublasStatus_t cublasXtCreate([out,count=1]cublasXtHandle_t* handle);
+        public cublasStatus_t cublasXtDestroy(cublasXtHandle_t handle);
+        // public cublasStatus_t cublasXtGetNumBoards(int nbDevices, int deviceId[], int* nbBoards);
+        public cublasStatus_t cublasXtMaxBoards([out,count=1]int* nbGpuBoards);
+
+        public cublasStatus_t cublasXtDeviceSelect(cublasXtHandle_t handle, int nbDevices, [in, count=nbDevices]int *deviceId);
+
+        public cublasStatus_t cublasXtSetBlockDim(cublasXtHandle_t handle, int blockDim);
+        public cublasStatus_t cublasXtGetBlockDim(cublasXtHandle_t handle, [out,count=1]int* blockDim);
+
+        public cublasStatus_t cublasXtGetPinningMemMode(cublasXtHandle_t handle, [out,count=1]cublasXtPinnedMemMode_t* mode);
+        public cublasStatus_t cublasXtSetPinningMemMode(cublasXtHandle_t handle, cublasXtPinnedMemMode_t mode);
+
+        // public cublasStatus_t cublasXtSetCpuRoutine(cublasXtHandle_t handle, cublasXtBlasOp_t blasOp, cublasXtOpType_t type, void* blasFunctor);
+        // public cublasStatus_t cublasXtSetCpuRatio(cublasXtHandle_t handle, cublasXtBlasOp_t blasOp, cublasXtOpType_t type, float ratio);
+
+    };
+};
