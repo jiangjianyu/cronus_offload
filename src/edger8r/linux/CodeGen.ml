@@ -728,6 +728,23 @@ let gen_func_invoking (fd: Ast.func_decl)
              List.fold_left (fun acc (pty, dlr) ->
                                acc ^ ", " ^ gen_parm_str pty dlr) p0 ps)
 
+let gen_func_intercept(fd: Ast.func_decl)
+                      (mk_parm_name: Ast.parameter_type -> Ast.declarator -> string)
+                      (func_name: string) =
+  let gen_parm_str pt declr =
+    let parm_name = mk_parm_name pt declr in
+    let tystr = get_param_tystr pt in
+      if is_const_ptr pt then sprintf "(const %s)%s" tystr parm_name else parm_name
+  in
+    match fd.Ast.plist with
+      [] -> sprintf "%s();" func_name
+    | (pt, (declr : Ast.declarator)) :: ps ->
+        sprintf "%s(%s);"
+        func_name
+          (let p0 = gen_parm_str pt declr in
+             List.fold_left (fun acc (pty, dlr) ->
+                               acc ^ ", " ^ gen_parm_str pty dlr) p0 ps)
+
 let ptr_has_sizefunc (pt: Ast.parameter_type) =
   match pt with
       Ast.PTVal _     -> false
@@ -946,7 +963,8 @@ let gen_uproxy_local_vars (plist: Ast.pdecl list) =
     List.fold_left (fun acc (pty, declr) -> acc ^ gen_local_var (pty, declr)) "" new_param_list
 
 (* Generate untrusted proxy code for a given trusted function. *)
-let gen_func_uproxy (fd: Ast.func_decl) (idx: int) (ec: enclave_content) =
+let gen_func_uproxy (tf: Ast.trusted_func) (idx: int) (ec: enclave_content) =
+  let fd = tf.Ast.tf_fdecl in
   let func_open  =
     gen_uproxy_com_proto fd ec.enclave_name ^
       "\n{\n\tTEE_Result status;\n\tint bufsize;\n" ^ "\tchar *enclave_buffer = rpc_buffer();\n" ^ "\t" ^ gen_local_retval fd.Ast.rtype ^ "\n"
@@ -993,28 +1011,36 @@ let gen_func_uproxy (fd: Ast.func_decl) (idx: int) (ec: enclave_content) =
 
   let debug_str = "\t\tRPC_DEBUG(\"ret -> %d (%d)\", retval, status);\n" in
   let debug_str_null = "\tRPC_DEBUG(\"ret -> (%d)\", status);\n" in
-
+  let pre_invoke = 
+    match tf.Ast.tf_fattr.Ast.fa_pre_func with
+      None -> ""
+    | Some f -> gen_func_intercept fd (fun pt declr -> declr.Ast.identifier) f in
+  let post_invoke = 
+    match tf.Ast.tf_fattr.Ast.fa_post_func with
+      None -> ""
+    | Some f -> gen_func_intercept fd (fun pt declr -> declr.Ast.identifier) f in
   (* Normal case - do ECALL with marshaling structure*)
-  let ecall_with_ms = sprintf "status = rpc_ecall(%s_DISPATCHER, %d, enclave_buffer, bufsize);\n"
+  let pre_logging = gen_func_logging fd "RPC_DEBUG" (fun pt declr -> declr.Ast.identifier) in
+  let ecall_with_ms = sprintf "status = rpc_ecall(%s_DISPATCHER, %d, enclave_buffer, bufsize);"
                               (ec.file_shortnm) idx in
 
   (* Rare case - the trusted function doesn't have parameter nor return value.
    * In this situation, no marshaling structure is required - passing in NULL.
    *)
-  let ecall_null = sprintf "status = rpc_ecall(%s_DISPATCHER, %d, enclave_buffer);\n%s"
+  let ecall_null = sprintf "\n\tstatus = rpc_ecall(%s_DISPATCHER, %d, enclave_buffer);\n%s"
                            (ec.file_shortnm) idx debug_str_null
   in
-  let update_retval = sprintf "if (status == TEE_SUCCESS) {\n\t\t%s = %s->%s;%s%s\t\treturn %s;\n\t}"
-                              retval_name ms_struct_val ms_retval_name copy_buffer_out_str debug_str retval_name in
-  let update_outval = sprintf "if (status == TEE_SUCCESS) {%s\t}" copy_buffer_out_str  in
+  let update_retval = sprintf "if (status == TEE_SUCCESS) {\n\t\t%s = %s->%s;%s%s\t\t%s\n\t\treturn %s;\n\t}"
+                              retval_name ms_struct_val ms_retval_name copy_buffer_out_str debug_str post_invoke retval_name in
+  let update_outval = sprintf "if (status == TEE_SUCCESS) {%s\t%s\n\t}" copy_buffer_out_str post_invoke in
   let func_body = ref [] in
     if is_naked_func fd then
-      sprintf "%s\t%s\n%s" func_open ecall_null func_close
+      sprintf "%s%s%s\t%s\n%s%s" func_open pre_logging pre_invoke ecall_null post_invoke func_close
     else
       begin
         func_body := copy_buffer_str :: declare_ms_expr :: local_vars :: !func_body;
         List.iter (fun pd -> func_body := fill_ms_field true pd :: !func_body) fd.Ast.plist;
-        func_body := ecall_with_ms :: check_share_mem :: set_share_mem :: !func_body;
+        func_body :=  ecall_with_ms :: pre_invoke :: pre_logging :: check_share_mem :: set_share_mem :: !func_body;
         if fd.Ast.rtype <> Ast.Void then func_body := update_retval :: !func_body else func_body := update_outval :: !func_body;
           List.fold_left (fun acc s -> acc ^ "\t" ^ s ^ "\n") func_open (List.rev !func_body) ^ func_close
       end
@@ -1322,7 +1348,8 @@ let gen_tbridge_local_vars (plist: Ast.pdecl list) =
     (len ^ " + " ^ get_ptr_length ty attr declr true, acc ^ gen_local_var (pty, declr) len)) ("0", status_var) new_param_list)
 
 (* It generates trusted bridge code for a trusted function. *)
-let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
+let gen_func_tbridge (tf: Ast.trusted_func) (dummy_var: string) =
+  let fd = tf.Ast.tf_fdecl in
   let func_open = sprintf "static TEE_Result %s(char *buffer)\n{\n"
                           (mk_tbridge_name fd.Ast.fname)
                           in
@@ -1339,6 +1366,14 @@ let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
                                ms_struct_name
                                "buffer" in
   let buffer_var_decl = sprintf "\tchar* buffer_start = buffer + sizeof(%s);\n" ms_struct_name in
+  let pre_invoke = 
+    match tf.Ast.tf_fattr.Ast.fa_pre_func with
+      None -> ""
+    | Some f -> gen_func_intercept fd mk_parm_name_tbridge f in
+  let post_invoke = 
+    match tf.Ast.tf_fattr.Ast.fa_post_func with
+      None -> ""
+    | Some f -> gen_func_intercept fd mk_parm_name_tbridge f in
   let invoke_func   = gen_func_invoking fd mk_parm_name_tbridge in
   let update_retval = sprintf "%s = %s"
                               (mk_parm_accessor retval_name)
@@ -1350,7 +1385,7 @@ let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
       in
         sprintf "%s%s%s\t%s\n\t%s\n%s" func_open local_vars dummy_var check_pms invoke_func func_close
     else
-      sprintf "%s\t%s\n%s\n%s%s%s\n%s\t%s\n%s\n%s\n%s\n%s"
+      sprintf "%s\t%s\n%s\n%s%s%s\n%s\t%s\n\t%s\n\t%s\n%s\n%s\n%s\n%s"
         func_open
         declare_ms_ptr
         buffer_var_decl
@@ -1360,7 +1395,9 @@ let gen_func_tbridge (fd: Ast.func_decl) (dummy_var: string) =
         (mk_check_pms fd.Ast.fname)
 (*        (gen_check_tbridge_ptr_parms fd.Ast.plist)*)
         (gen_parm_ptr_direction_pre fd.Ast.plist)
+        pre_invoke
         (if fd.Ast.rtype <> Ast.Void then update_retval else invoke_func)
+        post_invoke
         debug_str
         (gen_err_mark fd.Ast.plist)
         (gen_parm_ptr_direction_post fd.Ast.plist)
@@ -1533,7 +1570,7 @@ let gen_untrusted_source (ec: enclave_content) =
   let include_buffer_init = "sgx_status_t init_sgx_buffer() {\n\tsgx_status_t status;\n\tinput_sm.size = 10240;\n\tinput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\toutput_sm.size = 10240;\n\toutput_sm.flags = TEEC_MEM_INPUT | TEEC_MEM_OUTPUT;\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &input_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n\t}\n\tstatus = TEEC_AllocateSharedMemory(&ctx, &output_sm);\n\tif (status != TEE_SUCCESS) {\n\treturn status;\n}\n\tocall_add(output_sm.buffer, ocall_table_securecompiler.table);\n}\n" in
   let uproxy_list =
     List.map2 (fun fd ecall_idx -> gen_func_uproxy fd ecall_idx ec)
-      (tf_list_to_fd_list ec.tfunc_decls)
+      (ec.tfunc_decls)
       (Util.mk_seq 0 (List.length ec.tfunc_decls - 1))
   in
   let ubridge_list =
@@ -1561,7 +1598,7 @@ typedef TEE_Result (*ecall_invoke_entry) (char* buffer);\n" in
   \tecall_invoke_entry entry = TEE_CAST(ecall_invoke_entry, g_ecall_table.ecall_table[cmd_id].ecall_addr);\n\
   \treturn (*entry)(buffer + sizeof(uint32_t));\n\
   }\n" ec.file_shortnm in
-  let trusted_fds = tf_list_to_fd_list ec.tfunc_decls in
+  let trusted_fds = ec.tfunc_decls in
   let tbridge_list =
     let dummy_var = tbridge_gen_dummy_variable ec in
     List.map (fun tfd -> gen_func_tbridge tfd dummy_var) trusted_fds in

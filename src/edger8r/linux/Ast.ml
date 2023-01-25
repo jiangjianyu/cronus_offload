@@ -108,6 +108,8 @@ let get_call_conv_str (cc: call_conv) =
 type func_attr = {
   fa_dllimport : bool;                   (* use 'dllimport'? *)
   fa_convention: call_conv;              (* the calling convention *)
+  fa_pre_func  : string     option;
+  fa_post_func : string     option;
 }
 
 (* A declarator can be an identifier or an identifier with array form.
@@ -162,6 +164,7 @@ type func_decl = {
  *)
 type trusted_func = {
   tf_fdecl   : func_decl;
+  tf_fattr   : func_attr;
   tf_is_priv : bool;
 }
 

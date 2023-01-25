@@ -1,6 +1,5 @@
 
 #include <cublasXt.h>
-#include <cublas.h>
 #include "cublas_header.h"
 
 #define cublasStatus_t __attribute__((weak)) cublasStatus_t

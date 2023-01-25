@@ -1,6 +1,8 @@
 
 #pragma
 
+#include <stdio.h>
+
 #define LOG_COLOR_RED "\033[0;31m"
 #define LOG_COLOR_YELLOW "\033[0;33m"
 #define LOG_COLOR_GREEN "\033[0;32m"

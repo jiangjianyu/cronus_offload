@@ -207,6 +207,14 @@ let get_func_attr (attr_list: (string * Ast.attr_value) list) =
     | "dllimport" ->
       if res.Ast.fa_dllimport then failwith "duplicated attribute: `dllimport'"
       else { res with Ast.fa_dllimport = true }
+    | "prefunc" ->
+      let efn n = failwithf "invalid function name (%d) for `prefunc'" n in
+      let funcname = get_string_from_attr value efn
+      in { res with Ast.fa_pre_func = Some funcname }
+    | "postfunc" ->
+      let efn n = failwithf "invalid function name (%d) for `postfunc'" n in
+      let funcname = get_string_from_attr value efn
+      in { res with Ast.fa_post_func = Some funcname }
     | _ -> failwithf "invalid function attribute: %s" key
   in
   let rec do_get_func_attr alist res_attr =
@@ -215,6 +223,8 @@ let get_func_attr (attr_list: (string * Ast.attr_value) list) =
     | (k,v) :: xs -> do_get_func_attr xs (update_attr k v res_attr)
   in do_get_func_attr attr_list { Ast.fa_dllimport = false;
                                   Ast.fa_convention= Ast.CC_NONE;
+                                  Ast.fa_pre_func = None;
+                                  Ast.fa_post_func = None;
                                 }
 
 (* Some syntax checking against pointer attributes.
@@ -525,9 +535,15 @@ access_modifier: /* nothing */ { true }
   ;
 
 trusted_functions: /* nothing */          { [] }
+  | trusted_functions attr_block access_modifier func_def TSemicolon {
+      check_ptr_attr $4 (symbol_start_pos(), symbol_end_pos());
+      let fattr = get_func_attr $2 in
+      Ast.Trusted { Ast.tf_fdecl = $4; Ast.tf_fattr = fattr; Ast.tf_is_priv = $3 } :: $1
+    }
   | trusted_functions access_modifier func_def TSemicolon {
       check_ptr_attr $3 (symbol_start_pos(), symbol_end_pos());
-      Ast.Trusted { Ast.tf_fdecl = $3; Ast.tf_is_priv = $2 } :: $1
+      let fattr = get_func_attr [] in
+      Ast.Trusted { Ast.tf_fdecl = $3; Ast.tf_fattr = fattr; Ast.tf_is_priv = $2 } :: $1
     }
   ;
 

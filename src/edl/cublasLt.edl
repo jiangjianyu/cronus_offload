@@ -5,12 +5,13 @@ enclave {
     include "cublas_api.h"
     include "cublasLt.h"
     include "rt_cublas_header.h"
+    include "cublasLt_desc.h"
     trusted {
         public cublasStatus_t cublasLtCreate([out,count=1] cublasLtHandle_t* lightHandle);
         public cublasStatus_t cublasLtDestroy(cublasLtHandle_t lightHandle);
         public cublasStatus_t cublasLtGetProperty(libraryPropertyType type, [out,count=1] int* value);
-        public cublasStatus_t cublasLtMatmul(cublasLtHandle_t lightHandle, cublasLtMatmulDesc_t computeDesc, [in,size=1] const void* alpha, [user_check] const void* A, cublasLtMatrixLayout_t Adesc, [user_check] const void* B, cublasLtMatrixLayout_t Bdesc, [in,size=1] const void* beta, [user_check] const void* C, cublasLtMatrixLayout_t Cdesc, [user_check] void* D, cublasLtMatrixLayout_t Ddesc, [in, count=1] const cublasLtMatmulAlgo_t* algo, [user_check] void* workspace, size_t workspaceSizeInBytes, cudaStream_t stream);
-        public cublasStatus_t cublasLtMatrixTransform(cublasLtHandle_t lightHandle, cublasLtMatrixTransformDesc_t transformDesc, [in,size=1] const void* alpha, [user_check] const void* A, cublasLtMatrixLayout_t Adesc, [in,size=1] const void* beta, [user_check] const void* B, cublasLtMatrixLayout_t Bdesc, [user_check] void* C, cublasLtMatrixLayout_t Cdesc, cudaStream_t stream);
+        public cublasStatus_t cublasLtMatmul(cublasLtHandle_t lightHandle, cublasLtMatmulDesc_t computeDesc, [in,sizefunc=cublasLtMatmulSize,sizefuncpars=alpha_computeDesc] const void* alpha, [user_check] const void* A, cublasLtMatrixLayout_t Adesc, [user_check] const void* B, cublasLtMatrixLayout_t Bdesc, [in,sizefunc=cublasLtMatmulSize,sizefuncpars=beta_computeDesc] const void* beta, [user_check] const void* C, cublasLtMatrixLayout_t Cdesc, [user_check] void* D, cublasLtMatrixLayout_t Ddesc, [in, count=1] const cublasLtMatmulAlgo_t* algo, [user_check] void* workspace, size_t workspaceSizeInBytes, cudaStream_t stream);
+        public cublasStatus_t cublasLtMatrixTransform(cublasLtHandle_t lightHandle, cublasLtMatrixTransformDesc_t transformDesc, [in,sizefunc=cublasLtMatrixTransformSize,sizefuncpars=alpha_transformDesc] const void* alpha, [user_check] const void* A, cublasLtMatrixLayout_t Adesc, [in,sizefunc=cublasLtMatrixTransformSize,sizefuncpars=beta_transformDesc] const void* beta, [user_check] const void* B, cublasLtMatrixLayout_t Bdesc, [user_check] void* C, cublasLtMatrixLayout_t Cdesc, cudaStream_t stream);
 
         public cublasStatus_t cublasLtMatrixLayoutInit_internal(cublasLtMatrixLayout_t matLayout, size_t size, cudaDataType type, uint64_t rows, uint64_t cols, int64_t ld);
         public cublasStatus_t cublasLtMatrixLayoutCreate([out, count=1] cublasLtMatrixLayout_t* matLayout, cudaDataType type, uint64_t rows, uint64_t cols, int64_t ld);
@@ -19,14 +20,14 @@ enclave {
         public cublasStatus_t cublasLtMatrixLayoutGetAttribute(cublasLtMatrixLayout_t matLayout, cublasLtMatrixLayoutAttribute_t attr, [out,size=sizeInBytes] void* buf, size_t sizeInBytes, [out,count=1] size_t* sizeWritten);
 
         /* Helper functions for cublasLtMatmulDesc_t */
-        public cublasStatus_t cublasLtMatmulDescInit_internal(cublasLtMatmulDesc_t matmulDesc, size_t size, cublasComputeType_t computeType, cudaDataType_t scaleType);
-        public cublasStatus_t cublasLtMatmulDescCreate([out,count=1] cublasLtMatmulDesc_t* matmulDesc, cublasComputeType_t computeType, cudaDataType_t scaleType);
+        [prefunc=cublasLtMatmulDescInitLogging] public cublasStatus_t cublasLtMatmulDescInit_internal(cublasLtMatmulDesc_t matmulDesc, size_t size, cublasComputeType_t computeType, cudaDataType_t scaleType);
+        [postfunc=cublasLtMatmulDescCreateLogging] public cublasStatus_t cublasLtMatmulDescCreate([out,count=1] cublasLtMatmulDesc_t* matmulDesc, cublasComputeType_t computeType, cudaDataType_t scaleType);
         public cublasStatus_t cublasLtMatmulDescDestroy(cublasLtMatmulDesc_t matmulDesc);
         public cublasStatus_t cublasLtMatmulDescSetAttribute(cublasLtMatmulDesc_t matmulDesc, cublasLtMatmulDescAttributes_t attr, [in, size=sizeInBytes] const void* buf, size_t sizeInBytes);
         public cublasStatus_t cublasLtMatmulDescGetAttribute(cublasLtMatmulDesc_t matmulDesc, cublasLtMatmulDescAttributes_t attr, [out, size=sizeInBytes] void* buf, size_t sizeInBytes, [out, size=sizeInBytes] size_t* sizeWritten);
 
         /* Helper functions for cublasLtMatrixTransformDesc_t */
-        public cublasStatus_t cublasLtMatrixTransformDescInit_internal(cublasLtMatrixTransformDesc_t transformDesc, size_t size, cudaDataType scaleType);
+        [prefunc=cublasLtMatrixTransformDescInitLogging] public cublasStatus_t cublasLtMatrixTransformDescInit_internal(cublasLtMatrixTransformDesc_t transformDesc, size_t size, cudaDataType scaleType);
         public cublasStatus_t cublasLtMatrixTransformDescCreate([out,count=1] cublasLtMatrixTransformDesc_t* transformDesc, cudaDataType scaleType);
         public cublasStatus_t cublasLtMatrixTransformDescDestroy(cublasLtMatrixTransformDesc_t transformDesc);
         public cublasStatus_t cublasLtMatrixTransformDescSetAttribute(cublasLtMatrixTransformDesc_t transformDesc, cublasLtMatrixTransformDescAttributes_t attr, [in,size=sizeInBytes] const void* buf, size_t sizeInBytes);
@@ -45,7 +46,7 @@ enclave {
         public cublasStatus_t cublasLtMatmulAlgoCheck(cublasLtHandle_t lightHandle, cublasLtMatmulDesc_t operationDesc, cublasLtMatrixLayout_t Adesc, cublasLtMatrixLayout_t Bdesc, cublasLtMatrixLayout_t Cdesc, cublasLtMatrixLayout_t Ddesc, [in,count=1] const cublasLtMatmulAlgo_t* algo, [out,count=1] cublasLtMatmulHeuristicResult_t* result);
 
         public cublasStatus_t cublasLtMatmulAlgoCapGetAttribute([in,count=1] const cublasLtMatmulAlgo_t* algo, cublasLtMatmulAlgoCapAttributes_t attr, [out,size=sizeInBytes] void* buf, size_t sizeInBytes, [out,count=1] size_t* sizeWritten);
-        public cublasStatus_t cublasLtMatmulAlgoConfigSetAttribute([in,count=1] cublasLtMatmulAlgo_t* algo, cublasLtMatmulAlgoConfigAttributes_t attr, [in,size=sizeInBytes] const void* buf, size_t sizeInBytes);
+        public cublasStatus_t cublasLtMatmulAlgoConfigSetAttribute([out,count=1] cublasLtMatmulAlgo_t* algo, cublasLtMatmulAlgoConfigAttributes_t attr, [in,size=sizeInBytes] const void* buf, size_t sizeInBytes);
         public cublasStatus_t cublasLtMatmulAlgoConfigGetAttribute([in,count=1] const cublasLtMatmulAlgo_t* algo, cublasLtMatmulAlgoConfigAttributes_t attr, [out,size=sizeInBytes] void* buf, size_t sizeInBytes, [out,count=1] size_t* sizeWritten);
 
         public cublasStatus_t cublasLtLoggerSetCallback(cublasLtLoggerCallback_t callback);

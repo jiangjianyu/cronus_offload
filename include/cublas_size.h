@@ -2,6 +2,7 @@
 #pragma once
 
 #include <cublas_v2.h>
+#include <debug.h>
 
 #ifndef __cplusplus
 #define true 1
@@ -9,42 +10,8 @@
 #define bool int
 #endif
 
-static inline bool isDevPtr(const void* dev_ptr) {
-    if ((unsigned long)dev_ptr < 0xffffffff) {
-        return true;
-    }
-    return false;
-}
-
-static inline int cublasHostOrDeviceGemmTypeSize(const void* par, size_t base_size, const void* dev_ptr, cublasComputeType_t compute_type, cudaDataType cType) {
-    switch (compute_type) {
-        case CUBLAS_COMPUTE_16F:
-        case CUBLAS_COMPUTE_16F_PEDANTIC: (cType == CUDA_R_16F); return CUDA_R_16F;
-        case CUBLAS_COMPUTE_32I:
-        case CUBLAS_COMPUTE_32I_PEDANTIC: (cType == CUDA_R_32I); return CUDA_R_32I;
-        case CUBLAS_COMPUTE_32F:
-        case CUBLAS_COMPUTE_32F_PEDANTIC: 
-            if (cType == CUDA_C_32F || cType == CUDA_C_32F) return CUDA_C_32F;
-            return CUDA_R_32F; /* assert */
-        case CUBLAS_COMPUTE_32F_FAST_16F:
-        case CUBLAS_COMPUTE_32F_FAST_16BF:
-        case CUBLAS_COMPUTE_32F_FAST_TF32:
-            if (cType == CUDA_R_32F) return CUDA_R_32F;
-            return CUDA_C_32F;
-        case CUBLAS_COMPUTE_64F:
-        case CUBLAS_COMPUTE_64F_PEDANTIC:
-            if (cType == CUDA_R_64F) return CUDA_R_64F;
-            return CUDA_C_64F;
-        default: return 0;
-    }
-}
-
-static inline int cublasHostOrDeviceSize(const void* par, size_t base_size, const void* dev_ptr) {
-    return (isDevPtr(dev_ptr)) ? 0 : base_size;
-}
-
-static inline int cublasHostOrDeviceTypeSize(const void* par, size_t base_size, const void* dev_ptr, cudaDataType resultType) {
-	switch (resultType) {
+static inline int cudaTypeSize(cudaDataType type) {
+    switch (type) {
          case CUDA_R_16F:
         case CUDA_C_16F:
         case CUDA_R_16BF:
@@ -76,4 +43,46 @@ static inline int cublasHostOrDeviceTypeSize(const void* par, size_t base_size, 
         default:
             return 0;
     }
+}
+
+static inline bool isDevPtr(const void* dev_ptr) {
+    if ((unsigned long)dev_ptr < 0xffffffff) {
+        return true;
+    }
+    return false;
+}
+
+static inline int cublasHostOrDeviceGemmTypeSize(const void* par, size_t base_size, const void* dev_ptr, cublasComputeType_t compute_type, cudaDataType cType) {
+    cudaDataType r;
+    switch (compute_type) {
+        case CUBLAS_COMPUTE_16F:
+        case CUBLAS_COMPUTE_16F_PEDANTIC: (cType == CUDA_R_16F); r = CUDA_R_16F; break;
+        case CUBLAS_COMPUTE_32I:
+        case CUBLAS_COMPUTE_32I_PEDANTIC: (cType == CUDA_R_32I); r = CUDA_R_32I; break;
+        case CUBLAS_COMPUTE_32F:
+        case CUBLAS_COMPUTE_32F_PEDANTIC: 
+            if (cType == CUDA_C_32F || cType == CUDA_C_32F) r = CUDA_C_32F; break;
+            r = CUDA_R_32F; /* assert */ break;
+        case CUBLAS_COMPUTE_32F_FAST_16F:
+        case CUBLAS_COMPUTE_32F_FAST_16BF:
+        case CUBLAS_COMPUTE_32F_FAST_TF32:
+            if (cType == CUDA_R_32F) r = CUDA_R_32F; break;
+            r = CUDA_C_32F; break;
+        case CUBLAS_COMPUTE_64F:
+        case CUBLAS_COMPUTE_64F_PEDANTIC:
+            if (cType == CUDA_R_64F) r = CUDA_R_64F; break;
+            r = CUDA_C_64F; break;
+        default: 
+            log_warn("SIZE: zero size %d %d", (int)compute_type, (int)cType);
+        return 0;
+    }
+    return cudaTypeSize(r);
+}
+
+static inline int cublasHostOrDeviceSize(const void* par, size_t base_size, const void* dev_ptr) {
+    return (isDevPtr(dev_ptr)) ? 0 : base_size;
+}
+
+static inline int cublasHostOrDeviceTypeSize(const void* par, size_t base_size, const void* dev_ptr, cudaDataType resultType) {
+    return cudaTypeSize(resultType);
 }

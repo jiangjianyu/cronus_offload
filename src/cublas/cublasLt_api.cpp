@@ -1,6 +1,5 @@
 
 #include <cublasLt.h>
-#include <cublas.h>
 #include "cublas_header.h"
 
 #define CUBLALTAPI __attribute__((weak)) CUBLASLTAPI cublasStatus_t
@@ -28,11 +27,7 @@ const char* CUBLASWINAPI cublasLtGetStatusName(cublasStatus_t status) { return c
 const char* CUBLASWINAPI cublasLtGetStatusString(cublasStatus_t status) { return cublasGetStatusString(status); }
 
 size_t CUBLASWINAPI cublasLtGetVersion(void) { return CUBLAS_VERSION; }
-size_t CUBLASWINAPI cublasLtGetCudartVersion(void) {
-  int version = 0;
-  cudaRuntimeGetVersion(&version);
-  return version;
-}
+size_t CUBLASWINAPI cublasLtGetCudartVersion(void) { return CUBLAS_VERSION; }
 
 CUBLASLTAPI cublasStatus_t CUBLASWINAPI cublasLtGetProperty(libraryPropertyType type, int* value) CUBLAS_NOT_IMPLEMENTED;
 CUBLASLTAPI cublasStatus_t CUBLASWINAPI cublasLtMatmul(cublasLtHandle_t lightHandle,
