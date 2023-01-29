@@ -1153,6 +1153,12 @@ let mk_in_ptr_dst_name (rdonly: bool) (ptr_name: string) =
  * which is to be inserted before actually calling the trusted function.
  *)
 let gen_parm_ptr_direction_pre (plist: Ast.pdecl list) =
+  let tranform_val_in (ty: Ast.atype) (attr: Ast.val_attr) (declr: Ast.declarator) =
+    let name        = declr.Ast.identifier in
+    match attr.Ast.pa_transform_in with
+      Some s_func -> sprintf "\t%s(&%s);\n" s_func (mk_parm_accessor name)
+      | _ -> ""
+  in
   let clone_in_ptr (ty: Ast.atype) (attr: Ast.ptr_attr) (declr: Ast.declarator) =
     let name        = declr.Ast.identifier in
     let is_ary      = (Ast.is_array declr || attr.Ast.pa_isary) in
@@ -1226,7 +1232,7 @@ let gen_parm_ptr_direction_pre (plist: Ast.pdecl list) =
   in List.fold_left
        (fun acc (pty, declr) ->
           match pty with
-              Ast.PTVal _          -> acc
+              Ast.PTVal (ty, attr) -> acc ^ tranform_val_in ty attr declr
             | Ast.PTPtr (ty, attr) -> acc ^ clone_in_ptr ty attr declr) "" plist
 
 (* Generate the code to handle function pointer parameter direction,
@@ -1238,7 +1244,7 @@ let gen_parm_ptr_direction_post (plist: Ast.pdecl list) =
     let in_ptr_name = mk_in_var name in
     let len_var     = mk_len_var name in
     let in_ptr_dst_name = mk_in_ptr_dst_name attr.Ast.pa_rdonly in_ptr_name in
-    let tranform_out_or_null =
+    let transform_out_or_null =
       match attr.Ast.pa_transform_out with
       Some s_func -> sprintf "%s(%s)" s_func in_ptr_name
       | _ -> in_ptr_name
@@ -1250,7 +1256,7 @@ let gen_parm_ptr_direction_post (plist: Ast.pdecl list) =
             sprintf "\tif (%s != NULL && %s != 0) {\n\t\tmemcpy(%s, %s, %s);\n\t\tfree(%s);\n\t}\n"
                     in_ptr_name len_var
                     (mk_tmp_var name)
-                    tranform_out_or_null
+                    transform_out_or_null
                     len_var
                     in_ptr_name
         | _ -> ""

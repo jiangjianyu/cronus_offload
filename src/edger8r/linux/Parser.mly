@@ -115,6 +115,7 @@ let get_ptr_attr (attr_list: (string * Ast.attr_value) list) =
       | "wstring" -> { res with Ast.pa_isptr = true; Ast.pa_iswstr = true; }
       | "isptr"   -> { res with Ast.pa_isptr = true }
       | "isary"   -> { res with Ast.pa_isary = true }
+      | "val"     -> { res with Ast.pa_isval = true }
 
       | "readonly" -> { res with Ast.pa_rdonly = true }
       | "user_check" -> { res with Ast.pa_chkptr = false }
@@ -154,7 +155,7 @@ let get_ptr_attr (attr_list: (string * Ast.attr_value) list) =
     if pattr.Ast.pa_direction <> Ast.PtrNoDirection && pattr.Ast.pa_chkptr = false
     then failwith "pointer direction and `user_check' are mutual exclusive"
     else
-      if pattr.Ast.pa_direction = Ast.PtrNoDirection && pattr.Ast.pa_chkptr
+      if pattr.Ast.pa_direction = Ast.PtrNoDirection && pattr.Ast.pa_chkptr && not pattr.Ast.pa_isval
       then failwith "pointer/array should have direction attribute or `user_check'"
       else
         pattr
@@ -166,7 +167,7 @@ let get_ptr_attr (attr_list: (string * Ast.attr_value) list) =
       if not pattr.Ast.pa_isptr
       then
         (* 'pa_chkptr' is default to true unless user specifies 'user_check' *)
-        if pattr.Ast.pa_chkptr && pattr.Ast.pa_direction = Ast.PtrNoDirection
+        if pattr.Ast.pa_chkptr && pattr.Ast.pa_direction = Ast.PtrNoDirection && not pattr.Ast.pa_isval
         then failwith "array must have direction attribute or `user_check'"
         else pattr
       else
@@ -178,6 +179,7 @@ let get_ptr_attr (attr_list: (string * Ast.attr_value) list) =
                                           Ast.pa_size = Ast.empty_ptr_size;
                                           Ast.pa_isptr = false;
                                           Ast.pa_isary = false;
+                                          Ast.pa_isval = false;
                                           Ast.pa_isstr = false;
                                           Ast.pa_iswstr = false;
                                           Ast.pa_rdonly = false;
@@ -197,10 +199,7 @@ let get_val_attr (attr_list: (string * Ast.attr_value) list) =
         let efn n = failwithf "invalid parameter name (%d) for `transform_in'" n in
         let trans = get_string_from_attr value efn
         in { res with Ast.pa_transform_in = Some trans }
-      | "transform_out" ->
-        let efn n = failwithf "invalid parameter name (%d) for `transform_out'" n in
-        let trans = get_string_from_attr value efn
-        in { res with Ast.pa_transform_out = Some trans }
+      | "val" -> res
       | _ -> failwithf "unknown attribute: %s" key
   in
   let rec do_get_val_attr alist res_attr =
@@ -422,7 +421,8 @@ param_type: attr_block all_type {
               (* thinking about 'user_defined_type var[4]' *)
               fun is_ary ->
                 if is_ary then Ast.PTPtr($2, attr)
-                else failwithf "`%s' is considerred plain type but decorated with pointer attributes" s
+                else Ast.PTVal ($2, vattr)
+                (* else failwithf "`%s' is considerred plain type but decorated with pointer attributes" s *)
         | _ ->
           fun is_ary ->
             if is_ary then Ast.PTPtr($2, attr)

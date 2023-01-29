@@ -84,6 +84,7 @@ type ptr_attr = {
   pa_size       : ptr_size;
   pa_isptr      : bool;       (* If a foreign type is a pointer type *)
   pa_isary      : bool;       (* If a foreign type is an array *)
+  pa_isval      : bool;       (* If a foreign type is a vallue *)
   pa_isstr      : bool;
   pa_iswstr     : bool;
   pa_rdonly     : bool;       (* If the pointer is 'const' qualified *)
