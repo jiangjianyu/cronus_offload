@@ -10,7 +10,7 @@ enclave {
     trusted {
         public CUresult cuInit(unsigned int Flags);
         public CUresult internal_func_4_1(int ptr1, [user_check]void* ptr2, [out,count=4]float* ptr3);
-        public CUresult cudart_interface_internal2([out,count=1]CUcontext *pctx, CUdevice dev);
-        // public CUresult context_local_storage_get_state([out,count=1]void** ctx_state, CUcontext cu_ctx, [user_check]void* mgr);
+        public CUresult cudart_interface_internal2([out]CUcontext *pctx, CUdevice dev);
+        // public CUresult context_local_storage_get_state([out]void** ctx_state, CUcontext cu_ctx, [user_check]void* mgr);
     };
 };

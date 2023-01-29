@@ -204,6 +204,12 @@ let mk_len_var name = "_len_" ^ name
 let mk_in_var name = "_in_" ^ name
 let mk_ocall_table_name enclave_name = "ocall_table_" ^ enclave_name
 
+let zero_or_size y = if y <> "" then y else "0"
+
+let combine_ptr_length x y =
+  let cy = if y <> "" then " + " ^ y else "" in
+  if x <> "" then x ^ cy else y
+
 let get_ptr_length (ty: Ast.atype) (attr: Ast.ptr_attr) (declr: Ast.declarator) (is_tmp: bool) =
   let name        = declr.Ast.identifier in
   let mk_size_var = if is_tmp then (fun x -> mk_tmp_var x) else fun x -> x in
@@ -218,20 +224,20 @@ let get_ptr_length (ty: Ast.atype) (attr: Ast.ptr_attr) (declr: Ast.declarator) 
 
   let mk_sizeof_name = mk_size_var name in
 
-  let size_str is_none =
+  let size_str =
     match attr.Ast.pa_size.Ast.ps_size with
       Some a -> mk_len_size a
     | None   ->
       match attr.Ast.pa_size.Ast.ps_sizefunc with
-        None   -> if attr.Ast.pa_isstr then sprintf "strlen((const char*)%s) + 1" mk_sizeof_name else (if is_none then "0" else sprintf "sizeof(*%s)" mk_sizeof_name)
+        None   -> if attr.Ast.pa_isstr then sprintf "strlen((const char*)%s) + 1" mk_sizeof_name else (if attr.Ast.pa_direction <> Ast.PtrNoDirection then sprintf "sizeof(%s)" (Ast.get_sttystr ty) else "")
       | Some b -> mk_sizeof_var
   in
     match attr.Ast.pa_size.Ast.ps_count with
-      None   -> size_str true
+      None   -> size_str
     | Some a -> 
       match attr.Ast.pa_size.Ast.ps_length with
-        None   -> sprintf "%s * %s" (mk_len_size a) (size_str false)
-      | Some b -> sprintf "%s * %s * %s" (mk_len_size b) (mk_len_size a) (size_str false)
+        None   -> sprintf "%s * %s" (mk_len_size a) size_str
+      | Some b -> sprintf "%s * %s * %s" (mk_len_size b) (mk_len_size a) size_str
 
 let get_first = fun (a, b) -> b
 
@@ -716,8 +722,16 @@ let gen_func_invoking (fd: Ast.func_decl)
                       (mk_parm_name: Ast.parameter_type -> Ast.declarator -> string) =
   let gen_parm_str pt declr =
     let parm_name = mk_parm_name pt declr in
+    let is_struct =
+      match pt with
+      Ast.PTPtr (ty, attr) -> attr.Ast.pa_direction <> Ast.PtrNoDirection && attr.Ast.pa_size = Ast.empty_ptr_size
+      | _ -> false
+    in
+    let make_struct_param =
+      if is_struct then sprintf "&%s" parm_name else parm_name
+    in
     let tystr = get_param_tystr pt in
-      if is_const_ptr pt then sprintf "(const %s)%s" tystr parm_name else parm_name
+      if is_const_ptr pt then sprintf "(const %s)%s" tystr make_struct_param else sprintf "%s" make_struct_param
   in
     match fd.Ast.plist with
       [] -> sprintf "%s();" fd.Ast.fname
@@ -733,9 +747,17 @@ let gen_func_intercept(fd: Ast.func_decl)
                       (func_name: string) =
   let gen_parm_str pt declr =
     let parm_name = mk_parm_name pt declr in
+    let is_struct =
+      match pt with
+      Ast.PTPtr (ty, attr) -> attr.Ast.pa_direction <> Ast.PtrNoDirection && parm_name <> declr.Ast.identifier && attr.Ast.pa_size = Ast.empty_ptr_size
+      | _ -> false
+    in
+    let make_struct_param =
+      if is_struct then sprintf "&%s" parm_name else parm_name
+    in
     let tystr = get_param_tystr pt in
-      if is_const_ptr pt then sprintf "(const %s)%s" tystr parm_name else parm_name
-  in
+      if is_const_ptr pt then sprintf "(const %s)%s" tystr make_struct_param else sprintf "%s" make_struct_param
+    in
     match fd.Ast.plist with
       [] -> sprintf "%s();" func_name
     | (pt, (declr : Ast.declarator)) :: ps ->
@@ -820,7 +842,7 @@ let gen_func_ubridge (file_shortnm: string) (ufunc: Ast.untrusted_func) =
      | Ast.PTPtr(ty, attr) -> 
      match attr.Ast.pa_direction with 
      Ast.PtrIn | Ast.PtrOut | Ast.PtrInOut ->
-     (acc ^ " + " ^ get_ptr_length ty attr declr false, rewrite_buf ^ sprintf "\tms->ms_%s = pms%s;\n" declr.Ast.identifier acc)
+     (combine_ptr_length acc (get_ptr_length ty attr declr false), rewrite_buf ^ sprintf "\tms->ms_%s = pms%s;\n" declr.Ast.identifier acc)
      | _ -> (acc, rewrite_buf)) (input_size_base, "") fd.Ast.plist
   in
   let call_with_pms =
@@ -911,7 +933,7 @@ let gen_ptr_size (ty: Ast.atype) (pattr: Ast.ptr_attr) (name: string) (get_parm:
           Some a -> mk_len_size a
         | None   ->
           match sattr.Ast.ps_sizefunc with
-            None   -> sprintf "sizeof(*%s)" parm_name
+            None   -> sprintf "sizeof(%s)" (Ast.get_sttystr ty)
           | Some a -> 
             match sattr.Ast.ps_sizefunc_pars with
               None -> mk_len_sizefunc a ""
@@ -977,7 +999,7 @@ let gen_func_uproxy (tf: Ast.trusted_func) (idx: int) (ec: enclave_content) =
   let input_size_str = List.fold_left (fun acc (pty, declr) ->
      match pty with
          Ast.PTVal _         -> acc
-       | Ast.PTPtr(ty, attr) -> acc ^ " + " ^ get_ptr_length ty attr declr false) input_size_base fd.Ast.plist
+       | Ast.PTPtr(ty, attr) -> combine_ptr_length acc (get_ptr_length ty attr declr false)) input_size_base fd.Ast.plist
   in
   let copy_buffer_struct = List.fold_left (fun (acc, copy_buf) (pty, declr) ->
       match pty with
@@ -986,10 +1008,10 @@ let gen_func_uproxy (tf: Ast.trusted_func) (idx: int) (ec: enclave_content) =
     let total_len = get_ptr_length ty attr declr false in
     match attr.pa_direction with
       Ast.PtrInOut | Ast.PtrIn ->
-    let condition_start = if attr.Ast.pa_size.Ast.ps_sizefunc <> None then sprintf "\tif(%s) {\n\t" total_len else "" in
+    let condition_start = if attr.Ast.pa_size.Ast.ps_sizefunc <> None then sprintf "\tif(%s) {\n\t" (zero_or_size total_len) else "" in
     let condition_end = if attr.Ast.pa_size.Ast.ps_sizefunc <> None then "\t}\n" else "" in
-    (acc ^ " + " ^ total_len, copy_buf ^ sprintf "%s\tmemcpy(enclave_buffer + %s, %s, %s);\n%s" condition_start acc declr.Ast.identifier total_len condition_end)
-    | _ -> (acc ^ " + " ^ total_len, copy_buf)) (input_size_base, "") fd.Ast.plist
+    (combine_ptr_length acc total_len, copy_buf ^ sprintf "%s\tmemcpy(enclave_buffer + %s, %s, %s);\n%s" condition_start acc declr.Ast.identifier (zero_or_size total_len) condition_end)
+    | _ -> (combine_ptr_length acc total_len, copy_buf)) (input_size_base, "") fd.Ast.plist
   in
   let copy_buffer_out_struct = List.fold_left (fun (acc, copy_buf) (pty, declr) ->
      match pty with
@@ -998,14 +1020,14 @@ let gen_func_uproxy (tf: Ast.trusted_func) (idx: int) (ec: enclave_content) =
    let total_len = get_ptr_length ty attr declr false in
      match attr.pa_direction with
      Ast.PtrInOut | Ast.PtrOut ->
-   (acc ^ " + " ^ total_len, copy_buf ^ sprintf "\t\tmemcpy(%s, enclave_buffer + %s, %s);\n" declr.Ast.identifier acc total_len)
-   | _ -> (acc ^ " + " ^ total_len, copy_buf)) (input_size_base, "") fd.Ast.plist
+   (combine_ptr_length acc total_len, copy_buf ^ sprintf "\t\tmemcpy(%s, enclave_buffer + %s, %s);\n" declr.Ast.identifier acc (zero_or_size total_len))
+   | _ -> (combine_ptr_length acc total_len, copy_buf)) (input_size_base, "") fd.Ast.plist
   in
   let copy_buffer_str = "\n" ^ get_first copy_buffer_struct in
   let copy_buffer_out_str = "\n" ^ get_first copy_buffer_out_struct in
   let set_share_mem = sprintf "bufsize = %s;\n" input_size_str in
   let check_share_mem = "if(bufsize > buffer_size_in_bytes) {\n\t\treturn cudaErrorMemoryValueTooLarge;\n\t}" in
-  let declare_ms_expr = sprintf "%s* %s = TEE_CAST(%s*, enclave_buffer);;" ms_struct_name ms_struct_val ms_struct_name in
+  let declare_ms_expr = sprintf "%s* %s = TEE_CAST(%s*, enclave_buffer);" ms_struct_name ms_struct_val ms_struct_name in
   let ocall_table_ptr =
     sprintf "&%s" ocall_table_name in
 
@@ -1139,9 +1161,27 @@ let gen_parm_ptr_direction_pre (plist: Ast.pdecl list) =
     let len_var     = mk_len_var name in
     let in_ptr_dst_name = mk_in_ptr_dst_name attr.Ast.pa_rdonly in_ptr_name in
     let tmp_ptr_name= mk_tmp_var name in
-
+    let sttystr = Ast.get_sttystr ty in
     let check_sizefunc_ptr (fn: string) =
       ""
+    in
+    let structure_copy =
+      match attr.Ast.pa_direction with
+        Ast.PtrIn | Ast.PtrInOut ->
+          (match attr.Ast.pa_transform_in with
+          Some s_func -> sprintf "\t%s = *%s(%s);\n" in_ptr_name s_func tmp_ptr_name
+          | _ -> sprintf "\t%s = *%s;\n" in_ptr_name tmp_ptr_name)
+        | Ast.PtrOut ->
+          sprintf "\tmemset(&%s, 0, sizeof(%s));\n" in_ptr_name sttystr
+        | _ ->
+          match attr.Ast.pa_transform_in with
+          Some s_func -> sprintf "\t%s(&%s);\n" s_func (mk_tmp_var name)
+          | _ -> ""
+    in
+    let transform_in_or_null name =
+      match attr.Ast.pa_transform_in with
+      Some s_func -> sprintf "%s(%s)" s_func name
+      | _ -> name
     in
     let malloc_and_copy pre_indent =
       match attr.Ast.pa_direction with
@@ -1153,7 +1193,7 @@ let gen_parm_ptr_direction_pre (plist: Ast.pdecl list) =
               "\t\tstatus = TEE_ERROR_OUT_OF_MEMORY;";
               "\t\tgoto err;";
               "\t}\n";
-              sprintf "\tmemcpy(%s, %s, %s);" in_ptr_dst_name tmp_ptr_name len_var;
+              sprintf "\tmemcpy(%s, %s, %s);" in_ptr_dst_name (transform_in_or_null tmp_ptr_name) len_var;
             ]
             in
             let s1 = List.fold_left (fun acc s -> acc ^ pre_indent ^ s ^ "\n") "" code_template in
@@ -1181,7 +1221,8 @@ let gen_parm_ptr_direction_pre (plist: Ast.pdecl list) =
               List.fold_left (fun acc s -> acc ^ pre_indent ^ s ^ "\n") "" code_template
         | _ -> ""
     in
-      malloc_and_copy "\t"
+      if attr.pa_size <> Ast.empty_ptr_size then malloc_and_copy "\t"
+      else structure_copy
   in List.fold_left
        (fun acc (pty, declr) ->
           match pty with
@@ -1197,16 +1238,37 @@ let gen_parm_ptr_direction_post (plist: Ast.pdecl list) =
     let in_ptr_name = mk_in_var name in
     let len_var     = mk_len_var name in
     let in_ptr_dst_name = mk_in_ptr_dst_name attr.Ast.pa_rdonly in_ptr_name in
+    let tranform_out_or_null =
+      match attr.Ast.pa_transform_out with
+      Some s_func -> sprintf "%s(%s)" s_func in_ptr_name
+      | _ -> in_ptr_name
+    in
+    let do_free_copy_buffer =
       match attr.Ast.pa_direction with
           Ast.PtrIn -> sprintf "\tif (%s != NULL && %s != 0) free(%s);\n" in_ptr_name len_var in_ptr_dst_name
         | Ast.PtrInOut | Ast.PtrOut ->
             sprintf "\tif (%s != NULL && %s != 0) {\n\t\tmemcpy(%s, %s, %s);\n\t\tfree(%s);\n\t}\n"
                     in_ptr_name len_var
                     (mk_tmp_var name)
-                    in_ptr_name
+                    tranform_out_or_null
                     len_var
                     in_ptr_name
         | _ -> ""
+    in
+    let do_struct_assign =
+      match attr.Ast.pa_direction with
+        Ast.PtrInOut | Ast.PtrOut ->
+          (match attr.Ast.pa_transform_out with
+            Some s_func -> sprintf "\t*%s = %s(%s);\n" (mk_tmp_var name) s_func in_ptr_name
+            | _ -> sprintf "\t*%s = %s;\n" (mk_tmp_var name) in_ptr_name)
+        | Ast.PtrIn -> "" (* no output, so cannot be changed *)
+        | Ast.PtrNoDirection ->
+          match attr.Ast.pa_transform_out with
+          Some s_func -> sprintf "\t%s(&%s);\n" s_func (mk_tmp_var name)
+          | _ -> ""
+    in
+      if attr.pa_size <> Ast.empty_ptr_size then do_free_copy_buffer
+      else do_struct_assign
   in List.fold_left
        (fun acc (pty, declr) ->
           match pty with
@@ -1301,8 +1363,9 @@ let gen_tbridge_local_vars (plist: Ast.pdecl list) =
   let do_gen_local_var (ty: Ast.atype) (attr: Ast.ptr_attr) (name: string) (offset: string) =
     let tmp_var =
       (* Save a copy of pointer in case it might be modified in the marshaling structure. *)
-      sprintf "\t%s %s = TEE_CAST(%s, buffer_start + %s);\n" (Ast.get_tystr ty) (mk_tmp_var name) (Ast.get_tystr ty) offset
+      sprintf "\t%s %s = TEE_CAST(%s, %s);\n" (Ast.get_tystr ty) (mk_tmp_var name) (Ast.get_tystr ty) (combine_ptr_length "buffer_start" offset)
     in
+    let sttystr = Ast.get_sttystr ty in
     let len_var =
       if not attr.Ast.pa_chkptr then ""
       else gen_tmp_size attr plist ^ "\t" ^ gen_ptr_size ty attr name mk_tmp_var in
@@ -1311,7 +1374,10 @@ let gen_tbridge_local_vars (plist: Ast.pdecl list) =
       Ast.PtrNoDirection -> ""
     | _ -> sprintf "\t%s %s = NULL;\n" (Ast.get_tystr ty) (mk_in_var name)
     in
-      tmp_var ^ len_var ^ in_ptr
+    let in_structure_ptr = sprintf "\t%s %s;\n" sttystr (mk_in_var name)
+    in
+      if attr.Ast.pa_size <> Ast.empty_ptr_size then tmp_var ^ len_var ^ in_ptr
+      else tmp_var ^ in_structure_ptr
   in
   let gen_local_var_for_foreign_array (ty: Ast.atype) (attr: Ast.ptr_attr) (name: string) =
     let tystr = Ast.get_tystr ty in
@@ -1345,7 +1411,7 @@ let gen_tbridge_local_vars (plist: Ast.pdecl list) =
       match pty with
       Ast.PTVal _         -> (len, acc)
     | Ast.PTPtr(ty, attr) ->
-    (len ^ " + " ^ get_ptr_length ty attr declr true, acc ^ gen_local_var (pty, declr) len)) ("0", status_var) new_param_list)
+    (combine_ptr_length len (get_ptr_length ty attr declr true), acc ^ gen_local_var (pty, declr) len)) ("", status_var) new_param_list)
 
 (* It generates trusted bridge code for a trusted function. *)
 let gen_func_tbridge (tf: Ast.trusted_func) (dummy_var: string) =
@@ -1508,7 +1574,7 @@ let gen_func_tproxy (ufunc: Ast.untrusted_func) (idx: int) =
     in get_first (List.fold_left (fun (len, acc) (pty, declr) ->
              match pty with
                  Ast.PTVal _ -> (len, acc)
-               | Ast.PTPtr(ty, attr) -> (len ^ " + " ^ get_ptr_length ty attr declr false, acc ^ copy_memory attr declr len)) ("", "") plist) in
+               | Ast.PTPtr(ty, attr) -> (combine_ptr_length len (get_ptr_length ty attr declr false), acc ^ copy_memory attr declr len)) ("", "") plist) in
 
   let set_errno = if propagate_errno then "\terrno = ms->ocall_errno;" else "" in
   let func_close = sprintf "%s%s\n%s\n"
@@ -1521,7 +1587,7 @@ let gen_func_tproxy (ufunc: Ast.untrusted_func) (idx: int) =
   let fill_ms_field_all = get_first (List.fold_left(fun (len, acc) (pty, declr) ->
     match pty with
     Ast.PTVal _ -> (len, acc ^ tproxy_fill_ms_field (pty, declr) len)
-    | Ast.PTPtr(ty, attr) -> (len ^ " + " ^ get_ptr_length ty attr declr false, acc ^ tproxy_fill_ms_field (pty, declr) len)
+    | Ast.PTPtr(ty, attr) -> (combine_ptr_length len (get_ptr_length ty attr declr false), acc ^ tproxy_fill_ms_field (pty, declr) len)
   ) ("", "") fd.Ast.plist) in
   let func_body = ref [] in
     if (is_naked_func fd) && (propagate_errno = false) then

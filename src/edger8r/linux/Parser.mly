@@ -103,6 +103,14 @@ let get_ptr_attr (attr_list: (string * Ast.attr_value) list) =
         let pars = get_string_from_attr value efn
         in { res with Ast.pa_size =
             { res.Ast.pa_size with Ast.ps_sizefunc_pars = Some pars }}
+      | "transform_in" ->
+        let efn n = failwithf "invalid parameter name (%d) for `transform_in'" n in
+        let trans = get_string_from_attr value efn
+        in { res with Ast.pa_transform_in = Some trans }
+      | "transform_out" ->
+        let efn n = failwithf "invalid parameter name (%d) for `transform_out'" n in
+        let trans = get_string_from_attr value efn
+        in { res with Ast.pa_transform_out = Some trans }
       | "string"  -> { res with Ast.pa_isptr = true; Ast.pa_isstr = true; }
       | "wstring" -> { res with Ast.pa_isptr = true; Ast.pa_iswstr = true; }
       | "isptr"   -> { res with Ast.pa_isptr = true }
@@ -174,6 +182,8 @@ let get_ptr_attr (attr_list: (string * Ast.attr_value) list) =
                                           Ast.pa_iswstr = false;
                                           Ast.pa_rdonly = false;
                                           Ast.pa_chkptr = true;
+                                          Ast.pa_transform_in = None;
+                                          Ast.pa_transform_out = None;
                                         }
   in
     if pattr.Ast.pa_isary

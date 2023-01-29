@@ -88,6 +88,8 @@ type ptr_attr = {
   pa_iswstr     : bool;
   pa_rdonly     : bool;       (* If the pointer is 'const' qualified *)
   pa_chkptr     : bool;       (* Whether to generate code to check pointer *)
+  pa_transform_in  : string option;
+  pa_transform_out : string option;
 }
 
 (* parameter type *)
@@ -244,6 +246,11 @@ let rec get_tystr (ty: atype) =
     | Enum   id -> "enum "   ^ id
     | Foreign s -> s
     | Ptr ty    -> get_tystr(ty) ^ "*"
+
+let rec get_sttystr (ty: atype) =
+  match ty with
+    | Ptr ty -> get_tystr(ty)
+    | _ -> ""
 
 (* Get the plain `atype' from a `parameter_type'. *)
 let get_param_atype (pt: parameter_type) =

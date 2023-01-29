@@ -34,40 +34,40 @@ enclave {
         // #if defined(__cplusplus)
         // public cudaError_t cudaMallocManaged(void **devPtr, size_t size, unsigned int flags = cudaMemAttachGlobal);
         // #else
-        public cudaError_t cudaMallocManaged([out,count=1]void **devPtr, size_t size, unsigned int flags);
+        public cudaError_t cudaMallocManaged([out]void **devPtr, size_t size, unsigned int flags);
         // #endif
 
-        public cudaError_t cudaMalloc([out,count=1]void **devPtr, size_t size);
-        public cudaError_t cudaMallocHost([out,count=1]void **ptr, size_t size);
-        public cudaError_t cudaMallocPitch([out,count=1]void **devPtr, [out,count=1]size_t *pitch, size_t width, size_t height);
-        public cudaError_t cudaMallocArray([out,count=1]cudaArray_t *array, [in,count=1]const struct cudaChannelFormatDesc *desc, size_t width, size_t height, unsigned int flags);
+        public cudaError_t cudaMalloc([out]void **devPtr, size_t size);
+        public cudaError_t cudaMallocHost([out]void **ptr, size_t size);
+        public cudaError_t cudaMallocPitch([out]void **devPtr, [out]size_t *pitch, size_t width, size_t height);
+        public cudaError_t cudaMallocArray([out]cudaArray_t *array, [in]const struct cudaChannelFormatDesc *desc, size_t width, size_t height, unsigned int flags);
         public cudaError_t cudaFree([user_check]void *devPtr);
         public cudaError_t cudaFreeHost([user_check]void *ptr);
         public cudaError_t cudaFreeArray(cudaArray_t array);
         public cudaError_t cudaFreeMipmappedArray(cudaMipmappedArray_t mipmappedArray);
-        public cudaError_t cudaHostAlloc([out,count=1]void **pHost, size_t size, unsigned int flags);
+        public cudaError_t cudaHostAlloc([out]void **pHost, size_t size, unsigned int flags);
         public cudaError_t cudaHostRegister([user_check]void *ptr, size_t size, unsigned int flags);
         public cudaError_t cudaHostUnregister([user_check]void *ptr);
-        public cudaError_t cudaHostGetDevicePointer([out,count=1]void **pDevice, [user_check]void *pHost, unsigned int flags);
-        public cudaError_t cudaHostGetFlags([out,count=1]unsigned int *pFlags, [user_check]void *pHost);
-        public cudaError_t cudaMalloc3D([out,count=1]struct cudaPitchedPtr* pitchedDevPtr, struct cudaExtent extent);
-        public cudaError_t cudaMalloc3DArray([out,count=1]cudaArray_t *array, [in,count=1]const struct cudaChannelFormatDesc* desc, struct cudaExtent extent, unsigned int flags);
-        public cudaError_t cudaMallocMipmappedArray([out,count=1]cudaMipmappedArray_t *mipmappedArray, [in,count=1]const struct cudaChannelFormatDesc* desc, struct cudaExtent extent, unsigned int numLevels, unsigned int flags);
-        public cudaError_t cudaGetMipmappedArrayLevel([out,count=1]cudaArray_t *levelArray, cudaMipmappedArray_const_t mipmappedArray, unsigned int level);
-        public cudaError_t cudaMemcpy3D([in,count=1]const struct cudaMemcpy3DParms *p);
-        public cudaError_t cudaMemcpy3DPeer([in,count=1]const struct cudaMemcpy3DPeerParms *p);
-        public cudaError_t cudaMemcpy3DAsync([in,count=1]const struct cudaMemcpy3DParms *p, cudaStream_t stream);
-        public cudaError_t cudaMemcpy3DPeerAsync([in,count=1]const struct cudaMemcpy3DPeerParms *p, cudaStream_t stream);
-        public cudaError_t cudaMemGetInfo([out,count=1]size_t *free, [out,count=1]size_t *total);
-        public cudaError_t cudaArrayGetInfo([out,count=1]struct cudaChannelFormatDesc *desc, [out,count=1]struct cudaExtent *extent, [out,count=1]unsigned int *flags, cudaArray_t array);
-        public cudaError_t cudaArrayGetPlane([out,count=1]cudaArray_t *pPlaneArray, cudaArray_t hArray, unsigned int planeIdx);
+        public cudaError_t cudaHostGetDevicePointer([out]void **pDevice, [user_check]void *pHost, unsigned int flags);
+        public cudaError_t cudaHostGetFlags([out]unsigned int *pFlags, [user_check]void *pHost);
+        public cudaError_t cudaMalloc3D([out]struct cudaPitchedPtr* pitchedDevPtr, struct cudaExtent extent);
+        public cudaError_t cudaMalloc3DArray([out]cudaArray_t *array, [in]const struct cudaChannelFormatDesc* desc, struct cudaExtent extent, unsigned int flags);
+        public cudaError_t cudaMallocMipmappedArray([out]cudaMipmappedArray_t *mipmappedArray, [in]const struct cudaChannelFormatDesc* desc, struct cudaExtent extent, unsigned int numLevels, unsigned int flags);
+        public cudaError_t cudaGetMipmappedArrayLevel([out]cudaArray_t *levelArray, cudaMipmappedArray_const_t mipmappedArray, unsigned int level);
+        public cudaError_t cudaMemcpy3D([in]const struct cudaMemcpy3DParms *p);
+        public cudaError_t cudaMemcpy3DPeer([in]const struct cudaMemcpy3DPeerParms *p);
+        public cudaError_t cudaMemcpy3DAsync([in]const struct cudaMemcpy3DParms *p, cudaStream_t stream);
+        public cudaError_t cudaMemcpy3DPeerAsync([in]const struct cudaMemcpy3DPeerParms *p, cudaStream_t stream);
+        public cudaError_t cudaMemGetInfo([out]size_t *free, [out]size_t *total);
+        public cudaError_t cudaArrayGetInfo([out]struct cudaChannelFormatDesc *desc, [out]struct cudaExtent *extent, [out]unsigned int *flags, cudaArray_t array);
+        public cudaError_t cudaArrayGetPlane([out]cudaArray_t *pPlaneArray, cudaArray_t hArray, unsigned int planeIdx);
 
         // #if __CUDART_API_VERSION >= 11010
-        public cudaError_t cudaArrayGetSparseProperties([out,count=1]struct cudaArraySparseProperties *sparseProperties, cudaArray_t array);
+        public cudaError_t cudaArrayGetSparseProperties([out]struct cudaArraySparseProperties *sparseProperties, cudaArray_t array);
         // #endif
 
         // #if __CUDART_API_VERSION >= 11010
-        public cudaError_t cudaMipmappedArrayGetSparseProperties([out,count=1]struct cudaArraySparseProperties *sparseProperties, cudaMipmappedArray_t mipmap);
+        public cudaError_t cudaMipmappedArrayGetSparseProperties([out]struct cudaArraySparseProperties *sparseProperties, cudaMipmappedArray_t mipmap);
         // #endif
 
         // public cudaError_t cudaMemcpy(void *dst, const void *src, size_t count, enum cudaMemcpyKind kind);
@@ -140,8 +140,8 @@ enclave {
         public cudaError_t cudaMemsetAsync([user_check]void *devPtr, int value, size_t count, cudaStream_t stream);
         public cudaError_t cudaMemset2DAsync([user_check]void *devPtr, size_t pitch, int value, size_t width, size_t height, cudaStream_t stream);
         public cudaError_t cudaMemset3DAsync(struct cudaPitchedPtr pitchedDevPtr, int value, struct cudaExtent extent, cudaStream_t stream);
-        public cudaError_t cudaGetSymbolAddress([out,count=1]void **devPtr, [in,string]const void *symbol);
-        public cudaError_t cudaGetSymbolSize([out,count=1]size_t *size, [in,string]const void *symbol);
+        public cudaError_t cudaGetSymbolAddress([out]void **devPtr, [in,string]const void *symbol);
+        public cudaError_t cudaGetSymbolSize([out]size_t *size, [in,string]const void *symbol);
         public cudaError_t cudaMemPrefetchAsync([user_check]const void *devPtr, size_t count, int dstDevice, cudaStream_t stream);
         public cudaError_t cudaMemAdvise([user_check]const void *devPtr, size_t count, enum cudaMemoryAdvise advice, int device);
         public cudaError_t cudaMemRangeGetAttribute([out,size=dataSize]void *data, size_t dataSize, enum cudaMemRangeAttribute attribute, [user_check]const void *devPtr, size_t count);

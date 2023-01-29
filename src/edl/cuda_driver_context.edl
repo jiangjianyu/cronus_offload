@@ -17,19 +17,19 @@
 
 enclave {
     trusted {
-        public CUresult cuDeviceGet([out,count=1]CUdevice *device, int ordinal);
-        public CUresult cuDeviceGetCount([out,count=1]int *count);
+        public CUresult cuDeviceGet([out]CUdevice *device, int ordinal);
+        public CUresult cuDeviceGetCount([out]int *count);
         public CUresult cuDeviceGetName([out,size=len]char *name, int len, CUdevice dev);
-        public CUresult cuDeviceGetUuid([out,count=1]CUuuid *uuid, CUdevice dev);
-        public CUresult cuDeviceGetUuid_v2([out,count=1]CUuuid *uuid, CUdevice dev);
+        public CUresult cuDeviceGetUuid([out]CUuuid *uuid, CUdevice dev);
+        public CUresult cuDeviceGetUuid_v2([out]CUuuid *uuid, CUdevice dev);
         // public CUresult cuDeviceGetLuid(char *luid, unsigned int *deviceNodeMask, CUdevice dev);
-        public CUresult cuDeviceTotalMem([out,count=1]size_t *bytes, CUdevice dev);
-        public CUresult cuDeviceGetTexture1DLinearMaxWidth([out,count=1]size_t *maxWidthInElements, CUarray_format format, unsigned numChannels, CUdevice dev);
-        public CUresult cuDeviceGetAttribute([out,count=1]int *pi, CUdevice_attribute attrib, CUdevice dev);
+        public CUresult cuDeviceTotalMem([out]size_t *bytes, CUdevice dev);
+        public CUresult cuDeviceGetTexture1DLinearMaxWidth([out]size_t *maxWidthInElements, CUarray_format format, unsigned numChannels, CUdevice dev);
+        public CUresult cuDeviceGetAttribute([out]int *pi, CUdevice_attribute attrib, CUdevice dev);
         // public CUresult cuDeviceGetNvSciSyncAttributes(void *nvSciSyncAttrList, CUdevice dev, int flags);
         public CUresult cuDeviceSetMemPool(CUdevice dev, CUmemoryPool pool);
-        public CUresult cuDeviceGetMemPool([out,count=1]CUmemoryPool *pool, CUdevice dev);
-        public CUresult cuDeviceGetDefaultMemPool([out,count=1]CUmemoryPool *pool_out, CUdevice dev);
+        public CUresult cuDeviceGetMemPool([out]CUmemoryPool *pool, CUdevice dev);
+        public CUresult cuDeviceGetDefaultMemPool([out]CUmemoryPool *pool_out, CUdevice dev);
         public CUresult cuFlushGPUDirectRDMAWrites(CUflushGPUDirectRDMAWritesTarget target, CUflushGPUDirectRDMAWritesScope scope);
     };
 };
