@@ -190,6 +190,28 @@ let get_ptr_attr (attr_list: (string * Ast.attr_value) list) =
     then check_invalid_ary_attr pattr
     else check_invalid_ptr_size pattr |> check_ptr_dir
 
+let get_val_attr (attr_list: (string * Ast.attr_value) list) =
+  let update_attr (key: string) (value: Ast.attr_value) (res: Ast.val_attr) =
+    match key with
+      | "transform_in" ->
+        let efn n = failwithf "invalid parameter name (%d) for `transform_in'" n in
+        let trans = get_string_from_attr value efn
+        in { res with Ast.pa_transform_in = Some trans }
+      | "transform_out" ->
+        let efn n = failwithf "invalid parameter name (%d) for `transform_out'" n in
+        let trans = get_string_from_attr value efn
+        in { res with Ast.pa_transform_out = Some trans }
+      | _ -> failwithf "unknown attribute: %s" key
+  in
+  let rec do_get_val_attr alist res_attr =
+    match alist with
+        [] -> res_attr
+      | (k,v) :: xs -> do_get_val_attr xs (update_attr k v res_attr)
+  in
+    do_get_val_attr attr_list { Ast.pa_transform_in = None;
+                                Ast.pa_transform_out = None;
+                              }
+
 (* Untrusted functions can have these attributes:
  *
  * a. 3 mutual exclusive calling convention specifier:
@@ -392,6 +414,7 @@ param_type: attr_block all_type {
     | _         ->
       if $1 <> [] then
         let attr = get_ptr_attr $1 in
+        let vattr = get_val_attr $1 in
         match $2 with
           Ast.Foreign s ->
             if attr.Ast.pa_isptr || attr.Ast.pa_isary then fun x -> Ast.PTPtr($2, attr)
@@ -403,11 +426,12 @@ param_type: attr_block all_type {
         | _ ->
           fun is_ary ->
             if is_ary then Ast.PTPtr($2, attr)
-            else failwithf "unexpected pointer attributes for `%s'" (Ast.get_tystr $2)
+            else Ast.PTVal ($2, vattr)
+            (* else failwithf "unexpected pointer attributes for `%s'" (Ast.get_tystr $2) *)
       else
         fun is_ary ->
           if is_ary then Ast.PTPtr($2, get_ptr_attr [])
-          else  Ast.PTVal $2
+          else Ast.PTVal ($2, get_val_attr [])
     }
   | all_type {
     match $1 with
@@ -415,7 +439,7 @@ param_type: attr_block all_type {
     | _         ->
       fun is_ary ->
         if is_ary then Ast.PTPtr($1, get_ptr_attr [])
-        else  Ast.PTVal $1
+        else  Ast.PTVal ($1, get_val_attr [])
     }
   | attr_block Tconst type_spec pointer {
       let attr = get_ptr_attr $1
@@ -582,7 +606,7 @@ parameter_def: param_type declarator {
     let pt = $1 (Ast.is_array $2) in
     let is_void =
       match pt with
-          Ast.PTVal v -> v = Ast.Void
+          Ast.PTVal (v, _) -> v = Ast.Void
         | _           -> false
     in
       if is_void then

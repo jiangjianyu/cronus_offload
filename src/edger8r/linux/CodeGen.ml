@@ -363,7 +363,7 @@ let gen_marshal_struct (fd: Ast.func_decl) (errno: string) =
            a marshaling struct. *)
         Ast.Void -> if fd.Ast.plist = [] && errno = "" then ""
                     else mk_struct_decl member_list_str struct_name
-      | _ -> let rv_str = mk_ms_member_decl (Ast.PTVal fd.Ast.rtype) retval_declr
+      | _ -> let rv_str = mk_ms_member_decl (Ast.PTVal (fd.Ast.rtype, Ast.empty_val_attr)) retval_declr
              in mk_struct_decl (rv_str ^ member_list_str) struct_name
 
 let gen_ecall_marshal_struct (tf: Ast.trusted_func) =
@@ -818,7 +818,7 @@ let gen_ubridge_local_vars (plist: Ast.pdecl list) =
   in
     List.fold_left (fun acc (pty, declr) ->
       match pty with
-      Ast.PTVal (ty)      -> acc ^ do_gen_local_var ty declr.Ast.identifier
+      Ast.PTVal (ty, _)   -> acc ^ do_gen_local_var ty declr.Ast.identifier
     | Ast.PTPtr(ty, attr) -> acc ^ do_gen_local_var ty declr.Ast.identifier) "" new_param_list
 
 (* Generate untrusted bridge code for a given untrusted function. *)
@@ -874,7 +874,7 @@ let fill_ms_field (isptr: bool) (pd: Ast.pdecl) =
   in
     if declr.Ast.array_dims = [] then
       match pt with
-          Ast.PTVal(aty)        -> assignment_str false aty
+          Ast.PTVal(aty, _)     -> assignment_str false aty
         | Ast.PTPtr(aty, pattr) ->
             if pattr.Ast.pa_isary
             then gen_setup_foreign_array aty

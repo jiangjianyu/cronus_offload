@@ -92,9 +92,19 @@ type ptr_attr = {
   pa_transform_out : string option;
 }
 
+type val_attr = {
+  pa_transform_in  : string option;
+  pa_transform_out : string option;
+}
+
+let empty_val_attr = {
+  pa_transform_in  = None;
+  pa_transform_out = None;
+}
+
 (* parameter type *)
 type parameter_type =
-  | PTVal of atype            (* Passed by value *)
+  | PTVal of atype * val_attr (* Passed by value *)
   | PTPtr of atype * ptr_attr (* Passed by address *)
 
 type call_conv = CC_CDECL | CC_STDCALL | CC_FASTCALL | CC_NONE
@@ -255,7 +265,7 @@ let rec get_sttystr (ty: atype) =
 (* Get the plain `atype' from a `parameter_type'. *)
 let get_param_atype (pt: parameter_type) =
   match pt with
-    | PTVal t      -> t
+    | PTVal (t, _) -> t
     | PTPtr (t, _) -> t
 
 (* Convert attr_value to string *)
