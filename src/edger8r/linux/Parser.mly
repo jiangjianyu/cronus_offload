@@ -119,6 +119,7 @@ let get_ptr_attr (attr_list: (string * Ast.attr_value) list) =
 
       | "readonly" -> { res with Ast.pa_rdonly = true }
       | "user_check" -> { res with Ast.pa_chkptr = false }
+      | "devptr" ->     { res with Ast.pa_chkptr = false; Ast.pa_transform_in = Some "devOffsetToPtr";} 
 
       | "in"  ->
         let newdir = get_new_dir "in"  Ast.PtrIn  res.Ast.pa_direction
