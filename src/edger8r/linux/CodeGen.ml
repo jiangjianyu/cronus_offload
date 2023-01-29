@@ -724,7 +724,7 @@ let gen_func_invoking (fd: Ast.func_decl)
     let parm_name = mk_parm_name pt declr in
     let is_struct =
       match pt with
-      Ast.PTPtr (ty, attr) -> attr.Ast.pa_direction <> Ast.PtrNoDirection && attr.Ast.pa_size = Ast.empty_ptr_size
+      Ast.PTPtr (ty, attr) -> attr.Ast.pa_direction <> Ast.PtrNoDirection && attr.Ast.pa_size = Ast.empty_ptr_size && not attr.Ast.pa_isstr
       | _ -> false
     in
     let make_struct_param =
@@ -749,7 +749,7 @@ let gen_func_intercept(fd: Ast.func_decl)
     let parm_name = mk_parm_name pt declr in
     let is_struct =
       match pt with
-      Ast.PTPtr (ty, attr) -> attr.Ast.pa_direction <> Ast.PtrNoDirection && parm_name <> declr.Ast.identifier && attr.Ast.pa_size = Ast.empty_ptr_size
+      Ast.PTPtr (ty, attr) -> attr.Ast.pa_direction <> Ast.PtrNoDirection && parm_name <> declr.Ast.identifier && attr.Ast.pa_size = Ast.empty_ptr_size && not attr.Ast.pa_isstr
       | _ -> false
     in
     let make_struct_param =
@@ -1221,7 +1221,7 @@ let gen_parm_ptr_direction_pre (plist: Ast.pdecl list) =
               List.fold_left (fun acc s -> acc ^ pre_indent ^ s ^ "\n") "" code_template
         | _ -> ""
     in
-      if attr.pa_size <> Ast.empty_ptr_size then malloc_and_copy "\t"
+      if attr.Ast.pa_size <> Ast.empty_ptr_size || attr.Ast.pa_isstr then malloc_and_copy "\t"
       else structure_copy
   in List.fold_left
        (fun acc (pty, declr) ->
@@ -1267,7 +1267,7 @@ let gen_parm_ptr_direction_post (plist: Ast.pdecl list) =
           Some s_func -> sprintf "\t%s(&%s);\n" s_func (mk_tmp_var name)
           | _ -> ""
     in
-      if attr.pa_size <> Ast.empty_ptr_size then do_free_copy_buffer
+      if attr.pa_size <> Ast.empty_ptr_size || attr.Ast.pa_isstr then do_free_copy_buffer
       else do_struct_assign
   in List.fold_left
        (fun acc (pty, declr) ->
@@ -1376,7 +1376,7 @@ let gen_tbridge_local_vars (plist: Ast.pdecl list) =
     in
     let in_structure_ptr = sprintf "\t%s %s;\n" sttystr (mk_in_var name)
     in
-      if attr.Ast.pa_size <> Ast.empty_ptr_size then tmp_var ^ len_var ^ in_ptr
+      if attr.Ast.pa_size <> Ast.empty_ptr_size || attr.Ast.pa_isstr then tmp_var ^ len_var ^ in_ptr
       else tmp_var ^ in_structure_ptr
   in
   let gen_local_var_for_foreign_array (ty: Ast.atype) (attr: Ast.ptr_attr) (name: string) =
