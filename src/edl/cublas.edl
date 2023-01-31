@@ -1,6 +1,7 @@
 /* Enclave.edl - Top EDL file. */
 
 enclave {
+    include "cuda_offset.h"
     include "cublas_v2.h"
     include "cublas_api.h"
     include "rt_cublas_header.h"
@@ -9,27 +10,27 @@ enclave {
     from "cublas_api_v2.edl" import *;
     from "cublas_api_v3.edl" import *;
     trusted {
-        public cublasStatus_t cublasCreate_v2([out]cublasHandle_t* handle);
-        public cublasStatus_t cublasDestroy_v2(cublasHandle_t handle);
+        public cublasStatus_t cublasCreate_v2([out,transform_out=handleToCublas] cublasHandle_t* handle);
+        public cublasStatus_t cublasDestroy_v2([val,transform_in=handleToCublas] cublasHandle_t handle);
 
-        public cublasStatus_t cublasGetVersion_v2(cublasHandle_t handle, [out]int* version);
+        public cublasStatus_t cublasGetVersion_v2([val,transform_in=handleToCublas] cublasHandle_t handle, [out]int* version);
         public cublasStatus_t cublasGetProperty(libraryPropertyType type, [out]int* value);
 
-        public cublasStatus_t cublasSetWorkspace_v2(cublasHandle_t handle, [in, size=workspaceSizeInBytes]void* workspace, size_t workspaceSizeInBytes);
+        public cublasStatus_t cublasSetWorkspace_v2([val,transform_in=handleToCublas] cublasHandle_t handle, [in, size=workspaceSizeInBytes]void* workspace, size_t workspaceSizeInBytes);
 
-        public cublasStatus_t cublasSetStream_v2(cublasHandle_t handle, cudaStream_t streamId);
-        public cublasStatus_t cublasGetStream_v2(cublasHandle_t handle, [out]cudaStream_t* streamId);
+        public cublasStatus_t cublasSetStream_v2([val,transform_in=handleToCublas] cublasHandle_t handle, cudaStream_t streamId);
+        public cublasStatus_t cublasGetStream_v2([val,transform_in=handleToCublas] cublasHandle_t handle, [out]cudaStream_t* streamId);
 
-        public cublasStatus_t cublasGetPointerMode_v2(cublasHandle_t handle, [out]cublasPointerMode_t* mode);
-        public cublasStatus_t cublasSetPointerMode_v2(cublasHandle_t handle, cublasPointerMode_t mode);
+        public cublasStatus_t cublasGetPointerMode_v2([val,transform_in=handleToCublas] cublasHandle_t handle, [out]cublasPointerMode_t* mode);
+        public cublasStatus_t cublasSetPointerMode_v2([val,transform_in=handleToCublas] cublasHandle_t handle, cublasPointerMode_t mode);
 
-        public cublasStatus_t cublasGetAtomicsMode(cublasHandle_t handle, [out]cublasAtomicsMode_t* mode);
-        public cublasStatus_t cublasSetAtomicsMode(cublasHandle_t handle, cublasAtomicsMode_t mode);
+        public cublasStatus_t cublasGetAtomicsMode([val,transform_in=handleToCublas] cublasHandle_t handle, [out]cublasAtomicsMode_t* mode);
+        public cublasStatus_t cublasSetAtomicsMode([val,transform_in=handleToCublas] cublasHandle_t handle, cublasAtomicsMode_t mode);
 
-        public cublasStatus_t cublasGetMathMode(cublasHandle_t handle, [out]cublasMath_t* mode);
-        public cublasStatus_t cublasSetMathMode(cublasHandle_t handle, cublasMath_t mode);
+        public cublasStatus_t cublasGetMathMode([val,transform_in=handleToCublas] cublasHandle_t handle, [out]cublasMath_t* mode);
+        public cublasStatus_t cublasSetMathMode([val,transform_in=handleToCublas] cublasHandle_t handle, cublasMath_t mode);
 
-        public cublasStatus_t cublasGetSmCountTarget(cublasHandle_t handle, [out]int* smCountTarget);
-        public cublasStatus_t cublasSetSmCountTarget(cublasHandle_t handle, int smCountTarget);
+        public cublasStatus_t cublasGetSmCountTarget([val,transform_in=handleToCublas] cublasHandle_t handle, [out]int* smCountTarget);
+        public cublasStatus_t cublasSetSmCountTarget([val,transform_in=handleToCublas] cublasHandle_t handle, int smCountTarget);
     };
 };

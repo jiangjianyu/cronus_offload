@@ -200,6 +200,7 @@ let get_val_attr (attr_list: (string * Ast.attr_value) list) =
         let efn n = failwithf "invalid parameter name (%d) for `transform_in'" n in
         let trans = get_string_from_attr value efn
         in { res with Ast.pa_transform_in = Some trans }
+      | "devptr" -> { res with Ast.pa_transform_in = Some "devOffsetToPtr";} 
       | "val" -> res
       | _ -> failwithf "unknown attribute: %s" key
   in

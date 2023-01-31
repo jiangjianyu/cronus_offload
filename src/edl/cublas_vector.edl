@@ -3,11 +3,11 @@
 
 enclave {
     trusted {
-        public cublasStatus_t cublasSetVector(int n, int elemSize, [in,size=elemSize,count=n]const void* x, int incx, [user_check]void* devicePtr, int incy);
-        public cublasStatus_t cublasGetVector(int n, int elemSize, [user_check]const void* x, int incx, [out,size=elemSize,count=n]void* y, int incy);
+        public cublasStatus_t cublasSetVector(int n, int elemSize, [in,size=elemSize,count=n]const void* x, int incx, [devptr]void* devicePtr, int incy);
+        public cublasStatus_t cublasGetVector(int n, int elemSize, [devptr]const void* x, int incx, [out,size=elemSize,count=n]void* y, int incy);
 
-        public cublasStatus_t cublasSetMatrix(int rows, int cols, int elemSize, [in,size=elemSize,count=rows,length=cols]const void* A, int lda, [user_check]void* B, int ldb);
-        public cublasStatus_t cublasGetMatrix(int rows, int cols, int elemSize, [user_check]const void* A, int lda, [out,size=elemSize,count=rows,length=cols]void* B, int ldb);
+        public cublasStatus_t cublasSetMatrix(int rows, int cols, int elemSize, [in,size=elemSize,count=rows,length=cols]const void* A, int lda, [devptr]void* B, int ldb);
+        public cublasStatus_t cublasGetMatrix(int rows, int cols, int elemSize, [devptr]const void* A, int lda, [out,size=elemSize,count=rows,length=cols]void* B, int ldb);
 
         // public cublasStatus_t cublasSetVectorAsync(
         //     int n, int elemSize, const void* hostPtr, int incx, void* devicePtr, int incy, cudaStream_t stream);

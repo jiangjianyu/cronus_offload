@@ -1,6 +1,7 @@
 /* Enclave.edl - Top EDL file. */
 
 enclave {
+    include "cuda_offset.h"
     include "cuda_runtime_api.h"
     from "cuda_runtime_error.edl" import *;
     from "cuda_runtime_stream.edl" import *;

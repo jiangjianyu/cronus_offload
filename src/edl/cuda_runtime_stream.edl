@@ -13,34 +13,34 @@
 
 enclave {
     trusted {
-        public cudaError_t cudaStreamCreate([out]cudaStream_t *pStream);
-        public cudaError_t cudaStreamCreateWithFlags([out]cudaStream_t *pStream, unsigned int flags);
-        public cudaError_t cudaStreamCreateWithPriority([out]cudaStream_t *pStream, unsigned int flags, int priority);
-        public cudaError_t cudaStreamGetPriority(cudaStream_t hStream, [out]int *priority);
-        public cudaError_t cudaStreamGetFlags(cudaStream_t hStream, [out]unsigned int *flags);
+        public cudaError_t cudaStreamCreate([out,transform_out=streamToHandle]cudaStream_t *pStream);
+        public cudaError_t cudaStreamCreateWithFlags([out,transform_out=streamToHandle]cudaStream_t *pStream, unsigned int flags);
+        public cudaError_t cudaStreamCreateWithPriority([out,transform_out=streamToHandle]cudaStream_t *pStream, unsigned int flags, int priority);
+        public cudaError_t cudaStreamGetPriority([val,transform_in=handleToStream]cudaStream_t hStream, [out]int *priority);
+        public cudaError_t cudaStreamGetFlags([val,transform_in=handleToStream]cudaStream_t hStream, [out]unsigned int *flags);
         public cudaError_t cudaCtxResetPersistingL2Cache(void);
-        public cudaError_t cudaStreamCopyAttributes(cudaStream_t dst, cudaStream_t src);
-        public cudaError_t cudaStreamGetAttribute(cudaStream_t hStream, enum cudaStreamAttrID attr, [out]union cudaStreamAttrValue *value_out);
-        public cudaError_t cudaStreamSetAttribute(cudaStream_t hStream, enum cudaStreamAttrID attr, [in]const union cudaStreamAttrValue *value);
-        public cudaError_t cudaStreamDestroy(cudaStream_t stream);
-        public cudaError_t cudaStreamWaitEvent(cudaStream_t stream, cudaEvent_t event, unsigned int flags);
+        public cudaError_t cudaStreamCopyAttributes([val,transform_in=handleToStream]cudaStream_t dst, [val,transform_in=handleToStream]cudaStream_t src);
+        public cudaError_t cudaStreamGetAttribute([val,transform_in=handleToStream]cudaStream_t hStream, enum cudaStreamAttrID attr, [out]union cudaStreamAttrValue *value_out);
+        public cudaError_t cudaStreamSetAttribute([val,transform_in=handleToStream]cudaStream_t hStream, enum cudaStreamAttrID attr, [in]const union cudaStreamAttrValue *value);
+        public cudaError_t cudaStreamDestroy([val,transform_in=handleToStream]cudaStream_t stream);
+        public cudaError_t cudaStreamWaitEvent([val,transform_in=handleToStream]cudaStream_t stream, cudaEvent_t event, unsigned int flags);
         // public cudaError_t cudaStreamAddCallback(cudaStream_t stream, cudaStreamCallback_t callback, void *userData, unsigned int flags);
-        public cudaError_t cudaStreamSynchronize(cudaStream_t stream);
-        public cudaError_t cudaStreamQuery(cudaStream_t stream);
+        public cudaError_t cudaStreamSynchronize([val,transform_in=handleToStream]cudaStream_t stream);
+        public cudaError_t cudaStreamQuery([val,transform_in=handleToStream]cudaStream_t stream);
 
         // #if defined(__cplusplus)
         // public cudaError_t cudaStreamAttachMemAsync(cudaStream_t stream, void *devPtr, size_t length, unsigned int flags = cudaMemAttachSingle);
         // #else
-        public cudaError_t cudaStreamAttachMemAsync(cudaStream_t stream, [user_check]void *devPtr, size_t length, unsigned int flags);
+        public cudaError_t cudaStreamAttachMemAsync([val,transform_in=handleToStream]cudaStream_t stream, [user_check]void *devPtr, size_t length, unsigned int flags);
         // #endif
 
-        public cudaError_t cudaStreamBeginCapture(cudaStream_t stream, enum cudaStreamCaptureMode mode);
+        public cudaError_t cudaStreamBeginCapture([val,transform_in=handleToStream]cudaStream_t stream, enum cudaStreamCaptureMode mode);
         public cudaError_t cudaThreadExchangeStreamCaptureMode([in,out]enum cudaStreamCaptureMode *mode);
-        public cudaError_t cudaStreamEndCapture(cudaStream_t stream, [out]cudaGraph_t *pGraph);
-        public cudaError_t cudaStreamIsCapturing(cudaStream_t stream, [out]enum cudaStreamCaptureStatus *pCaptureStatus);
-        public cudaError_t cudaStreamGetCaptureInfo(cudaStream_t stream, [out]enum cudaStreamCaptureStatus *pCaptureStatus, [out]unsigned long long *pId);
+        public cudaError_t cudaStreamEndCapture([val,transform_in=handleToStream]cudaStream_t stream, [out]cudaGraph_t *pGraph);
+        public cudaError_t cudaStreamIsCapturing([val,transform_in=handleToStream]cudaStream_t stream, [out]enum cudaStreamCaptureStatus *pCaptureStatus);
+        public cudaError_t cudaStreamGetCaptureInfo([val,transform_in=handleToStream]cudaStream_t stream, [out]enum cudaStreamCaptureStatus *pCaptureStatus, [out]unsigned long long *pId);
         // public cudaError_t cudaStreamGetCaptureInfo_v2(cudaStream_t stream, [out]enum cudaStreamCaptureStatus *captureStatus_out, [out]unsigned long long *id_out, [out]cudaGraph_t *graph_out, [out]const cudaGraphNode_t **dependencies_out, [out]size_t *numDependencies_out);
-        public cudaError_t cudaStreamUpdateCaptureDependencies(cudaStream_t stream, [in,count=numDependencies]cudaGraphNode_t *dependencies, size_t numDependencies, unsigned int flags);
+        public cudaError_t cudaStreamUpdateCaptureDependencies([val,transform_in=handleToStream]cudaStream_t stream, [in,count=numDependencies]cudaGraphNode_t *dependencies, size_t numDependencies, unsigned int flags);
 
     };
 };

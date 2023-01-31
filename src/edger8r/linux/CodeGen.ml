@@ -1181,7 +1181,7 @@ let gen_parm_ptr_direction_pre (plist: Ast.pdecl list) =
         Ast.PtrIn | Ast.PtrInOut -> sprintf "%s\t%s = *%s;\n" (transform_in_or_null tmp_ptr_name) in_ptr_name tmp_ptr_name
         | Ast.PtrOut ->
           sprintf "\tmemset(&%s, 0, sizeof(%s));\n" in_ptr_name sttystr
-        | _ -> ""
+        | _ -> transform_in_or_null tmp_ptr_name
     in
     let malloc_and_copy pre_indent =
       match attr.Ast.pa_direction with
@@ -1264,15 +1264,8 @@ let gen_parm_ptr_direction_post (plist: Ast.pdecl list) =
     in
     let do_struct_assign =
       match attr.Ast.pa_direction with
-        Ast.PtrInOut | Ast.PtrOut ->
-          (match attr.Ast.pa_transform_out with
-            Some s_func -> sprintf "\t*%s = %s(%s);\n" (mk_tmp_var name) s_func in_ptr_name
-            | _ -> sprintf "\t*%s = %s;\n" (mk_tmp_var name) in_ptr_name)
-        | Ast.PtrIn -> "" (* no output, so cannot be changed *)
-        | Ast.PtrNoDirection ->
-          match attr.Ast.pa_transform_out with
-          Some s_func -> sprintf "\t%s(&%s);\n" s_func (mk_tmp_var name)
-          | _ -> ""
+        Ast.PtrInOut | Ast.PtrOut -> sprintf "\t*%s = %s;\n%s" (mk_tmp_var name) in_ptr_name transform_out_or_null
+        | _ -> "" (* no output, so cannot be changed *)
     in
       if attr.pa_size <> Ast.empty_ptr_size || attr.Ast.pa_isstr then do_free_copy_buffer
       else do_struct_assign

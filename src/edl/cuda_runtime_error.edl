@@ -17,9 +17,9 @@ enclave {
         public cudaError_t cudaGetDeviceCount([out]int *count);
         public cudaError_t cudaGetDeviceProperties([out]struct cudaDeviceProp *prop, int device);
         public cudaError_t cudaDeviceGetAttribute([out]int *value, enum cudaDeviceAttr attr, int device);
-        public cudaError_t cudaDeviceGetDefaultMemPool([out]cudaMemPool_t *memPool, int device);
-        public cudaError_t cudaDeviceSetMemPool(int device, cudaMemPool_t memPool);
-        public cudaError_t cudaDeviceGetMemPool([out]cudaMemPool_t *memPool, int device);
+        public cudaError_t cudaDeviceGetDefaultMemPool([out,transform_out=devPtrToOffset]cudaMemPool_t *memPool, int device);
+        public cudaError_t cudaDeviceSetMemPool(int device, [val,transform_in=devOffsetToPtr]cudaMemPool_t memPool);
+        public cudaError_t cudaDeviceGetMemPool([out,transform_out=devPtrToOffset]cudaMemPool_t *memPool, int device);
         // public cudaError_t cudaDeviceGetNvSciSyncAttributes(void *nvSciSyncAttrList, int device, int flags);
         // public cudaError_t cudaDeviceGetP2PAttribute(int *value, enum cudaDeviceP2PAttr attr, int srcDevice, int dstDevice);
         public cudaError_t cudaChooseDevice([out]int *device, [in]const struct cudaDeviceProp *prop);
