@@ -7,7 +7,7 @@ enclave {
     include "rt_cublas_header.h"
     include "cublasLt_desc.h"
     trusted {
-        public cublasStatus_t cublasLtCreate([out,in,transform_out=cublasHandleToOffset,transform_in=cublasOffsetToHandle] cublasLtHandle_t* lightHandle);
+        public cublasStatus_t cublasLtCreate([out,in] cublasLtHandle_t* lightHandle);
         public cublasStatus_t cublasLtDestroy(cublasLtHandle_t lightHandle);
         public cublasStatus_t cublasLtGetProperty(libraryPropertyType type, [out] int* value);
         public cublasStatus_t cublasLtMatmul(cublasLtHandle_t lightHandle, cublasLtMatmulDesc_t computeDesc, [in,sizefunc=cublasLtMatmulSize,sizefuncpars=alpha_computeDesc] const void* alpha, [user_check] const void* A, cublasLtMatrixLayout_t Adesc, [user_check] const void* B, cublasLtMatrixLayout_t Bdesc, [in,sizefunc=cublasLtMatmulSize,sizefuncpars=beta_computeDesc] const void* beta, [user_check] const void* C, cublasLtMatrixLayout_t Cdesc, [user_check] void* D, cublasLtMatrixLayout_t Ddesc, [in] const cublasLtMatmulAlgo_t* algo, [user_check] void* workspace, size_t workspaceSizeInBytes, cudaStream_t stream);
