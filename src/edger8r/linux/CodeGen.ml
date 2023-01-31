@@ -1171,14 +1171,14 @@ let gen_parm_ptr_direction_pre (plist: Ast.pdecl list) =
     let check_sizefunc_ptr (fn: string) =
       ""
     in
-    let transform_in_or_null =
+    let transform_in_or_null name =
       match attr.Ast.pa_transform_in with
-      Some s_func -> sprintf "\t%s(&%s);\n" s_func tmp_ptr_name
+      Some s_func -> sprintf "\t%s(&%s);\n" s_func name
       | _ -> ""
     in
     let structure_copy =
       match attr.Ast.pa_direction with
-        Ast.PtrIn | Ast.PtrInOut -> sprintf "%s\t%s = *%s;\n" transform_in_or_null in_ptr_name tmp_ptr_name
+        Ast.PtrIn | Ast.PtrInOut -> sprintf "%s\t%s = *%s;\n" (transform_in_or_null tmp_ptr_name) in_ptr_name tmp_ptr_name
         | Ast.PtrOut ->
           sprintf "\tmemset(&%s, 0, sizeof(%s));\n" in_ptr_name sttystr
         | _ -> ""
@@ -1194,6 +1194,7 @@ let gen_parm_ptr_direction_pre (plist: Ast.pdecl list) =
               "\t\tgoto err;";
               "\t}\n";
               sprintf "\tmemcpy(%s, %s, %s);" in_ptr_dst_name tmp_ptr_name len_var;
+              transform_in_or_null in_ptr_name
             ]
             in
             let s1 = List.fold_left (fun acc s -> acc ^ pre_indent ^ s ^ "\n") "" code_template in
@@ -1207,7 +1208,12 @@ let gen_parm_ptr_direction_pre (plist: Ast.pdecl list) =
               match attr.Ast.pa_size.Ast.ps_sizefunc with
                   None   -> s2
                 | Some s -> sprintf "%s%s" s2 (check_sizefunc_ptr(s))
-            in sprintf "%s%s\t}\n" transform_in_or_null s3
+            in
+            let s4 =
+              match attr.Ast.pa_size.Ast.ps_sizefunc with
+                  None   -> ""
+                | Some s -> transform_in_or_null (mk_parm_accessor name)
+            in sprintf "%s\t}\n%s" s3 s4
         | Ast.PtrOut ->
             let code_template = [
               sprintf "if (%s != NULL && %s != 0) {" tmp_ptr_name len_var;
@@ -1219,7 +1225,7 @@ let gen_parm_ptr_direction_pre (plist: Ast.pdecl list) =
               "}"]
             in
               List.fold_left (fun acc s -> acc ^ pre_indent ^ s ^ "\n") "" code_template
-        | _ -> transform_in_or_null
+        | _ -> transform_in_or_null tmp_ptr_name
     in
       if attr.Ast.pa_size <> Ast.empty_ptr_size || attr.Ast.pa_isstr then malloc_and_copy "\t"
       else structure_copy
@@ -1240,7 +1246,7 @@ let gen_parm_ptr_direction_post (plist: Ast.pdecl list) =
     let in_ptr_dst_name = mk_in_ptr_dst_name attr.Ast.pa_rdonly in_ptr_name in
     let transform_out_or_null =
       match attr.Ast.pa_transform_out with
-      Some s_func -> sprintf "\t%s(&%s);\n" s_func (mk_tmp_var name)
+      Some s_func -> sprintf "\t%s(%s);\n" s_func (mk_tmp_var name)
       | _ -> ""
     in
     let do_free_copy_buffer =
