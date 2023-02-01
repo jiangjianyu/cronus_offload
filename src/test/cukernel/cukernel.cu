@@ -9,7 +9,7 @@ template<class F>
 __global__ void add(int* c, int* a, int* b, int size, F kernel) {
 	int i = blockIdx.x * blockDim.x + threadIdx.x;
 	if (i < size) {
-		kernel(c, a, b, i);
+		kernel(a, b, i);
 	}
 }
 
@@ -46,8 +46,8 @@ extern "C" int main(int argc, char* argv[]) {
 	int block  = 100;
 	int grid = n * n / block;
 
-	auto lam = [=] __device__(int* c, int* a, int* b, int i) {
-		c[i] = a[i] + b[i];
+	auto lam = [darrc] __device__(int* a, int* b, int i) {
+		darrc[i] = a[i] + b[i];
 	};
 
 	add<<<grid, block>>>(darrc, darra, darrb, n * n, lam);
