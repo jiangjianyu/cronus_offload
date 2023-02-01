@@ -8,6 +8,7 @@ file(GLOB srcs
 )
 
 include_directories(./)
+include_directories(/usr/include/libiberty/)
 include_directories(/usr/local/cuda-11.4/include)
 include_directories(${CMAKE_SOURCE_DIR}/gen/)
 
@@ -15,6 +16,7 @@ find_library(CUDART cudart /usr/local/cuda-11.4/targets/x86_64-linux/lib/)
 
 add_library(cudart_rpc SHARED ${srcs})
 target_link_libraries(cudart_rpc lz4)
+target_link_libraries(cudart_rpc iberty)
 # add_executable(cuclient ${srcs})
 
 # use c++14 and cxxabi for abi compatability for pytorch
