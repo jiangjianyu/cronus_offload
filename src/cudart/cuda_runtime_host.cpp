@@ -84,7 +84,6 @@ extern void CUDARTAPI __cudaRegisterVar(
         int    constant,
         int    global
 ) {
-    NOT_IMPLEMENTED;
 }
 
 extern void CUDARTAPI __cudaRegisterManagedVar(

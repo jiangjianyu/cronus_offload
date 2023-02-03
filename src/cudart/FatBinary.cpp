@@ -5,6 +5,7 @@
 */
 
 #include "cudaFatBinary.h"
+#include "debug.h"
 #include "FatBinary.h"
 
 #include <dlfcn.h>
@@ -18,6 +19,9 @@
 	ss << s; 							\
 	fprintf(stderr, "%s\n", ss.str().c_str());	\
 	}
+
+#undef report
+#define report(s)
 
 #define assertM(cond, s) { 						\
 	std::stringstream ss;						\
@@ -132,11 +136,14 @@ FatBinary::FatBinary(void* ptr) {
 						::memset(compressed_input_clean, 0, compressed_size + 32);
 						::memcpy(compressed_input_clean, compressed_input, compressed_size);
 						auto r = ::LZ4_decompress_safe((const char*)compressed_input_clean, (char*)uncompressed_output, compressed_size, uncompressed_size);
-						if (r != uncompressed_size) {
-							report("error in decompressing fatbin: " << r << " != " << uncompressed_size << " " << compressed_size);
-						} else {
+						if (r != compressed_size && -r < (compressed_size  - 32)) {
+							log_err("error in decompressing fatbin: %ld != %ld ", uncompressed_size, compressed_size);
+						} 
+						/*
+						else {
 							report("same in decompressing fatbin: " << r << " == " << uncompressed_size << " " << compressed_size);
 						}
+						*/
 						_cubin = uncompressed_output;
 					} else {
 						_cubin  = (char*)entry + entry->binary;
@@ -851,7 +858,7 @@ int FatBinary::parse() {
 fail_symbol:
 fail_cubin_func_type:
 fail_malloc_func:
-	fprintf(stderr, "error in parsing\n");
+	log_err("error in parsing");
 
 	return ret;
 }
