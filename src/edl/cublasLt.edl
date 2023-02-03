@@ -7,6 +7,7 @@ enclave {
     include "cublasLt.h"
     include "rt_cublas_header.h"
     include "cublasLt_desc.h"
+    include "cublasLt_desc_local.h"
     trusted {
         public cublasStatus_t cublasLtCreate([out,transform_out=cublasLtToHandle] cublasLtHandle_t* lightHandle);
         public cublasStatus_t cublasLtDestroy([val,transform_in=handleToCublasLt]cublasLtHandle_t lightHandle);
@@ -24,7 +25,7 @@ enclave {
         [prefunc=cublasLtMatmulDescInitLogging] public cublasStatus_t cublasLtMatmulDescInit_internal([val,transform_in=handleToCublasDesc]cublasLtMatmulDesc_t matmulDesc, size_t size, cublasComputeType_t computeType, cudaDataType_t scaleType);
         [postfunc=cublasLtMatmulDescCreateLogging] public cublasStatus_t cublasLtMatmulDescCreate([out,transform_out=cublasDescToHandle]cublasLtMatmulDesc_t* matmulDesc, cublasComputeType_t computeType, cudaDataType_t scaleType);
         public cublasStatus_t cublasLtMatmulDescDestroy([val,transform_in=handleToCublasDesc]cublasLtMatmulDesc_t matmulDesc);
-        public cublasStatus_t cublasLtMatmulDescSetAttribute([val,transform_in=handleToCublasDesc]cublasLtMatmulDesc_t matmulDesc, cublasLtMatmulDescAttributes_t attr, [in, size=sizeInBytes] const void* buf, size_t sizeInBytes);
+        [prefunc=cublasLtMatmulDescSetAttributeParams] public cublasStatus_t cublasLtMatmulDescSetAttribute([val,transform_in=handleToCublasDesc]cublasLtMatmulDesc_t matmulDesc, cublasLtMatmulDescAttributes_t attr, [in, size=sizeInBytes] const void* buf, size_t sizeInBytes);
         public cublasStatus_t cublasLtMatmulDescGetAttribute([val,transform_in=handleToCublasDesc]cublasLtMatmulDesc_t matmulDesc, cublasLtMatmulDescAttributes_t attr, [out, size=sizeInBytes] void* buf, size_t sizeInBytes, [out, size=sizeInBytes] size_t* sizeWritten);
 
         /* Helper functions for cublasLtMatrixTransformDesc_t */

@@ -28,7 +28,7 @@ char* kernel_name_parameter(const char* s) {
 			case '(': 
 				matching_stack.push_back('(');
 				if (matching_stack.size() == 1) {
-					std::cout << "par starting here: " << cur << "\n";
+					// std::cout << "par starting here: " << cur << "\n";
 					last_name = cur + 1;
 				}
 				break;
@@ -40,6 +40,7 @@ char* kernel_name_parameter(const char* s) {
 				}
 				if (matching_stack.size() == 0) {
 					auto s = std::string(last_name, cur - last_name);
+					if (s == "anonymous namespace") break;
 					parameters.push_back(s);
 					log_info("parameter index-%d: %s",  par_cnt++, s.c_str());
 					// std::cout << "par ending here: " << cur << "\n";
@@ -49,9 +50,10 @@ char* kernel_name_parameter(const char* s) {
 				if (matching_stack.size() == 1 && matching_stack.back() == '(') {
 					// top-level new parameter
 					auto s = std::string(last_name, cur - last_name);
+					last_name = cur + 1;
+					if (s == "anonymous namespace") break;
 					parameters.push_back(s);
 					log_info("parameter index-%d: %s",  par_cnt++, s.c_str());
-					last_name = cur + 1;
 				}
 				break;
 			case ' ':
@@ -68,9 +70,12 @@ char* kernel_name_parameter(const char* s) {
 	for (int i = 0;i < parameters.size();i++) {
 		if (parameters[i].back() == '*')
 			ret[i] = '*';
+		else if (parameters[i].find(' ') != std::string::npos)
+			ret[i] = 'L';
 		else
 			ret[i] = '$';
 	}
 	ret[parameters.size()] = '\0';
+	log_info("func demangle full: %s", name);
 	return ret;
 }

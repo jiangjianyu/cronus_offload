@@ -12,6 +12,7 @@ file(GLOB srcs
 )
 
 include_directories(./)
+include_directories(/usr/include/libiberty/)
 include_directories(/usr/local/cuda-11.4/include)
 include_directories(${CMAKE_SOURCE_DIR}/gen/)
 
@@ -21,6 +22,7 @@ find_library(CUDART cudart /usr/local/cuda-11.4/targets/x86_64-linux/lib/)
 add_library(cudaserver SHARED ${srcs})
 target_link_libraries(cudaserver ${CUDART})
 target_link_libraries(cudaserver dl)
+target_link_libraries(cudaserver iberty)
 
 # set_target_properties(cudaserver PROPERTIES LINK_FLAGS "-Wl,-export-dynamic")
 

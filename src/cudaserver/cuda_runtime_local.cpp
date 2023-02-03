@@ -11,6 +11,9 @@
 #include "cuda_runtime_header.h"
 #include <unordered_map>
 
+#include "cuda_offset.h"
+#include "kernel_demangle.h"
+
 std::unordered_map<std::string, const char*> *cudaserver_kernel_functions;
 
 typedef void (*cudaRegisterFunction_t)(
@@ -79,12 +82,37 @@ cudaError_t cudaLaunchKernelByName(char* funcname, dim3 gridDim, dim3 blockDim,
         return cudaErrorLaunchFailure;
     }
 
+    auto par_types = kernel_name_parameter(funcname);
+    cudaserver_log_info("par types: %s", par_types);
+
     int parameter_len = (int)(par_len / sizeof(uint32_t));
     void** args = (void**) malloc(parameter_len * sizeof(void*));
     int total_offset = 0;
     for (int i = 0;i < parameter_len;i++) {
         args[i] = (void*)((char*)args_buf + total_offset);
         total_offset += parameters[i];
+        if (par_types[i] == '*') {
+            auto val_ptr = (unsigned long*)(args[i]);
+            auto orig_val = *val_ptr;
+            devOffsetToPtr((void**)args[i]);
+            cudaserver_log_info("transform %d (%lx -> %lx)", i, orig_val, *val_ptr);
+        } else if (par_types[i] == 'L') {
+            // lambda function
+            cudaserver_log_info("transform lambda %d", i);
+            auto lambda_pars = (unsigned long*)(args[i]);
+            for (int j = 0;j < parameters[i] / sizeof(void*);j++) {
+                if (isDevOffset(lambda_pars[j])) {
+                    devOffsetToPtr(&lambda_pars[j]);
+                }
+            }
+        } else {
+            cudaserver_log_info("not transform %d %d", i, parameters[i]);
+        }
+    }
+
+    auto pre_status = cudaDeviceSynchronize();
+    if (pre_status != cudaSuccess) {
+        cudaserver_log_err("error in previous kernel");
     }
 
     auto status = cudaLaunchKernel(func_ptr, gridDim, blockDim, args, sharedMem, stream);

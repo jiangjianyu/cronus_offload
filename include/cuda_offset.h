@@ -5,23 +5,31 @@
 #include <cublas_v2.h>
 #include <cublasLt.h>
 
+#include "debug.h"
+
 #ifdef __cplusplus
 
-static unsigned long __devptr_start = 0x500000000000;
+static unsigned long __devptr_start = 0;
 
-#define NULL_DEV_PTR_OFFSET ((unsigned long)1 << 56)
+// pointer mark and format
+// | dev_ptr magic number | pointer |
+
+#define NULL_DEV_PTR_OFFSET ((unsigned long)0x2e2f << 48)
+#define DEV_PTR_MARK        ((unsigned long)0x2e2e << 48)
+#define DEV_PTR_MASK        ((unsigned long)0xffff << 48)
 
 template<typename T>
 static inline void devOffsetToPtr(T* ptr) {
     if (ptr == NULL) return;
     auto val = (unsigned long)*ptr;
-    if (val & NULL_DEV_PTR_OFFSET) {
+    if ((val & DEV_PTR_MASK) == NULL_DEV_PTR_OFFSET) {
         *ptr = NULL;
     } else if ((unsigned long)val == 0) {
         // if this is a null, then this null is supplied by the app
     } else {
-        *ptr = (T)(val + __devptr_start);
+        *ptr = (T)((val + __devptr_start) & (~DEV_PTR_MASK));
     }
+    // log_info("offset %lx -> %lx %lx", val, *ptr, __devptr_start);
 }
 
 template<typename T>
@@ -31,8 +39,13 @@ static inline void devPtrToOffset(T* offset) {
     if ((unsigned long)val == 0) {
         // do nothing, as this is a zero
     } else {
-        *offset = (T)(val - __devptr_start);
+        *offset = (T)((val - __devptr_start) | DEV_PTR_MARK);
     }
+    // log_info("ptr %lx -> %lx %lx", val, *offset, __devptr_start);
+}
+
+static inline bool isDevOffset(unsigned long offset) {
+    return ((offset & DEV_PTR_MASK) == DEV_PTR_MARK);
 }
 
 static inline void handleToStream(cudaStream_t *stream) {

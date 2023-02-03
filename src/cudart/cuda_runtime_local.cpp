@@ -5,8 +5,8 @@
 #include "cuda_runtime_api.h"
 #include "cuda_runtime_u.h"
 #include "cuda_runtime_header.h"
+#include "cuda_offset.h"
 #include "FatBinary.h"
-#include "kernel_demangle.h"
 
 #define KERNEL_ARGC_SIZE 64
 
@@ -55,9 +55,6 @@ cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void
             }
         }
 
-        auto par_types = kernel_name_parameter(func_name);
-        cudart_log_info("par types: %s", par_types);
-
         for (int i = 0;i < n_par; i++)
                 total_parameter_sizes += parameters[i];
         
@@ -65,11 +62,7 @@ cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void
 
         for (int i = 0;i < n_par;i++) {
             memcpy((char*)args_copy + args_copy_offset, args[i], parameters[i]);
-            if (par_types[i] == '*') {
-                cudart_log_info("transform %d", i);
-                devOffsetToPtr((void**)((char*)args_copy + args_copy_offset));
-            }
-            /*
+            // /*
             if (parameters[i] == sizeof(uint64_t)) {
                 uint64_t device_ptr = *(uint64_t*)(args[i]);
                 log_err("parameter %d %lx", i, device_ptr);
@@ -85,7 +78,7 @@ cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void
 			} else {
 				log_err("parameter %d size %d", i, parameters[i]);
 			}
-            */
+            // */
             args_copy_offset += parameters[i];
         }
 
