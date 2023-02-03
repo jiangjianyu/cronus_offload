@@ -62,7 +62,7 @@ cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void
 
         for (int i = 0;i < n_par;i++) {
             memcpy((char*)args_copy + args_copy_offset, args[i], parameters[i]);
-            // /*
+            /*
             if (parameters[i] == sizeof(uint64_t)) {
                 uint64_t device_ptr = *(uint64_t*)(args[i]);
                 log_err("parameter %d %lx", i, device_ptr);
@@ -78,7 +78,7 @@ cudaError_t cudaLaunchKernel(const void *func, dim3 gridDim, dim3 blockDim, void
 			} else {
 				log_err("parameter %d size %d", i, parameters[i]);
 			}
-            // */
+            */
             args_copy_offset += parameters[i];
         }
 
